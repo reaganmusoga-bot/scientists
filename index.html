@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PIYS Young Scientists Repository — Uganda</title>
+<style>
+  :root {
+    --black: #000000;
+    --yellow: #FCDC04;
+    --red: #D90000;
+    --white: #FFFFFF;
+    --grey: #F4F4F4;
+    --dark-grey: #1a1a1a;
+    --mid-grey: #666;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+  body { background: var(--grey); color: var(--black); line-height: 1.6; }
+
+  /* ===== HEADER ===== */
+  header {
+    background: var(--black);
+    color: var(--white);
+    padding: 0;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .flag-stripe {
+    height: 6px;
+    background: linear-gradient(to right,
+      var(--black) 0%, var(--black) 16.6%,
+      var(--yellow) 16.6%, var(--yellow) 33.3%,
+      var(--red) 33.3%, var(--red) 50%,
+      var(--black) 50%, var(--black) 66.6%,
+      var(--yellow) 66.6%, var(--yellow) 83.3%,
+      var(--red) 83.3%, var(--red) 100%);
+  }
+  .header-inner {
+    max-width: 1200px; margin: 0 auto;
+    padding: 16px 24px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-mark {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--yellow);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--black); font-size: 18px;
+    border: 3px solid var(--red);
+  }
+  .logo-text h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.3px; }
+  .logo-text p { font-size: 11px; color: var(--yellow); text-transform: uppercase; letter-spacing: 1.5px; }
+  nav ul { display: flex; list-style: none; gap: 6px; flex-wrap: wrap; }
+  nav button {
+    background: transparent; color: var(--white);
+    border: 1px solid transparent; padding: 8px 14px;
+    border-radius: 6px; cursor: pointer; font-size: 14px;
+    font-weight: 500; transition: all 0.2s;
+  }
+  nav button:hover { background: rgba(252,220,4,0.15); color: var(--yellow); }
+  nav button.active { background: var(--yellow); color: var(--black); font-weight: 700; }
+
+  /* ===== HERO ===== */
+  .hero {
+    background: linear-gradient(135deg, var(--black) 0%, var(--dark-grey) 100%);
+    color: var(--white); padding: 48px 24px; text-align: center;
+    border-bottom: 4px solid var(--yellow);
+  }
+  .hero h2 { font-size: 32px; margin-bottom: 12px; font-weight: 800; }
+  .hero h2 span { color: var(--yellow); }
+  .hero p { max-width: 720px; margin: 0 auto 20px; color: #ccc; font-size: 16px; }
+  .hero-stats { display: flex; justify-content: center; gap: 40px; margin-top: 28px; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat .num { font-size: 28px; font-weight: 800; color: var(--yellow); }
+  .stat .lbl { font-size: 12px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ===== MAIN ===== */
+  main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 64px; }
+  .view { display: none; }
+  .view.active { display: block; }
+
+  h3.section-title {
+    font-size: 22px; margin-bottom: 20px; padding-bottom: 10px;
+    border-bottom: 3px solid var(--yellow); display: inline-block;
+  }
+
+  /* ===== CARDS ===== */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+  .card {
+    background: var(--white); border-radius: 10px; padding: 20px;
+    border-left: 5px solid var(--yellow);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+  .card .tag {
+    display: inline-block; background: var(--red); color: var(--white);
+    font-size: 10px; padding: 3px 9px; border-radius: 12px;
+    text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .card .tag.yellow { background: var(--yellow); color: var(--black); }
+  .card h4 { font-size: 16px; margin-bottom: 6px; line-height: 1.3; }
+  .card .meta { font-size: 12px; color: var(--mid-grey); margin-bottom: 10px; }
+  .card .abstract { font-size: 13px; color: #333; margin-bottom: 12px; }
+  .card .footer { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--mid-grey); border-top: 1px solid #eee; padding-top: 10px; }
+  .hash { font-family: monospace; font-size: 10px; color: var(--mid-grey); word-break: break-all; }
+
+  /* ===== FORM ===== */
+  .form-wrap { background: var(--white); border-radius: 10px; padding: 28px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); max-width: 760px; margin: 0 auto; }
+  .form-row { margin-bottom: 18px; }
+  label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--black); }
+  label .req { color: var(--red); }
+  input, select, textarea {
+    width: 100%; padding: 10px 12px; border: 2px solid #ddd;
+    border-radius: 6px; font-size: 14px; font-family: inherit;
+    transition: border 0.2s;
+  }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--yellow); box-shadow: 0 0 0 3px rgba(252,220,4,0.2); }
+  textarea { resize: vertical; min-height: 90px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+
+  .btn {
+    background: var(--yellow); color: var(--black); border: none;
+    padding: 12px 24px; border-radius: 6px; font-size: 14px;
+    font-weight: 700; cursor: pointer; transition: all 0.2s;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .btn:hover { background: #e6c800; transform: translateY(-1px); }
+  .btn-red { background: var(--red); color: var(--white); }
+  .btn-red:hover { background: #b00000; }
+  .btn-black { background: var(--black); color: var(--white); }
+  .btn-black:hover { background: #333; }
+  .btn-sm { padding: 7px 14px; font-size: 12px; }
+
+  /* ===== FILTERS ===== */
+  .filters { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+  .filters input, .filters select { width: auto; flex: 1; min-width: 160px; }
+  .filters input { flex: 2; }
+
+  /* ===== ALERTS ===== */
+  .alert { padding: 12px 16px; border-radius: 6px; margin-bottom: 16px; font-size: 14px; }
+  .alert-success { background: #e6f4ea; border-left: 4px solid #1e8e3e; color: #0d5c26; }
+  .alert-info { background: #fff9e0; border-left: 4px solid var(--yellow); color: #665500; }
+  .alert-error { background: #fdecea; border-left: 4px solid var(--red); color: #8b0000; }
+
+  /* ===== TABLE (Admin) ===== */
+  table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+  th { background: var(--black); color: var(--yellow); padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; }
+  td { padding: 12px; border-bottom: 1px solid #eee; font-size: 13px; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafafa; }
+
+  /* ===== MODAL ===== */
+  .modal-bg {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    z-index: 200; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-bg.active { display: flex; }
+  .modal {
+    background: var(--white); border-radius: 10px; max-width: 640px; width: 100%;
+    max-height: 90vh; overflow-y: auto; padding: 28px;
+    border-top: 6px solid var(--yellow);
+  }
+  .modal h3 { margin-bottom: 16px; }
+  .modal .close { float: right; cursor: pointer; font-size: 22px; color: var(--mid-grey); border: none; background: none; }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--black); color: #999; padding: 28px 24px;
+    text-align: center; font-size: 13px; border-top: 4px solid var(--red);
+  }
+  footer .flag-stripe { margin-bottom: 16px; }
+  footer strong { color: var(--yellow); }
+
+  .badge-trl {
+    display: inline-block; background: var(--black); color: var(--yellow);
+    font-size: 10px; padding: 3px 8px; border-radius: 10px; font-weight: 700;
+  }
+
+  .empty { text-align: center; padding: 48px 20px; color: var(--mid-grey); }
+  .empty .icon { font-size: 48px; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+<header>
+  <div class="flag-stripe"></div>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-mark">YS</div>
+      <div class="logo-text">
+        <h1>PIYS Young Scientists Repository</h1>
+        <p>Republic of Uganda · STI-OP · IUYSC</p>
+      </div>
+    </div>
+    <nav>
+      <ul>
+        <li><button data-view="home" class="active">Home</button></li>
+        <li><button data-view="browse">Browse</button></li>
+        <li><button data-view="submit">Submit Research</button></li>
+        <li><button data-view="admin">Admin</button></li>
+        <li><button data-view="about">About</button></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="hero">
+  <h2>From <span>Subsistence Science</span> to <span>Commercial Science</span></h2>
+  <p>Protecting and advancing the research of Uganda's young scientists — one innovation at a time. Every project submitted is timestamped, hashed, and preserved for national development.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="num" id="stat-total">0</div><div class="lbl">Innovations</div></div>
+    <div class="stat"><div class="num" id="stat-universities">0</div><div class="lbl">Universities</div></div>
+    <div class="stat"><div class="num" id="stat-sectors">0</div><div class="lbl">Sectors</div></div>
+    <div class="stat"><div class="num" id="stat-protected">0</div><div class="lbl">IP Protected</div></div>
+  </div>
+</section>
+
+<!-- ================= MAIN ================= -->
+<main>
+
+  <!-- ===== HOME VIEW ===== -->
+  <section class="view active" id="view-home">
+    <h3 class="section-title">Featured Innovations</h3>
+    <div id="home-featured" class="grid"></div>
+  </section>
+
+  <!-- ===== BROWSE VIEW ===== -->
+  <section class="view" id="view-browse">
+    <h3 class="section-title">Browse the National Repository</h3>
+    <div class="filters">
+      <input type="text" id="search-input" placeholder="Search by title, keyword, author..." />
+      <select id="filter-sector"><option value="">All Sectors</option></select>
+      <select id="filter-university"><option value="">All Universities</option></select>
+      <select id="filter-trl">
+        <option value="">All TRL Levels</option>
+        <option value="1">TRL 1 — Basic Research</option>
+        <option value="2">TRL 2 — Concept</option>
+        <option value="3">TRL 3 — Proof of Concept</option>
+        <option value="4">TRL 4 — Lab Validated</option>
+        <option value="5">TRL 5 — Relevant Environment</option>
+        <option value="6">TRL 6 — Prototype Demo</option>
+        <option value="7">TRL 7 — System Prototype</option>
+        <option value="8">TRL 8 — Qualified System</option>
+        <option value="9">TRL 9 — Proven in Market</option>
+      </select>
+      <button class="btn btn-sm" id="clear-filters">Clear</button>
+    </div>
+    <div id="browse-results" class="grid"></div>
+  </section>
+
+  <!-- ===== SUBMIT VIEW ===== -->
+  <section class="view" id="view-submit">
+    <h3 class="section-title">Submit Your Research</h3>
+    <div class="form-wrap">
+      <div class="alert alert-info">
+        <strong>🛡️ IP Protection Notice:</strong> On submission, your work is timestamped and assigned a unique SHA-256 hash — creating a verifiable record of authorship. This is <em>not</em> a substitute for formal patent/URSB registration, but it is strong evidence of prior art.
+      </div>
+      <form id="submit-form">
+        <div class="form-row">
+          <label>Research / Innovation Title <span class="req">*</span></label>
+          <input type="text" id="f-title" required placeholder="e.g., Low-cost solar-powered malaria diagnostic kit" />
+        </div>
+        <div class="two-col">
+          <div class="form-row">
+            <label>Your Full Name <span class="req">*</span></label>
+            <input type="text" id="f-author" required placeholder="e.g., Wamezaya Ebenezer" />
+          </div>
+          <div class="form-row">
+            <label>Email <span class="req">*</span></label>
+            <input type="email" id="f-email" required placeholder="you@university.ac.ug" />
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="form-row">
+            <label>University <span class="req">*</span></label>
+            <select id="f-university" required>
+              <option value="">Select university...</option>
+              <option>Makerere University</option>
+              <option>Kyambogo University</option>
+              <option>Makerere University Business School</option>
+              <option>Uganda Christian University</option>
+              <option>Mbarara University of Science &amp; Technology</option>
+              <option>Gulu University</option>
+              <option>Busitema University</option>
+              <option>Muni University</option>
+              <option>Kabale University</option>
+              <option>Lira University</option>
+              <option>Soroti University</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Course / Department</label>
+            <input type="text" id="f-course" placeholder="e.g., BSc. Biomedical Engineering" />
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="form-row">
+            <label>Sector <span class="req">*</span></label>
+            <select id="f-sector" required>
+              <option value="">Select sector...</option>
+              <option>Health &amp; Pharmaceuticals</option>
+              <option>Medical Devices &amp; Diagnostics</option>
+              <option>Biotechnology</option>
+              <option>Agriculture &amp; Agro-processing</option>
+              <option>Engineering &amp; Manufacturing</option>
+              <option>Renewable Energy</option>
+              <option>Robotics &amp; Automation</option>
+              <option>ICT &amp; Artificial Intelligence</option>
+              <option>Environmental Technologies</option>
+              <option>Construction &amp; Transport Tech</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Technology Readiness Level (TRL) <span class="req">*</span></label>
+            <select id="f-trl" required>
+              <option value="">Select TRL...</option>
+              <option value="1">TRL 1 — Basic Research</option>
+              <option value="2">TRL 2 — Concept Formulated</option>
+              <option value="3">TRL 3 — Proof of Concept</option>
+              <option value="4">TRL 4 — Lab Validated</option>
+              <option value="5">TRL 5 — Relevant Environment</option>
+              <option value="6">TRL 6 — Prototype Demo</option>
+              <option value="7">TRL 7 — System Prototype</option>
+              <option value="8">TRL 8 — Qualified System</option>
+              <option value="9">TRL 9 — Proven in Market</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Abstract / Summary <span class="req">*</span></label>
+          <textarea id="f-abstract" required placeholder="Describe your research, the problem it solves, and its potential impact (150–400 words)."></textarea>
+        </div>
+        <div class="form-row">
+          <label>Keywords (comma-separated)</label>
+          <input type="text" id="f-keywords" placeholder="e.g., malaria, diagnostics, solar, low-cost" />
+        </div>
+        <div class="form-row">
+          <label>Visibility</label>
+          <select id="f-visibility">
+            <option value="public">Public — visible to all</option>
+            <option value="protected">Protected — metadata only, details hidden</option>
+            <option value="private">Private — under embargo</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Upload File (PDF, image, video link) — optional</label>
+          <input type="file" id="f-file" />
+          <small style="color:var(--mid-grey); font-size:11px;">In this demo, files are not uploaded to a server. In production, this connects to secure cloud storage.</small>
+        </div>
+        <div style="display:flex; gap:12px; margin-top:8px;">
+          <button type="submit" class="btn">🛡️ Submit &amp; Protect My Research</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== ADMIN VIEW ===== -->
+  <section class="view" id="view-admin">
+    <h3 class="section-title">Administrator Dashboard</h3>
+    <div class="alert alert-info">Demo admin view — in production this is role-protected (IUYSC / STI-OP only).</div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th><th>Title</th><th>Author</th><th>University</th><th>Sector</th><th>TRL</th><th>Status</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="admin-table"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT VIEW ===== -->
+  <section class="view" id="view-about">
+    <h3 class="section-title">About This Initiative</h3>
+    <div class="form-wrap" style="max-width:100%;">
+      <p style="margin-bottom:16px;">The <strong>Presidential Initiative for Young Scientists (PIYS)</strong>, operating through the <strong>Inter-University Young Scientists Consortium (IUYSC)</strong>, is building Uganda's first national digital repository dedicated to protecting and advancing the research of young and emerging scientists.</p>
+      <p style="margin-bottom:16px;">Every year, Ugandan universities produce hundreds of final-year projects and research papers that never leave the campus shelf. This repository exists to change that — capturing each innovation at the moment of completion, protecting it, and connecting it to industry, investors, and government.</p>
+      <h4 style="margin:20px 0 10px; color:var(--red);">Our 5 Strategic Pillars</h4>
+      <ol style="padding-left:20px; line-height:2;">
+        <li><strong>Discover</strong> — National innovation challenge &amp; repository</li>
+        <li><strong>Develop</strong> — Incubation, scientific entrepreneurship, IP academy, prototyping</li>
+        <li><strong>Protect</strong> — National student patent program, IP support centre</li>
+        <li><strong>Commercialise</strong> — Start-up accelerator, research marketplace, investment fund</li>
+        <li><strong>Industrialise</strong> — Manufacturing partnerships, industry linkage, export readiness</li>
+      </ol>
+      <h4 style="margin:20px 0 10px; color:var(--red);">Contact</h4>
+      <p><strong>Wamezaya Ebenezer</strong><br/>Health Minister, Makerere University Students' Guild<br/>Chief Scientist, IUYSC<br/>Presented to: Science, Technology and Innovation Office of the President (STI-OP)</p>
+      <div style="margin-top:24px; padding:16px; background:var(--grey); border-left:4px solid var(--yellow); border-radius:6px;">
+        <strong>🇺🇬 Built with the colors of the Ugandan flag:</strong><br/>
+        <span style="display:inline-block; width:14px; height:14px; background:#000; border-radius:3px; margin:0 4px; vertical-align:middle;"></span> Black — The People of Africa &nbsp;
+        <span style="display:inline-block; width:14px; height:14px; background:#FCDC04; border-radius:3px; margin:0 4px; vertical-align:middle;"></span> Yellow — Sunshine &nbsp;
+        <span style="display:inline-block; width:14px; height:14px; background:#D90000; border-radius:3px; margin:0 4px; vertical-align:middle;"></span> Red — Brotherhood
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= MODAL ================= -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <button class="close" id="modal-close">&times;</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="flag-stripe"></div>
+  <p><strong>Presidential Initiative for Young Scientists (PIYS)</strong> · Inter-University Young Scientists Consortium (IUYSC)</p>
+  <p style="margin-top:8px;">Mobilising Uganda's young scientists for innovation, industrialisation and national transformation.</p>
+  <p style="margin-top:12px; font-size:11px;">© 2026 IUYSC · Presented to the Science, Technology and Innovation Office of the President</p>
+</footer>
+
+<script>
+// ================= STATE =================
+const STORAGE_KEY = 'piys_repository_v1';
+
+function loadData() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) return JSON.parse(raw);
+  // Seed with demo data
+  const seed = [
+    {
+      id: 'seed-1',
+      title: 'Low-Cost Solar-Powered Malaria Diagnostic Kit',
+      author: 'Nakato Sarah',
+      email: 'sarah@mak.ac.ug',
+      university: 'Makerere University',
+      course: 'BSc. Biomedical Engineering',
+      sector: 'Medical Devices & Diagnostics',
+      trl: 4,
+      abstract: 'A portable, solar-powered device that uses light microscopy and AI image analysis to detect malaria parasites in under 3 minutes, designed for rural health centres with unreliable electricity.',
+      keywords: 'malaria, diagnostics, solar, AI, rural health',
+      visibility: 'public',
+      date: new Date('2026-08-14').toISOString(),
+      hash: 'a3f5c9e1b7d2408f6a1c3e5b9d7f2a4c8e6b1d3f5a7c9e2b4d6f8a1c3e5b7d9f',
+      status: 'Published'
+    },
+    {
+      id: 'seed-2',
+      title: 'Cassava Peel Biochar for Soil Restoration',
+      author: 'Okello Brian',
+      email: 'brian@gulu.ac.ug',
+      university: 'Gulu University',
+      course: 'BSc. Agriculture',
+      sector: 'Agriculture & Agro-processing',
+      trl: 6,
+      abstract: 'Converting cassava peel waste into biochar to restore degraded northern Uganda soils — increasing maize yield by 32% in field trials while reducing agricultural waste.',
+      keywords: 'cassava, biochar, soil, waste, yield',
+      visibility: 'public',
+      date: new Date('2026-09-02').toISOString(),
+      hash: 'b4e6d0f2c8a3519e7b2d4f6a0c8e3b5d9f7a2c4e6b8d0f2a4c6e8b1d3f5a7c9e',
+      status: 'Published'
+    },
+    {
+      id: 'seed-3',
+      title: 'AI-Powered Luganda Language Tutor for Primary Schools',
+      author: 'Auma Grace',
+      email: 'grace@kyambogo.ac.ug',
+      university: 'Kyambogo University',
+      course: 'BSc. Computer Science',
+      sector: 'ICT & Artificial Intelligence',
+      trl: 3,
+      abstract: 'A mobile app using speech recognition and NLP to teach Luganda literacy to primary school children, with offline capability for low-connectivity areas.',
+      keywords: 'Luganda, AI, education, mobile, NLP',
+      visibility: 'protected',
+      date: new Date('2026-09-20').toISOString(),
+      hash: 'c5f7e1a3d9b4620f8c3e5a7b1d9f4c6e0a8b2d4f6c8e0a2b4d6f8c1e3a5b7d9f',
+      status: 'Under Review'
+    }
+  ];
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
+  return seed;
+}
+
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+let DB = loadData();
+
+// ================= HASHING (SHA-256) =================
+async function sha256(text) {
+  const buf = new TextEncoder().encode(text);
+  const hashBuf = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ================= NAVIGATION =================
+document.querySelectorAll('nav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const view = document.getElementById('view-' + btn.dataset.view);
+    if (view) view.classList.add('active');
+    document.getElementById('hero').style.display = btn.dataset.view === 'home' ? 'block' : 'none';
+    if (btn.dataset.view === 'browse') renderBrowse();
+    if (btn.dataset.view === 'admin') renderAdmin();
+    if (btn.dataset.view === 'home') renderHome();
+  });
+});
+
+// ================= STATS =================
+function renderStats() {
+  document.getElementById('stat-total').textContent = DB.length;
+  document.getElementById('stat-universities').textContent = new Set(DB.map(d => d.university)).size;
+  document.getElementById('stat-sectors').textContent = new Set(DB.map(d => d.sector)).size;
+  document.getElementById('stat-protected').textContent = DB.filter(d => d.hash).length;
+}
+
+// ================= CARD RENDERER =================
+function cardHTML(item) {
+  const isProtected = item.visibility === 'protected';
+  const isPrivate = item.visibility === 'private';
+  const abstract = isProtected || isPrivate
+    ? '<em style="color:var(--mid-grey);">Details protected. Contact author via the consortium to request access.</em>'
+    : item.abstract;
+  return `
+    <div class="card">
+      <span class="tag ${item.visibility === 'public' ? '' : 'yellow'}">${item.sector}</span>
+      <h4>${escapeHtml(item.title)}</h4>
+      <div class="meta">${escapeHtml(item.author)} · ${escapeHtml(item.university)}</div>
+      <div class="abstract">${abstract}</div>
+      <div class="footer">
+        <span class="badge-trl">TRL ${item.trl}</span>
+        <span>${new Date(item.date).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })}</span>
+      </div>
+      <div class="hash" title="SHA-256 proof of authorship">🔒 ${item.hash.slice(0, 24)}…</div>
+      <div style="margin-top:10px;">
+        <button class="btn btn-sm" onclick="viewItem('${item.id}')">View Details</button>
+      </div>
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ================= HOME =================
+function renderHome() {
+  const featured = DB.filter(d => d.visibility === 'public').slice(0, 6);
+  document.getElementById('home-featured').innerHTML = featured.length
+    ? featured.map(cardHTML).join('')
+    : '<div class="empty"><div class="icon">🔬</div><p>No innovations yet. Be the first to submit!</p></div>';
+}
+
+// ================= BROWSE =================
+function populateFilters() {
+  const sectors = [...new Set(DB.map(d => d.sector))].sort();
+  const unis = [...new Set(DB.map(d => d.university))].sort();
+  const sectorSel = document.getElementById('filter-sector');
+  const uniSel = document.getElementById('filter-university');
+  sectorSel.innerHTML = '<option value="">All Sectors</option>' + sectors.map(s => `<option>${escapeHtml(s)}</option>`).join('');
+  uniSel.innerHTML = '<option value="">All Universities</option>' + unis.map(u => `<option>${escapeHtml(u)}</option>`).join('');
+}
+
+function renderBrowse() {
+  populateFilters();
+  const q = document.getElementById('search-input').value.toLowerCase().trim();
+  const sector = document.getElementById('filter-sector').value;
+  const uni = document.getElementById('filter-university').value;
+  const trl = document.getElementById('filter-trl').value;
+
+  let results = DB.filter(d => d.visibility !== 'private');
+  if (q) results = results.filter(d =>
+    (d.title + ' ' + d.author + ' ' + d.abstract + ' ' + (d.keywords||'')).toLowerCase().includes(q)
+  );
+  if (sector) results = results.filter(d => d.sector === sector);
+  if (uni) results = results.filter(d => d.university === uni);
+  if (trl) results = results.filter(d => String(d.trl) === trl);
+
+  document.getElementById('browse-results').innerHTML = results.length
+    ? results.map(cardHTML).join('')
+    : '<div class="empty"><div class="icon">🔍</div><p>No innovations match your filters.</p></div>';
+}
+
+['search-input','filter-sector','filter-university','filter-trl'].forEach(id => {
+  document.addEventListener('input', e => { if (e.target.id === id) renderBrowse(); });
+  document.addEventListener('change', e => { if (e.target.id === id) renderBrowse(); });
+});
+document.getElementById('clear-filters').addEventListener('click', () => {
+  document.getElementById('search-input').value = '';
+  document.getElementById('filter-sector').value = '';
+  document.getElementById('filter-university').value = '';
+  document.getElementById('filter-trl').value = '';
+  renderBrowse();
+});
+
+// ================= SUBMIT =================
+document.getElementById('submit-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const title = document.getElementById('f-title').value.trim();
+  const author = document.getElementById('f-author').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const university = document.getElementById('f-university').value;
+  const course = document.getElementById('f-course').value.trim();
+  const sector = document.getElementById('f-sector').value;
+  const trl = parseInt(document.getElementById('f-trl').value);
+  const abstract = document.getElementById('f-abstract').value.trim();
+  const keywords = document.getElementById('f-keywords').value.trim();
+  const visibility = document.getElementById('f-visibility').value;
+
+  const payload = { title, author, email, university, course, sector, trl, abstract, keywords, visibility, date: new Date().toISOString() };
+  const hash = await sha256(JSON.stringify(payload) + Date.now());
+
+  const item = { ...payload, id: 'item-' + Date.now(), hash, status: 'Submitted' };
+  DB.push(item);
+  saveData(DB);
+
+  renderStats();
+  renderHome();
+  renderBrowse();
+  renderAdmin();
+
+  // Show success modal with certificate info
+  openModal(`
+    <h3 style="color:#1e8e3e;">✅ Research Submitted &amp; Protected</h3>
+    <div class="alert alert-success">
+      Your innovation has been timestamped and assigned a unique SHA-256 hash — a verifiable proof of authorship.
+    </div>
+    <p style="margin:12px 0;"><strong>Title:</strong> ${escapeHtml(title)}</p>
+    <p style="margin:12px 0;"><strong>Author:</strong> ${escapeHtml(author)}</p>
+    <p style="margin:12px 0;"><strong>Submitted:</strong> ${new Date(item.date).toLocaleString('en-GB')}</p>
+    <p style="margin:12px 0;"><strong>SHA-256 Hash:</strong></p>
+    <div class="hash" style="background:var(--grey); padding:10px; border-radius:6px;">${hash}</div>
+    <p style="margin-top:16px; font-size:13px; color:var(--mid-grey);">Keep this hash safe. It proves you submitted this work on this date. For formal IP protection, contact URSB or the IUYSC IP Support Centre.</p>
+    <div style="margin-top:20px; display:flex; gap:10px;">
+      <button class="btn" onclick="downloadCertificate('${item.id}')">📄 Download Certificate</button>
+      <button class="btn btn-black" onclick="closeModal()">Close</button>
+    </div>
+  `);
+
+  e.target.reset();
+});
+
+// ================= CERTIFICATE =================
+window.downloadCertificate = function(id) {
+  const item = DB.find(d => d.id === id);
+  if (!item) return;
+  const cert = `
+PRESIDENTIAL INITIATIVE FOR YOUNG SCIENTISTS (PIYS)
+Inter-University Young Scientists Consortium (IUYSC)
+Republic of Uganda
+
+============================================================
+           CERTIFICATE OF RESEARCH SUBMISSION
+============================================================
+
+This certifies that the following research/innovation has been
+officially recorded in the National Young Scientists Repository.
+
+Title:        ${item.title}
+Author:       ${item.author}
+Email:        ${item.email}
+University:   ${item.university}
+Course:       ${item.course || 'N/A'}
+Sector:       ${item.sector}
+TRL Level:    ${item.trl}
+Submitted:    ${new Date(item.date).toLocaleString('en-GB')}
+
+SHA-256 HASH (Proof of Authorship):
+${item.hash}
+
+------------------------------------------------------------
+This certificate provides verifiable evidence of prior art and
+authorship as of the submission date above. It does not replace
+formal patent or IP registration with URSB.
+
+Verify at: https://piys.go.ug/verify/${item.id}
+------------------------------------------------------------
+
+Wamezaya Ebenezer
+Chief Scientist, IUYSC
+Presented to the STI Office of the President
+  `.trim();
+  const blob = new Blob([cert], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `PIYS_Certificate_${item.id}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+// ================= ADMIN =================
+function renderAdmin() {
+  const tbody = document.getElementById('admin-table');
+  if (!DB.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:var(--mid-grey);">No submissions yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = DB.slice().reverse().map(d => `
+    <tr>
+      <td>${new Date(d.date).toLocaleDateString('en-GB')}</td>
+      <td><strong>${escapeHtml(d.title)}</strong></td>
+      <td>${escapeHtml(d.author)}</td>
+      <td>${escapeHtml(d.university)}</td>
+      <td>${escapeHtml(d.sector)}</td>
+      <td><span class="badge-trl">${d.trl}</span></td>
+      <td>${d.status}</td>
+      <td>
+        <button class="btn btn-sm" onclick="viewItem('${d.id}')">View</button>
+        <button class="btn btn-sm btn-red" onclick="deleteItem('${d.id}')">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+window.deleteItem = function(id) {
+  if (!confirm('Delete this submission? This cannot be undone.')) return;
+  DB = DB.filter(d => d.id !== id);
+  saveData(DB);
+  renderStats(); renderHome(); renderBrowse(); renderAdmin();
+};
+
+// ================= MODAL =================
+function openModal(html) {
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('modal-bg').classList.add('active');
+}
+window.closeModal = function() {
+  document.getElementById('modal-bg').classList.remove('active');
+};
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal-bg').addEventListener('click', e => {
+  if (e.target.id === 'modal-bg') closeModal();
+});
+
+window.viewItem = function(id) {
+  const d = DB.find(x => x.id === id);
+  if (!d) return;
+  const isProtected = d.visibility !== 'public';
+  openModal(`
+    <span class="tag" style="background:var(--yellow); color:var(--black);">${escapeHtml(d.sector)}</span>
+    <h3 style="margin:10px 0;">${escapeHtml(d.title)}</h3>
+    <p style="color:var(--mid-grey); margin-bottom:14px;">
+      <strong>${escapeHtml(d.author)}</strong> · ${escapeHtml(d.university)}<br/>
+      ${d.course ? escapeHtml(d.course) + ' · ' : ''}Submitted ${new Date(d.date).toLocaleDateString('en-GB')}
+    </p>
+    <p style="margin-bottom:14px;"><span class="badge-trl">TRL ${d.trl}</span> <span class="badge-trl" style="background:var(--red); color:white;">${d.status}</span></p>
+    <h4 style="margin-bottom:8px;">Abstract</h4>
+    <p style="margin-bottom:16px;">${isProtected ? '<em>This research is protected. Contact the IUYSC to request access from the author.</em>' : escapeHtml(d.abstract)}</p>
+    ${d.keywords ? `<p style="font-size:13px; color:var(--mid-grey);"><strong>Keywords:</strong> ${escapeHtml(d.keywords)}</p>` : ''}
+    <h4 style="margin:16px 0 8px;">Proof of Authorship (SHA-256)</h4>
+    <div class="hash" style="background:var(--grey); padding:10px; border-radius:6px;">${d.hash}</div>
+    <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn" onclick="downloadCertificate('${d.id}')">📄 Certificate</button>
+      ${!isProtected ? `<a class="btn btn-black" href="mailto:${escapeHtml(d.email)}?subject=Interest in: ${encodeURIComponent(d.title)}">✉️ Contact Innovator</a>` : ''}
+      <button class="btn btn-black" onclick="closeModal()">Close</button>
+    </div>
+  `);
+};
+
+// ================= INIT =================
+renderStats();
+renderHome();
+renderBrowse();
+</script>
+</body>
+</html>
