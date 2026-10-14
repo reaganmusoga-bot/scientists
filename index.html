@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>SciPool UG | Uganda's National Young Scientists Repository</title>
+<title>SciPool UG | The National Data, Research and Project Repository for Young Scientific Talents</title>
 <style>
   :root {
-    /* Warm Ugandan palette */
     --charcoal: #1a1410;
     --charcoal-soft: #2a211a;
     --gold: #F5B700;
@@ -120,10 +119,12 @@
   .card .footer { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 10px; }
   .hash { font-family: monospace; font-size: 10px; color: var(--ink-faint); word-break: break-all; }
 
-  /* ===== LANDING HERO ===== */
+  /* ================================================================= */
+  /* ================ LANDING HERO WITH IDENTITY STATEMENT =========== */
+  /* ================================================================= */
   .landing-hero {
     background: linear-gradient(135deg, var(--charcoal) 0%, var(--charcoal-soft) 55%, #3a2c1f 100%);
-    color: var(--white); padding: 80px 24px 90px;
+    color: var(--white); padding: 72px 24px 80px;
     position: relative; overflow: hidden;
     border-bottom: 6px solid var(--gold);
   }
@@ -144,19 +145,49 @@
   .landing-hero-inner {
     max-width: 1280px; margin: 0 auto;
     position: relative; z-index: 2;
-    display: grid; grid-template-columns: 1.35fr 1fr; gap: 48px; align-items: center;
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: center;
   }
   @media (max-width: 900px) {
     .landing-hero-inner { grid-template-columns: 1fr; }
     .pool-visual { display: none; }
   }
-  .landing-eyebrow {
-    display: inline-block; background: rgba(245,183,0,0.12);
-    color: var(--gold); padding: 8px 18px; border-radius: 24px;
-    font-size: 11px; font-weight: 800; text-transform: uppercase;
-    letter-spacing: 2px; margin-bottom: 24px;
-    border: 1px solid rgba(245,183,0,0.35);
+
+  /* Identity statement banner, most prominent element */
+  .identity-banner {
+    display: block;
+    background: linear-gradient(90deg, rgba(245,183,0,0.18) 0%, rgba(200,16,46,0.12) 100%);
+    border: 2px solid rgba(245,183,0,0.5);
+    border-left: 6px solid var(--gold);
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin-bottom: 26px;
+    position: relative;
   }
+  .identity-banner .identity-label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .identity-banner .identity-text {
+    display: block;
+    font-size: 17px;
+    line-height: 1.45;
+    color: var(--white);
+    font-weight: 800;
+    letter-spacing: -0.2px;
+  }
+  .identity-banner .identity-text em {
+    color: var(--gold);
+    font-style: normal;
+  }
+  @media (max-width: 600px) {
+    .identity-banner .identity-text { font-size: 15px; }
+  }
+
   .landing-h1 {
     font-size: 46px; font-weight: 900; line-height: 1.08;
     margin-bottom: 16px; letter-spacing: -1px;
@@ -167,12 +198,12 @@
     text-shadow: 0 2px 20px rgba(245,183,0,0.25);
   }
   .landing-h1 .scipool-tagline {
-    display: block; font-size: 22px; color: var(--white);
-    font-weight: 700; margin-bottom: 16px; letter-spacing: -0.3px;
-    line-height: 1.35;
+    display: block; font-size: 21px; color: var(--white);
+    font-weight: 700; margin-bottom: 20px; letter-spacing: -0.3px;
+    line-height: 1.4;
   }
   .landing-sub {
-    font-size: 16px; color: #d4c8b8; line-height: 1.7;
+    font-size: 15px; color: #d4c8b8; line-height: 1.75;
     margin-bottom: 32px; max-width: 580px;
   }
   .landing-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
@@ -191,7 +222,7 @@
   .btn-hero.red { background: var(--flag-red); color: var(--white); }
   .btn-hero.red:hover { background: var(--flag-red-deep); transform: translateY(-2px); }
 
-  /* Pool visual (replaces DNA) */
+  /* Pool visual */
   .pool-visual {
     display: flex; justify-content: center; align-items: center;
     height: 360px; position: relative;
@@ -231,11 +262,31 @@
   .pool-dot.d3 { bottom: 40px; left: 20px; background: var(--white); box-shadow: 0 0 16px rgba(255,255,255,0.6); }
   .pool-dot.d4 { top: 60px; right: 30px; background: var(--earth); box-shadow: 0 0 16px rgba(139,94,52,0.7); }
 
-  /* ===== SNAPSHOT ===== */
+  /* ===== SNAPSHOT WITH IDENTITY HEADER ===== */
   .snapshot-strip {
-    background: var(--earth-deep); padding: 36px 24px;
+    background: var(--earth-deep); padding: 40px 24px 36px;
     border-top: 4px solid var(--gold);
     border-bottom: 4px solid var(--flag-red);
+  }
+  .snapshot-heading {
+    max-width: 1280px; margin: 0 auto 28px;
+    text-align: center;
+    padding-bottom: 22px;
+    border-bottom: 1px dashed rgba(245,183,0,0.3);
+  }
+  .snapshot-heading .snap-title {
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--gold); font-weight: 800; margin-bottom: 10px;
+  }
+  .snapshot-heading .snap-identity {
+    font-size: 18px; font-weight: 800; color: var(--white);
+    line-height: 1.45; letter-spacing: -0.2px;
+  }
+  .snapshot-heading .snap-identity em {
+    color: var(--gold); font-style: normal;
+  }
+  @media (max-width: 600px) {
+    .snapshot-heading .snap-identity { font-size: 15px; }
   }
   .snapshot-inner {
     max-width: 1280px; margin: 0 auto;
@@ -272,7 +323,6 @@
   .landing-section.dark .section-heading { color: var(--white); }
   .landing-section.dark .section-heading span { color: var(--gold); }
 
-  /* Story block */
   .story-block {
     display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
     align-items: center;
@@ -294,7 +344,6 @@
   .story-stat .num { font-size: 32px; font-weight: 900; color: var(--charcoal); line-height: 1; }
   .story-stat .lbl { font-size: 13px; color: var(--earth-deep); margin-top: 4px; font-weight: 600; }
 
-  /* Pillars */
   .pillars-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 22px; }
   .pillar {
     background: var(--white); border-radius: 14px; padding: 28px 24px;
@@ -303,14 +352,10 @@
     box-shadow: 0 2px 8px rgba(90,60,20,0.05);
   }
   .pillar:hover { transform: translateY(-5px); box-shadow: 0 12px 28px rgba(90,60,20,0.12); border-top-color: var(--flag-red); }
-  .pillar .pillar-icon {
-    font-size: 38px; margin-bottom: 14px; line-height: 1;
-    display: inline-block;
-  }
+  .pillar .pillar-icon { font-size: 38px; margin-bottom: 14px; line-height: 1; display: inline-block; }
   .pillar h4 { font-size: 18px; font-weight: 800; margin-bottom: 10px; color: var(--ink); }
   .pillar p { font-size: 13px; color: var(--ink-soft); line-height: 1.7; }
 
-  /* Pipeline */
   .pipeline-flow { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 24px; }
   .pipe-step {
     background: var(--white); border: 2px solid var(--gold);
@@ -330,7 +375,6 @@
   }
   .pipe-step:hover .num { background: var(--flag-red); color: var(--white); }
 
-  /* Sector cards */
   .sector-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 18px; }
   .sector-card {
     background: var(--white); border-radius: 14px; padding: 28px 22px;
@@ -348,7 +392,6 @@
   .sector-card .sector-name { font-size: 14px; font-weight: 800; margin-bottom: 8px; color: var(--ink); }
   .sector-card .sector-count { font-size: 11px; color: var(--earth); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
 
-  /* Steps */
   .steps-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
   .step-card {
     background: var(--white); border-radius: 14px; padding: 30px 26px;
@@ -366,7 +409,6 @@
   .step-card h4 { font-size: 18px; margin-bottom: 10px; font-weight: 800; color: var(--ink); }
   .step-card p { font-size: 13px; color: var(--ink-soft); line-height: 1.7; }
 
-  /* Preview lock */
   .preview-wrap { position: relative; }
   .preview-lock {
     position: absolute; inset: 0;
@@ -385,7 +427,6 @@
   .preview-lock-cta h4 .accent { color: var(--flag-red); }
   .preview-lock-cta p { font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; line-height: 1.6; }
 
-  /* Quote */
   .quote-block {
     background: linear-gradient(135deg, var(--gold-soft) 0%, #F5DFA8 100%);
     border-radius: 18px; padding: 48px 44px;
@@ -417,7 +458,6 @@
   .quote-author { margin-top: 16px; font-size: 14px; font-weight: 800; color: var(--charcoal); }
   .quote-author small { display: block; font-weight: 500; color: var(--earth-deep); font-size: 12px; margin-top: 3px; }
 
-  /* Big CTA */
   .big-cta {
     background: linear-gradient(135deg, var(--charcoal) 0%, var(--charcoal-soft) 100%);
     color: var(--white);
@@ -438,7 +478,6 @@
   .big-cta p { color: #c8bcac; max-width: 640px; margin: 0 auto 32px; font-size: 15px; position: relative; z-index: 2; line-height: 1.7; }
   .big-cta .landing-ctas { justify-content: center; position: relative; z-index: 2; }
 
-  /* Partners */
   .partners-strip { background: var(--cream-deep); padding: 44px 24px; }
   .partners-inner { max-width: 1000px; margin: 0 auto; text-align: center; }
   .partners-inner h5 {
@@ -455,7 +494,6 @@
   }
   .partner-logo:hover { box-shadow: 0 6px 18px rgba(90,60,20,0.14); color: var(--flag-red); }
 
-  /* Dashboard */
   .dash-hero {
     background: linear-gradient(135deg, var(--charcoal) 0%, var(--charcoal-soft) 100%);
     color: var(--white); border-radius: 16px; padding: 32px 34px;
@@ -498,7 +536,6 @@
   .qa .qa-title { font-size: 15px; font-weight: 800; margin-bottom: 4px; color: var(--ink); }
   .qa .qa-desc { font-size: 12px; color: var(--ink-soft); }
 
-  /* Browse */
   .browse-shell { display: grid; grid-template-columns: 260px 1fr 300px; gap: 24px; align-items: start; }
   @media (max-width: 1180px) { .browse-shell { grid-template-columns: 240px 1fr; } .browse-side-right { display: none; } }
   @media (max-width: 860px) { .browse-shell { grid-template-columns: 1fr; } .browse-side-left { display: none; } }
@@ -630,7 +667,6 @@
   .browse-empty h4 { font-size: 19px; margin-bottom: 8px; color: var(--ink); }
   .browse-empty p { color: var(--ink-soft); font-size: 14px; margin-bottom: 18px; }
 
-  /* Forms */
   .form-wrap { background: var(--white); border-radius: 12px; padding: 32px; box-shadow: 0 2px 10px rgba(90,60,20,0.07); max-width: 780px; margin: 0 auto; border-top: 5px solid var(--gold); }
   .form-wrap.wide { max-width: 100%; }
   .form-row { margin-bottom: 20px; }
@@ -693,18 +729,35 @@
   .modal .close:hover { color: var(--flag-red); }
 
   footer {
-    background: var(--charcoal); color: #a89a85; padding: 36px 24px;
+    background: var(--charcoal); color: #a89a85; padding: 40px 24px 36px;
     text-align: center; font-size: 13px; border-top: 5px solid var(--flag-red);
   }
-  footer .flag-stripe { margin-bottom: 20px; }
+  footer .flag-stripe { margin-bottom: 22px; }
   footer strong { color: var(--gold); }
   footer .footer-full-name { color: var(--white); font-weight: 900; font-size: 15px; }
   footer .footer-brand {
     font-size: 26px; font-weight: 900; letter-spacing: -0.8px;
-    color: var(--gold); margin-bottom: 8px;
+    color: var(--gold); margin-bottom: 10px;
   }
   footer .footer-brand .pool { color: var(--white); }
   footer .footer-brand .ug { color: var(--flag-red); }
+  footer .footer-identity {
+    display: inline-block;
+    margin: 12px auto;
+    padding: 10px 22px;
+    background: rgba(245,183,0,0.1);
+    border: 1px solid rgba(245,183,0,0.3);
+    border-radius: 24px;
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.5;
+    letter-spacing: -0.1px;
+  }
+  footer .footer-identity em {
+    color: var(--gold);
+    font-style: normal;
+  }
 
   .badge-trl { display: inline-block; background: var(--charcoal); color: var(--gold); font-size: 10px; padding: 3px 9px; border-radius: 10px; font-weight: 700; }
   .empty { text-align: center; padding: 50px 24px; color: var(--ink-faint); }
@@ -829,7 +882,7 @@
       <div class="logo-mark">SP</div>
       <div class="logo-text">
         <h1><span class="scipool-name">Sci</span><span class="scipool-pool">Pool</span> <span class="scipool-ug">UG</span></h1>
-        <p>Uganda's National Young Scientists Repository. PIYS and IUYSC.</p>
+        <p>The national data, research and project repository for young scientific talents.</p>
       </div>
     </div>
     <nav>
@@ -855,13 +908,21 @@
     <div class="landing-hero">
       <div class="landing-hero-inner">
         <div>
-          <span class="landing-eyebrow">Republic of Uganda. STI Office of the President.</span>
+          <!-- THE IDENTITY STATEMENT, FIRST AND MOST PROMINENT -->
+          <div class="identity-banner">
+            <span class="identity-label">What this is</span>
+            <span class="identity-text">
+              The national <em>data, research and project</em> repository for <em>young scientific talents</em>.
+            </span>
+          </div>
+
           <h1 class="landing-h1">
             <span class="scipool-brand">SciPool UG</span>
             <span class="scipool-tagline">Uganda's scientific talent, gathered in one pool.</span>
           </h1>
+
           <p class="landing-sub">
-            The <strong style="color:var(--gold);">Presidential Initiative for Young Scientists</strong> protects the research of Uganda's young scientists and connects it to industry, investors and government. From campus idea to national industry.
+            Powered by the <strong style="color:var(--gold);">Presidential Initiative for Young Scientists</strong>. We protect the research of Uganda's young scientists and connect it to industry, investors and government. From campus idea to national industry.
           </p>
           <div class="landing-ctas">
             <button class="btn-hero primary" onclick="document.querySelector('nav button[data-view=browse]').click()">Explore Innovations</button>
@@ -883,7 +944,14 @@
       </div>
     </div>
 
+    <!-- Snapshot with identity header repeated -->
     <div class="snapshot-strip">
+      <div class="snapshot-heading">
+        <div class="snap-title">Uganda's national snapshot</div>
+        <div class="snap-identity">
+          The national <em>data, research and project</em> repository for <em>young scientific talents</em>.
+        </div>
+      </div>
       <div class="snapshot-inner">
         <div class="snap"><div class="num" id="snap-total">0</div><div class="lbl">Innovations</div></div>
         <div class="snap"><div class="num" id="snap-universities">0</div><div class="lbl">Universities</div></div>
@@ -973,13 +1041,13 @@
     <section class="landing-section">
       <span class="section-eyebrow">A preview</span>
       <h2 class="section-heading">A glimpse into the <span>SciPool</span></h2>
-      <p class="section-sub">Recent innovations from Uganda's universities. Full access, filtering and investor contact tools are available to registered members.</p>
+      <p class="section-sub">A national data, research and project repository for young scientific talents. Here are recent innovations from Uganda's universities. Full access, filtering and investor contact tools are available to registered members.</p>
       <div class="preview-wrap">
         <div class="grid" id="landing-preview"></div>
         <div class="preview-lock">
           <div class="preview-lock-cta">
             <h4>Dive into <span class="accent">SciPool UG</span></h4>
-            <p>Register as a Young Scientist, University Chapter, Industry Partner or Government body to access the full pool, save shortlists and contact innovators directly.</p>
+            <p>The national data, research and project repository for young scientific talents. Register as a Young Scientist, University Chapter, Industry Partner or Government body to access the full pool, save shortlists and contact innovators directly.</p>
             <button class="btn" onclick="document.getElementById('open-auth').click()">Create Free Account</button>
           </div>
         </div>
@@ -1000,7 +1068,7 @@
 
     <div class="big-cta">
       <h2>Be part of <span>Uganda's scientific future</span></h2>
-      <p>Whether you are a young innovator, a university chapter, an investor or a government partner, there is a place for you in SciPool UG.</p>
+      <p>SciPool UG is the national data, research and project repository for young scientific talents. Whether you are a young innovator, a university chapter, an investor or a government partner, there is a place for you here.</p>
       <div class="landing-ctas">
         <button class="btn-hero primary" onclick="document.getElementById('open-auth').click()">Create Free Account</button>
         <button class="btn-hero secondary" onclick="document.querySelector('nav button[data-view=about]').click()">Learn More</button>
@@ -1219,7 +1287,7 @@
   <section class="view" id="view-about">
     <h3 class="section-title">About SciPool UG</h3>
     <div class="form-wrap wide">
-      <p style="margin-bottom:18px;"><strong>SciPool UG</strong> is Uganda's National Young Scientists Repository, the digital home of the <strong>Presidential Initiative for Young Scientists (PIYS)</strong>, operating through the <strong>Inter University Young Scientists Consortium (IUYSC)</strong>.</p>
+      <p style="margin-bottom:18px;"><strong>SciPool UG</strong> is the national data, research and project repository for young scientific talents. It is the digital home of the <strong>Presidential Initiative for Young Scientists (PIYS)</strong>, operating through the <strong>Inter University Young Scientists Consortium (IUYSC)</strong>.</p>
       <p style="margin-bottom:18px;">It gathers the research of young and emerging scientists from every accredited Ugandan university, protects it, and connects it to industry, investors and government.</p>
       <h4 style="margin:24px 0 12px; color:var(--flag-red); font-weight:800;">Our five strategic pillars</h4>
       <ol style="padding-left:22px; line-height:2; color:var(--ink-soft);">
@@ -1261,7 +1329,9 @@
   <div class="footer-brand">Sci<span class="pool">Pool</span> <span class="ug">UG</span></div>
   <p class="footer-full-name">Presidential Initiative for Young Scientists (PIYS)</p>
   <p style="margin-top:6px;">Inter University Young Scientists Consortium (IUYSC)</p>
-  <p style="margin-top:10px;">Uganda's National Young Scientists Repository.</p>
+  <div class="footer-identity">
+    The national <em>data, research and project</em> repository for <em>young scientific talents</em>.
+  </div>
   <p style="margin-top:14px; font-size:11px;">© 2026 IUYSC. Presented to the Science, Technology and Innovation Office of the President.</p>
 </footer>
 
@@ -1293,8 +1363,7 @@ const TRL_LABELS = {
   7: 'System Prototype', 8: 'Qualified System', 9: 'Proven in Market'
 };
 
-// ================= STATE =================
-const STORAGE_KEY = 'scipool_ug_v2';
+const STORAGE_KEY = 'scipool_ug_v3';
 const USERS_KEY = 'scipool_users_v1';
 const SESSION_KEY = 'scipool_session_v1';
 const SAVED_KEY = 'scipool_saved_v1';
@@ -1953,7 +2022,8 @@ window.downloadCertificate = function(id) {
   if (!item) return;
   const cert = `============================================================
               SciPool UG
-   Uganda's National Young Scientists Repository
+  The national data, research and project repository
+           for young scientific talents
 ============================================================
    Presidential Initiative for Young Scientists (PIYS)
       Inter University Young Scientists Consortium
@@ -2198,7 +2268,7 @@ async function handleSignUp(e) {
   openModal(`
     <h3 style="color:var(--green);">Welcome to SciPool UG, ${escapeHtml(name.split(' ')[0])}</h3>
     <div class="alert alert-success">You are registered as <strong>${escapeHtml(selectedRole)}</strong>${chapterUni ? ', ' + escapeHtml(chapterUni) : ''}.</div>
-    <p style="margin:14px 0; font-size:14px; color:var(--ink-soft); line-height:1.7;">You have officially joined Uganda's national pool of young scientific talent.</p>
+    <p style="margin:14px 0; font-size:14px; color:var(--ink-soft); line-height:1.7;">You have joined the national data, research and project repository for young scientific talents.</p>
     <button class="btn" onclick="closeModal()">Continue to dashboard</button>
   `);
 }
@@ -2238,7 +2308,6 @@ window.signOut = function() {
   document.querySelector('nav button[data-view=home]').click();
 };
 
-// ================= INIT =================
 renderStats();
 renderPublicLanding();
 swapHomeView();
