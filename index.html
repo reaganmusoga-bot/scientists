@@ -13,7 +13,9 @@
     --grey: #F4F4F4;
     --dark-grey: #1a1a1a;
     --mid-grey: #666;
+    --light-grey: #e8e8e8;
     --green: #1e8e3e;
+    --blue: #1a73e8;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
   body { background: var(--grey); color: var(--black); line-height: 1.6; }
@@ -35,7 +37,7 @@
       var(--red) 83.3%, var(--red) 100%);
   }
   .header-inner {
-    max-width: 1280px; margin: 0 auto;
+    max-width: 1400px; margin: 0 auto;
     padding: 14px 24px;
     display: flex; justify-content: space-between; align-items: center;
     flex-wrap: wrap; gap: 12px;
@@ -60,16 +62,12 @@
   }
   nav button:hover { background: rgba(252,220,4,0.15); color: var(--yellow); }
   nav button.active { background: var(--yellow); color: var(--black); font-weight: 700; }
-  nav .signin-btn {
-    background: var(--red); color: var(--white); font-weight: 700;
-    padding: 8px 16px; margin-left: 6px;
-  }
+  nav .signin-btn { background: var(--red); color: var(--white); font-weight: 700; padding: 8px 16px; margin-left: 6px; }
   nav .signin-btn:hover { background: #b00000; color: var(--white); }
   nav .user-badge {
     background: var(--yellow); color: var(--black);
     padding: 6px 12px; border-radius: 20px; font-size: 12px;
-    font-weight: 700; margin-left: 6px; cursor: pointer;
-    display: none;
+    font-weight: 700; margin-left: 6px; cursor: pointer; display: none;
   }
   nav .user-badge.active { display: inline-block; }
 
@@ -95,7 +93,7 @@
   .stat .lbl { font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
 
   /* ===== MAIN ===== */
-  main { max-width: 1280px; margin: 0 auto; padding: 32px 24px 64px; }
+  main { max-width: 1400px; margin: 0 auto; padding: 32px 24px 64px; }
   .view { display: none; }
   .view.active { display: block; }
 
@@ -129,7 +127,276 @@
   .card .footer { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--mid-grey); border-top: 1px solid #eee; padding-top: 10px; }
   .hash { font-family: monospace; font-size: 10px; color: var(--mid-grey); word-break: break-all; }
 
-  /* ===== FORM ===== */
+  /* ================================================================= */
+  /* ===== BROWSE PAGE — INVESTOR-GRADE RESEARCHGATE-STYLE LAYOUT ==== */
+  /* ================================================================= */
+  .browse-shell {
+    display: grid;
+    grid-template-columns: 260px 1fr 300px;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 1180px) {
+    .browse-shell { grid-template-columns: 240px 1fr; }
+    .browse-side-right { display: none; }
+  }
+  @media (max-width: 860px) {
+    .browse-shell { grid-template-columns: 1fr; }
+    .browse-side-left { display: none; }
+  }
+
+  /* ===== TOP TOOLBAR ===== */
+  .browse-toolbar {
+    background: var(--white); border-radius: 10px;
+    padding: 16px 20px; margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    border-left: 5px solid var(--yellow);
+  }
+  .browse-toolbar .search-big {
+    flex: 2; min-width: 240px;
+    position: relative;
+  }
+  .browse-toolbar .search-big input {
+    width: 100%; padding: 12px 16px 12px 42px;
+    border: 2px solid #ddd; border-radius: 8px; font-size: 14px;
+  }
+  .browse-toolbar .search-big input:focus { outline: none; border-color: var(--yellow); box-shadow: 0 0 0 3px rgba(252,220,4,0.2); }
+  .browse-toolbar .search-big::before {
+    content: '🔍'; position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    font-size: 16px; pointer-events: none;
+  }
+  .browse-toolbar select {
+    padding: 12px 16px; border: 2px solid #ddd; border-radius: 8px;
+    font-size: 13px; font-weight: 600; background: var(--white);
+    cursor: pointer; min-width: 140px;
+  }
+  .browse-toolbar select:focus { outline: none; border-color: var(--yellow); }
+
+  /* ===== LEFT SIDEBAR ===== */
+  .browse-side-left .side-box {
+    background: var(--white); border-radius: 10px;
+    padding: 18px; margin-bottom: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+  .side-box h5 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--mid-grey); margin-bottom: 12px; font-weight: 800;
+  }
+  .side-list { list-style: none; }
+  .side-list li {
+    padding: 8px 10px; border-radius: 6px; cursor: pointer;
+    font-size: 13px; display: flex; justify-content: space-between;
+    align-items: center; transition: background 0.15s;
+    color: #333;
+  }
+  .side-list li:hover { background: var(--grey); }
+  .side-list li.active {
+    background: var(--yellow); color: var(--black); font-weight: 700;
+  }
+  .side-list li .count {
+    background: var(--grey); color: var(--mid-grey);
+    font-size: 10px; padding: 2px 8px; border-radius: 10px;
+    font-weight: 700;
+  }
+  .side-list li.active .count { background: var(--black); color: var(--yellow); }
+  .side-list li .ico { margin-right: 8px; font-size: 14px; }
+
+  /* ===== RIGHT SIDEBAR ===== */
+  .browse-side-right .side-box {
+    background: var(--white); border-radius: 10px;
+    padding: 18px; margin-bottom: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+  .top-innovator {
+    display: flex; gap: 10px; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid #f0f0f0;
+  }
+  .top-innovator:last-child { border-bottom: none; }
+  .top-innovator .avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--yellow); color: var(--black);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px; flex-shrink: 0;
+    border: 2px solid var(--red);
+  }
+  .top-innovator .info { flex: 1; min-width: 0; }
+  .top-innovator .name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .top-innovator .sub { font-size: 11px; color: var(--mid-grey); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .top-innovator .badge-count {
+    background: var(--black); color: var(--yellow);
+    font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 10px;
+  }
+
+  /* ===== FEED ===== */
+  .feed-header {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px; margin-bottom: 16px;
+  }
+  .feed-header .results-count {
+    font-size: 13px; color: var(--mid-grey);
+  }
+  .feed-header .results-count strong { color: var(--black); }
+
+  .feed-list { display: flex; flex-direction: column; gap: 14px; }
+
+  /* ===== INNOVATION CARD (ResearchGate-style) ===== */
+  .inn-card {
+    background: var(--white); border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    transition: box-shadow 0.2s, transform 0.2s;
+    border-left: 5px solid var(--yellow);
+    overflow: hidden;
+    position: relative;
+  }
+  .inn-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.12); transform: translateY(-2px); }
+  .inn-card.protected { border-left-color: var(--red); }
+  .inn-card-body { padding: 18px 20px; }
+  .inn-card-top {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; gap: 12px; margin-bottom: 10px;
+  }
+  .inn-sector-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--grey); color: var(--black);
+    font-size: 11px; font-weight: 700; padding: 4px 10px;
+    border-radius: 14px; text-transform: uppercase; letter-spacing: 0.6px;
+  }
+  .inn-sector-chip .ico { font-size: 13px; }
+  .inn-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pill {
+    font-size: 10px; padding: 3px 9px; border-radius: 10px;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px;
+  }
+  .pill.trl { background: var(--black); color: var(--yellow); }
+  .pill.investment { background: var(--green); color: var(--white); }
+  .pill.protected { background: var(--red); color: var(--white); }
+  .pill.published { background: var(--yellow); color: var(--black); }
+
+  .inn-title {
+    font-size: 17px; font-weight: 800; line-height: 1.3;
+    margin-bottom: 6px; color: var(--black);
+    cursor: pointer;
+  }
+  .inn-title:hover { color: var(--red); }
+
+  .inn-author-line {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--mid-grey); margin-bottom: 12px;
+  }
+  .inn-author-line .mini-avatar {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--black); color: var(--yellow);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 10px;
+  }
+  .inn-author-line strong { color: var(--black); }
+
+  .inn-abstract {
+    font-size: 13px; color: #444; line-height: 1.55; margin-bottom: 14px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .inn-abstract.protected-text {
+    font-style: italic; color: var(--mid-grey);
+  }
+
+  .inn-keywords {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;
+  }
+  .kw {
+    background: var(--grey); color: var(--mid-grey);
+    font-size: 10px; padding: 3px 8px; border-radius: 10px;
+    font-weight: 600;
+  }
+
+  .inn-card-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 12px; border-top: 1px solid #f0f0f0;
+    flex-wrap: wrap; gap: 10px;
+  }
+  .inn-stats {
+    display: flex; gap: 16px; font-size: 11px; color: var(--mid-grey);
+  }
+  .inn-stats .stat-item { display: flex; align-items: center; gap: 4px; }
+  .inn-stats .stat-item .n { font-weight: 800; color: var(--black); }
+
+  .inn-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn-tiny {
+    padding: 6px 12px; font-size: 11px; font-weight: 700;
+    border-radius: 6px; cursor: pointer; border: none;
+    text-transform: uppercase; letter-spacing: 0.4px;
+    transition: all 0.15s; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .btn-tiny.yellow { background: var(--yellow); color: var(--black); }
+  .btn-tiny.yellow:hover { background: #e6c800; }
+  .btn-tiny.red { background: var(--red); color: var(--white); }
+  .btn-tiny.red:hover { background: #b00000; }
+  .btn-tiny.black { background: var(--black); color: var(--white); }
+  .btn-tiny.black:hover { background: #333; }
+  .btn-tiny.outline { background: transparent; color: var(--black); border: 1.5px solid var(--black); }
+  .btn-tiny.outline:hover { background: var(--black); color: var(--white); }
+  .btn-tiny.saved { background: var(--green); color: var(--white); }
+
+  /* ===== EMPTY STATE ===== */
+  .browse-empty {
+    background: var(--white); border-radius: 10px;
+    padding: 60px 24px; text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    border-left: 5px solid var(--yellow);
+  }
+  .browse-empty .icon { font-size: 56px; margin-bottom: 12px; }
+  .browse-empty h4 { font-size: 18px; margin-bottom: 8px; }
+  .browse-empty p { color: var(--mid-grey); font-size: 14px; margin-bottom: 16px; }
+
+  /* ===== DETAIL DRAWER ===== */
+  .drawer-bg {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 300;
+    animation: fadeIn 0.2s;
+  }
+  .drawer-bg.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .drawer {
+    position: fixed; top: 0; right: 0; bottom: 0; width: 520px;
+    max-width: 100vw; background: var(--white); z-index: 301;
+    box-shadow: -8px 0 24px rgba(0,0,0,0.2);
+    transform: translateX(100%); transition: transform 0.3s ease-out;
+    overflow-y: auto;
+  }
+  .drawer.active { transform: translateX(0); }
+  .drawer-header {
+    background: var(--black); color: var(--white); padding: 20px 24px;
+    border-bottom: 4px solid var(--yellow); position: sticky; top: 0; z-index: 2;
+  }
+  .drawer-header h3 { font-size: 17px; margin-bottom: 6px; line-height: 1.3; padding-right: 40px; }
+  .drawer-header p { font-size: 12px; color: #bbb; }
+  .drawer-close {
+    position: absolute; top: 16px; right: 16px;
+    background: var(--red); color: var(--white); border: none;
+    width: 32px; height: 32px; border-radius: 50%; font-size: 18px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+  }
+  .drawer-close:hover { background: #b00000; }
+  .drawer-body { padding: 24px; }
+  .drawer-section { margin-bottom: 22px; }
+  .drawer-section h5 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--mid-grey); font-weight: 800; margin-bottom: 10px;
+    border-bottom: 1px solid #eee; padding-bottom: 6px;
+  }
+  .drawer-section p { font-size: 14px; line-height: 1.6; color: #333; }
+  .drawer-kv { display: grid; grid-template-columns: 130px 1fr; gap: 8px 12px; font-size: 13px; }
+  .drawer-kv .k { color: var(--mid-grey); font-weight: 600; }
+  .drawer-kv .v { color: var(--black); font-weight: 600; }
+  .drawer-actions {
+    display: flex; gap: 10px; flex-wrap: wrap; padding-top: 16px;
+    border-top: 2px solid var(--yellow); margin-top: 20px;
+  }
+
+  /* ===== FORM (unchanged parts) ===== */
   .form-wrap { background: var(--white); border-radius: 10px; padding: 28px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); max-width: 760px; margin: 0 auto; }
   .form-wrap.wide { max-width: 100%; }
   .form-row { margin-bottom: 18px; }
@@ -160,11 +427,6 @@
   .btn-sm { padding: 7px 14px; font-size: 12px; }
   .btn-outline { background: transparent; color: var(--black); border: 2px solid var(--black); }
   .btn-outline:hover { background: var(--black); color: var(--white); }
-
-  /* ===== FILTERS ===== */
-  .filters { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-  .filters input, .filters select { width: auto; flex: 1; min-width: 160px; }
-  .filters input { flex: 2; }
 
   /* ===== ALERTS ===== */
   .alert { padding: 12px 16px; border-radius: 6px; margin-bottom: 16px; font-size: 14px; }
@@ -213,7 +475,7 @@
   .empty { text-align: center; padding: 48px 20px; color: var(--mid-grey); }
   .empty .icon { font-size: 48px; margin-bottom: 12px; }
 
-  /* ===== SIGN-UP ROLE CARDS ===== */
+  /* ===== ROLE CARDS ===== */
   .role-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
   @media (max-width: 520px) { .role-cards { grid-template-columns: 1fr; } }
   .role-card {
@@ -244,33 +506,20 @@
   .chapter-header h2 { font-size: 22px; margin-bottom: 4px; }
   .chapter-header h2 span { color: var(--yellow); }
   .chapter-header p { color: #bbb; font-size: 13px; }
-  .chapter-select {
-    display: flex; gap: 10px; align-items: center; margin-top: 16px;
-    flex-wrap: wrap;
-  }
+  .chapter-select { display: flex; gap: 10px; align-items: center; margin-top: 16px; flex-wrap: wrap; }
   .chapter-select label { color: var(--yellow); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
   .chapter-select select { max-width: 360px; background: var(--dark-grey); color: var(--white); border: 2px solid var(--yellow); }
 
-  .kpi-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 16px; margin-bottom: 28px;
-  }
-  .kpi {
-    background: var(--white); border-radius: 10px; padding: 18px;
-    border-left: 4px solid var(--yellow); box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-  }
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .kpi { background: var(--white); border-radius: 10px; padding: 18px; border-left: 4px solid var(--yellow); box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
   .kpi .kpi-label { font-size: 11px; color: var(--mid-grey); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 4px; }
   .kpi .kpi-value { font-size: 26px; font-weight: 800; color: var(--black); line-height: 1; }
   .kpi.red { border-left-color: var(--red); }
   .kpi.black { border-left-color: var(--black); }
 
-  /* ===== LEADERBOARD ===== */
   .leaderboard { background: var(--white); border-radius: 10px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); margin-bottom: 24px; }
   .leaderboard h4 { margin-bottom: 14px; font-size: 16px; }
-  .lb-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 0; border-bottom: 1px solid #eee;
-  }
+  .lb-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #eee; }
   .lb-row:last-child { border-bottom: none; }
   .lb-rank {
     width: 30px; height: 30px; border-radius: 50%;
@@ -284,13 +533,21 @@
   .lb-info { flex: 1; }
   .lb-name { font-weight: 700; font-size: 14px; }
   .lb-sub { font-size: 11px; color: var(--mid-grey); }
-  .lb-count {
-    background: var(--black); color: var(--yellow);
-    padding: 4px 12px; border-radius: 12px; font-weight: 700; font-size: 12px;
-  }
+  .lb-count { background: var(--black); color: var(--yellow); padding: 4px 12px; border-radius: 12px; font-weight: 700; font-size: 12px; }
 
   .two-panel { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
   @media (max-width: 900px) { .two-panel { grid-template-columns: 1fr; } }
+
+  .saved-banner {
+    background: linear-gradient(135deg, #fff9e0, #fffbf0);
+    border-left: 4px solid var(--yellow); border-radius: 8px;
+    padding: 12px 16px; margin-bottom: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 10px;
+    font-size: 13px;
+  }
+  .saved-banner strong { color: var(--black); }
+  .saved-banner.hidden { display: none; }
 </style>
 </head>
 <body>
@@ -309,7 +566,7 @@
     <nav>
       <ul>
         <li><button data-view="home" class="active">Home</button></li>
-        <li><button data-view="browse">Browse</button></li>
+        <li><button data-view="browse">Browse Innovations</button></li>
         <li><button data-view="submit">Submit Research</button></li>
         <li><button data-view="chapters">Chapter Dashboard</button></li>
         <li><button data-view="admin">Admin</button></li>
@@ -346,28 +603,82 @@
     <div id="home-featured" class="grid"></div>
   </section>
 
-  <!-- ===== BROWSE VIEW ===== -->
+  <!-- ===== BROWSE VIEW (INVESTOR-GRADE) ===== -->
   <section class="view" id="view-browse">
-    <h3 class="section-title">Browse the National Repository</h3>
-    <div class="filters">
-      <input type="text" id="search-input" placeholder="Search by title, keyword, author..." />
-      <select id="filter-sector"><option value="">All Sectors</option></select>
-      <select id="filter-university"><option value="">All Universities</option></select>
-      <select id="filter-trl">
-        <option value="">All TRL Levels</option>
-        <option value="1">TRL 1 — Basic Research</option>
-        <option value="2">TRL 2 — Concept</option>
-        <option value="3">TRL 3 — Proof of Concept</option>
-        <option value="4">TRL 4 — Lab Validated</option>
-        <option value="5">TRL 5 — Relevant Environment</option>
-        <option value="6">TRL 6 — Prototype Demo</option>
-        <option value="7">TRL 7 — System Prototype</option>
-        <option value="8">TRL 8 — Qualified System</option>
-        <option value="9">TRL 9 — Proven in Market</option>
+    <!-- Top toolbar -->
+    <div class="browse-toolbar">
+      <div class="search-big">
+        <input type="text" id="search-input" placeholder="Search innovations by title, author, keyword, university..." />
+      </div>
+      <select id="sort-select">
+        <option value="newest">🕐 Newest first</option>
+        <option value="trending">🔥 Trending</option>
+        <option value="trl">📈 Highest TRL</option>
+        <option value="views">👁️ Most Viewed</option>
+        <option value="contacted">📩 Most Contacted</option>
       </select>
-      <button class="btn btn-sm" id="clear-filters">Clear</button>
+      <button class="btn btn-sm btn-red" id="clear-filters">Clear All</button>
     </div>
-    <div id="browse-results" class="grid"></div>
+
+    <!-- Saved innovations banner -->
+    <div class="saved-banner hidden" id="saved-banner">
+      <span>💾 You have <strong id="saved-count">0</strong> saved innovation(s) in your investor shortlist.</span>
+      <button class="btn-tiny yellow" onclick="showSavedOnly()">View Shortlist</button>
+    </div>
+
+    <!-- 3-column shell -->
+    <div class="browse-shell">
+
+      <!-- ===== LEFT SIDEBAR ===== -->
+      <aside class="browse-side-left">
+        <div class="side-box">
+          <h5>📂 Sectors</h5>
+          <ul class="side-list" id="sector-list"></ul>
+        </div>
+        <div class="side-box">
+          <h5>🎓 Universities</h5>
+          <ul class="side-list" id="uni-list"></ul>
+        </div>
+        <div class="side-box">
+          <h5>📊 TRL Level</h5>
+          <ul class="side-list" id="trl-list"></ul>
+        </div>
+      </aside>
+
+      <!-- ===== CENTER FEED ===== -->
+      <div class="browse-feed">
+        <div class="feed-header">
+          <div class="results-count">
+            <strong id="results-count">0</strong> innovation(s) found
+            <span id="active-filters-label" style="color:var(--mid-grey);"></span>
+          </div>
+          <div style="font-size:12px; color:var(--mid-grey);">
+            Showing public &amp; protected research from Uganda's young scientists
+          </div>
+        </div>
+        <div class="feed-list" id="browse-results"></div>
+      </div>
+
+      <!-- ===== RIGHT SIDEBAR ===== -->
+      <aside class="browse-side-right">
+        <div class="side-box">
+          <h5>⭐ Top Innovators</h5>
+          <div id="top-innovators"></div>
+        </div>
+        <div class="side-box">
+          <h5>🔥 Trending Sectors</h5>
+          <div id="trending-sectors"></div>
+        </div>
+        <div class="side-box" style="background: var(--black); color: var(--white);">
+          <h5 style="color: var(--yellow);">📢 For Investors</h5>
+          <p style="font-size: 12px; line-height: 1.6; color: #ddd;">
+            Register as an Industry / Investor to receive alerts on new innovations in your sector, save shortlists, and contact innovators directly.
+          </p>
+          <button class="btn btn-sm" style="margin-top: 10px; width: 100%;" onclick="document.getElementById('open-auth').click()">Register Interest</button>
+        </div>
+      </aside>
+
+    </div>
   </section>
 
   <!-- ===== SUBMIT VIEW ===== -->
@@ -375,7 +686,7 @@
     <h3 class="section-title">Submit Your Research</h3>
     <div class="form-wrap">
       <div class="alert alert-info">
-        <strong>🛡️ IP Protection Notice:</strong> On submission, your work is timestamped and assigned a unique SHA-256 hash — creating a verifiable record of authorship. This is <em>not</em> a substitute for formal patent/URSB registration, but it is strong evidence of prior art.
+        <strong>🛡️ IP Protection Notice:</strong> On submission, your work is timestamped and assigned a unique SHA-256 hash — creating a verifiable record of authorship.
       </div>
       <form id="submit-form">
         <div class="form-row">
@@ -465,11 +776,6 @@
             <option value="private">Private — under embargo</option>
           </select>
         </div>
-        <div class="form-row">
-          <label>Upload File (PDF, image, video link) — optional</label>
-          <input type="file" id="f-file" />
-          <small style="color:var(--mid-grey); font-size:11px;">In this demo, files are not uploaded to a server. In production, this connects to secure cloud storage.</small>
-        </div>
         <div style="display:flex; gap:12px; margin-top:8px;">
           <button type="submit" class="btn">🛡️ Submit &amp; Protect My Research</button>
         </div>
@@ -481,17 +787,13 @@
   <section class="view" id="view-chapters">
     <div class="chapter-header">
       <h2>🎓 University <span>Chapter Dashboard</span></h2>
-      <p>Each accredited Ugandan university has a chapter of the Inter-University Young Scientists Consortium (IUYSC). This dashboard lets chapter coordinators see, manage, and export their university's submissions.</p>
+      <p>Each accredited Ugandan university has a chapter of the Inter-University Young Scientists Consortium (IUYSC).</p>
       <div class="chapter-select">
         <label>Select University:</label>
         <select id="chapter-select"></select>
       </div>
     </div>
-
-    <!-- KPIs -->
     <div class="kpi-grid" id="chapter-kpis"></div>
-
-    <!-- Two-panel: submissions table + leaderboard -->
     <div class="two-panel">
       <div>
         <div class="section-header-row">
@@ -504,9 +806,7 @@
         <div style="overflow-x:auto;">
           <table>
             <thead>
-              <tr>
-                <th>Date</th><th>Title</th><th>Author</th><th>Sector</th><th>TRL</th><th>Status</th><th>Actions</th>
-              </tr>
+              <tr><th>Date</th><th>Title</th><th>Author</th><th>Sector</th><th>TRL</th><th>Status</th><th>Actions</th></tr>
             </thead>
             <tbody id="chapter-table"></tbody>
           </table>
@@ -532,9 +832,7 @@
     <div style="overflow-x:auto;">
       <table>
         <thead>
-          <tr>
-            <th>Date</th><th>Title</th><th>Author</th><th>University</th><th>Sector</th><th>TRL</th><th>Status</th><th>Actions</th>
-          </tr>
+          <tr><th>Date</th><th>Title</th><th>Author</th><th>University</th><th>Sector</th><th>TRL</th><th>Status</th><th>Actions</th></tr>
         </thead>
         <tbody id="admin-table"></tbody>
       </table>
@@ -556,17 +854,25 @@
         <li><strong>Industrialise</strong> — Manufacturing partnerships, industry linkage, export readiness</li>
       </ol>
       <h4 style="margin:20px 0 10px; color:var(--red);">Contact</h4>
-      <p><strong>Wamezaya Ebenezer</strong><br/>Health Minister, Makerere University Students' Guild<br/>Chief Scientist, IUYSC<br/>Presented to: Science, Technology and Innovation Office of the President (STI-OP)</p>
+      <p><strong>Wamezaya Ebenezer</strong><br/>Health Minister, Makerere University Students' Guild<br/>Chief Scientist, IUYSC</p>
       <div style="margin-top:24px; padding:16px; background:var(--grey); border-left:4px solid var(--yellow); border-radius:6px;">
-        <strong>🇺🇬 Built with the colors of the Ugandan flag:</strong><br/>
-        <span style="display:inline-block; width:14px; height:14px; background:#000; border-radius:3px; margin:0 4px; vertical-align:middle;"></span> Black — The People of Africa &nbsp;
-        <span style="display:inline-block; width:14px; height:14px; background:#FCDC04; border-radius:3px; margin:0 4px; vertical-align:middle;"></span> Yellow — Sunshine &nbsp;
-        <span style="display:inline-block; width:14px; height:14px; background:#D90000; border-radius:3px; margin:0 4px; vertical-align:middle;"></span> Red — Brotherhood
+        <strong>🇺🇬 Built with the colors of the Ugandan flag</strong>
       </div>
     </div>
   </section>
 
 </main>
+
+<!-- ================= DRAWER (Innovation Detail) ================= -->
+<div class="drawer-bg" id="drawer-bg"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-header">
+    <button class="drawer-close" id="drawer-close">×</button>
+    <h3 id="drawer-title">Innovation Title</h3>
+    <p id="drawer-subtitle">Author · University</p>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</aside>
 
 <!-- ================= MODAL ================= -->
 <div class="modal-bg" id="modal-bg">
@@ -588,130 +894,149 @@
 <script>
 // ================= CONSTANTS =================
 const UNIVERSITIES = [
-  'Makerere University',
-  'Kyambogo University',
-  'Makerere University Business School',
-  'Uganda Christian University',
-  'Mbarara University of Science & Technology',
-  'Gulu University',
-  'Busitema University',
-  'Muni University',
-  'Kabale University',
-  'Lira University',
-  'Soroti University',
-  'Other'
+  'Makerere University','Kyambogo University','Makerere University Business School',
+  'Uganda Christian University','Mbarara University of Science & Technology',
+  'Gulu University','Busitema University','Muni University','Kabale University',
+  'Lira University','Soroti University','Other'
 ];
 
+const SECTOR_ICONS = {
+  'Health & Pharmaceuticals': '💊',
+  'Medical Devices & Diagnostics': '🩺',
+  'Biotechnology': '🧬',
+  'Agriculture & Agro-processing': '🌾',
+  'Engineering & Manufacturing': '⚙️',
+  'Renewable Energy': '☀️',
+  'Robotics & Automation': '🤖',
+  'ICT & Artificial Intelligence': '💻',
+  'Environmental Technologies': '🌍',
+  'Construction & Transport Tech': '🏗️'
+};
+
+const TRL_LABELS = {
+  1: 'Basic Research', 2: 'Concept', 3: 'Proof of Concept',
+  4: 'Lab Validated', 5: 'Relevant Env.', 6: 'Prototype Demo',
+  7: 'System Prototype', 8: 'Qualified System', 9: 'Proven in Market'
+};
+
 // ================= STATE =================
-const STORAGE_KEY = 'piys_repository_v3';
+const STORAGE_KEY = 'piys_repository_v4';
 const USERS_KEY = 'piys_users_v1';
 const SESSION_KEY = 'piys_session_v1';
+const SAVED_KEY = 'piys_saved_v1';
+const STATS_KEY = 'piys_stats_v1';
 
 function loadData() {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (raw) return JSON.parse(raw);
   const seed = [
-    {
-      id: 'seed-1', title: 'Low-Cost Solar-Powered Malaria Diagnostic Kit',
+    { id: 'seed-1', title: 'Low-Cost Solar-Powered Malaria Diagnostic Kit',
       author: 'Musoga Reagan', email: 'reagan.musoga@mak.ac.ug',
       university: 'Makerere University', course: 'BSc. Biomedical Engineering',
       sector: 'Medical Devices & Diagnostics', trl: 4,
       abstract: 'A portable, solar-powered device that uses light microscopy and AI image analysis to detect malaria parasites in under 3 minutes, designed for rural health centres with unreliable electricity.',
       keywords: 'malaria, diagnostics, solar, AI, rural health', visibility: 'public',
       date: new Date('2026-08-14').toISOString(),
-      hash: 'a3f5c9e1b7d2408f6a1c3e5b9d7f2a4c8e6b1d3f5a7c9e2b4d6f8a1c3e5b7d9f', status: 'Published'
-    },
-    {
-      id: 'seed-2', title: 'Cassava Peel Biochar for Soil Restoration in Northern Uganda',
+      hash: 'a3f5c9e1b7d2408f6a1c3e5b9d7f2a4c8e6b1d3f5a7c9e2b4d6f8a1c3e5b7d9f', status: 'Published' },
+    { id: 'seed-2', title: 'Cassava Peel Biochar for Soil Restoration in Northern Uganda',
       author: 'Wamezaya Ebenezer', email: 'ebenezer.wamezaya@mak.ac.ug',
       university: 'Makerere University', course: 'BSc. Agricultural Engineering',
       sector: 'Agriculture & Agro-processing', trl: 6,
       abstract: 'Converting cassava peel waste into biochar to restore degraded northern Uganda soils — increasing maize yield by 32% in field trials while reducing agricultural waste and creating rural jobs.',
       keywords: 'cassava, biochar, soil, waste, yield, circular economy', visibility: 'public',
       date: new Date('2026-09-02').toISOString(),
-      hash: 'b4e6d0f2c8a3519e7b2d4f6a0c8e3b5d9f7a2c4e6b8d0f2a4c6e8b1d3f5a7c9e', status: 'Published'
-    },
-    {
-      id: 'seed-3', title: 'AI-Powered Luganda Language Tutor for Primary Schools',
+      hash: 'b4e6d0f2c8a3519e7b2d4f6a0c8e3b5d9f7a2c4e6b8d0f2a4c6e8b1d3f5a7c9e', status: 'Published' },
+    { id: 'seed-3', title: 'AI-Powered Luganda Language Tutor for Primary Schools',
       author: 'Ssemwogerere Jordan', email: 'jordan.ssemwogerere@must.ac.ug',
       university: 'Mbarara University of Science & Technology', course: 'BSc. Computer Science',
       sector: 'ICT & Artificial Intelligence', trl: 5,
       abstract: 'A mobile app using speech recognition and NLP to teach Luganda literacy to primary school children, with offline capability for low-connectivity areas. Pilot-tested in 12 schools across Ankole.',
       keywords: 'Luganda, AI, education, mobile, NLP, literacy', visibility: 'public',
       date: new Date('2026-09-20').toISOString(),
-      hash: 'c5f7e1a3d9b4620f8c3e5a7b1d9f4c6e0a8b2d4f6c8e0a2b4d6f8c1e3a5b7d9f', status: 'Published'
-    },
-    {
-      id: 'seed-4', title: 'Solar-Powered Cold Chain for Smallholder Dairy Farmers',
+      hash: 'c5f7e1a3d9b4620f8c3e5a7b1d9f4c6e0a8b2d4f6c8e0a2b4d6f8c1e3a5b7d9f', status: 'Published' },
+    { id: 'seed-4', title: 'Solar-Powered Cold Chain for Smallholder Dairy Farmers',
       author: 'Kassaga Andrew', email: 'andrew.kassaga@busitema.ac.ug',
       university: 'Busitema University', course: 'BSc. Renewable Energy Engineering',
       sector: 'Renewable Energy', trl: 7,
       abstract: 'A decentralized solar-powered milk cooling system for smallholder dairy farmers in eastern Uganda — reducing post-harvest milk losses by 68% and increasing farmer incomes. Currently deployed in 3 districts.',
       keywords: 'solar, cold chain, dairy, milk, off-grid, smallholder', visibility: 'public',
       date: new Date('2026-08-28').toISOString(),
-      hash: 'd6a8f2b4e0c5731a9d4f6b8c2e0a5d7f1b9c3e5a7d9f1b3c5e7a9d2f4b6c8e0a', status: 'Published'
-    },
-    {
-      id: 'seed-5', title: 'Low-Cost Prosthetic Hand with EMG Signal Control',
+      hash: 'd6a8f2b4e0c5731a9d4f6b8c2e0a5d7f1b9c3e5a7d9f1b3c5e7a9d2f4b6c8e0a', status: 'Published' },
+    { id: 'seed-5', title: 'Low-Cost Prosthetic Hand with EMG Signal Control',
       author: 'Nabukeera Aisha', email: 'aisha.nabukeera@kyambogo.ac.ug',
       university: 'Kyambogo University', course: 'BSc. Mechatronics Engineering',
       sector: 'Engineering & Manufacturing', trl: 5,
       abstract: 'A 3D-printed prosthetic hand controlled by electromyography (EMG) signals from residual limb muscles. Cost: UGX 850,000 vs. UGX 12M for imported alternatives. Tested with 8 amputees in Kampala.',
       keywords: 'prosthetics, EMG, 3D printing, assistive tech, affordable', visibility: 'public',
       date: new Date('2026-09-10').toISOString(),
-      hash: 'e7b9a3c5f1d6842b0e5a7c9d3f1b6e8a2c4d6f8b0a2c4e6d8f1b3a5c7e9d2f4b', status: 'Published'
-    },
-    {
-      id: 'seed-6', title: 'Indigenous Herbal Formulation for Wound Healing',
+      hash: 'e7b9a3c5f1d6842b0e5a7c9d3f1b6e8a2c4d6f8b0a2c4e6d8f1b3a5c7e9d2f4b', status: 'Published' },
+    { id: 'seed-6', title: 'Indigenous Herbal Formulation for Wound Healing',
       author: 'Ochieng Daniel', email: 'daniel.ochieng@gulu.ac.ug',
       university: 'Gulu University', course: 'BPharm. Pharmacy',
       sector: 'Health & Pharmaceuticals', trl: 4,
       abstract: 'A standardized topical formulation from locally available medicinal plants (Bidens pilosa and Vernonia amygdalina) showing 40% faster wound closure in clinical trials compared to conventional dressings.',
       keywords: 'herbal medicine, wound healing, indigenous knowledge, pharmaceuticals', visibility: 'protected',
       date: new Date('2026-09-25').toISOString(),
-      hash: 'f8c0b4d6a2e7953c1f6b8d0e4a2c7f9b3d5e7a9c1f3b5d7e9a2c4f6b8d0e2a4c', status: 'Under Review'
-    },
-    {
-      id: 'seed-7', title: 'Smart Water Quality Monitoring for Lake Victoria',
+      hash: 'f8c0b4d6a2e7953c1f6b8d0e4a2c7f9b3d5e7a9c1f3b5d7e9a2c4f6b8d0e2a4c', status: 'Under Review' },
+    { id: 'seed-7', title: 'Smart Water Quality Monitoring for Lake Victoria',
       author: 'Namatovu Patricia', email: 'patricia.namatovu@mak.ac.ug',
       university: 'Makerere University', course: 'BSc. Environmental Science',
       sector: 'Environmental Technologies', trl: 6,
       abstract: 'An IoT-based sensor network that monitors pH, turbidity, and heavy metal contamination in Lake Victoria in real time, alerting fishing communities and regulators via SMS when unsafe levels are detected.',
       keywords: 'IoT, water quality, Lake Victoria, sensors, environment', visibility: 'public',
       date: new Date('2026-09-15').toISOString(),
-      hash: 'a9d1c5e7b3f8064d2a7c9e1f5b3d8a0c4e6f8a1b3d5c7e9f2a4b6d8c0e2f4a6b', status: 'Published'
-    },
-    {
-      id: 'seed-8', title: 'Biogas from Market Waste for Urban Households',
+      hash: 'a9d1c5e7b3f8064d2a7c9e1f5b3d8a0c4e6f8a1b3d5c7e9f2a4b6d8c0e2f4a6b', status: 'Published' },
+    { id: 'seed-8', title: 'Biogas from Market Waste for Urban Households',
       author: 'Tumusiime Robert', email: 'robert.tumusiime@must.ac.ug',
       university: 'Mbarara University of Science & Technology', course: 'BSc. Environmental Engineering',
       sector: 'Renewable Energy', trl: 6,
       abstract: 'A modular anaerobic digester that converts market vegetable waste into cooking biogas for urban households. One unit serves 4 families, reducing charcoal use by 70% and indoor air pollution.',
       keywords: 'biogas, waste-to-energy, urban, clean cooking', visibility: 'public',
       date: new Date('2026-09-05').toISOString(),
-      hash: 'b0e2d6f8c4a9175e3b8d0f2a6c4e9b1d5f7a9c2e4b6d8f0a3c5e7b9d1f3a5c7e', status: 'Published'
-    }
+      hash: 'b0e2d6f8c4a9175e3b8d0f2a6c4e9b1d5f7a9c2e4b6d8f0a3c5e7b9d1f3a5c7e', status: 'Published' }
   ];
   localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
   return seed;
 }
 
+function loadStats() {
+  const raw = localStorage.getItem(STATS_KEY);
+  return raw ? JSON.parse(raw) : {};
+}
+function saveStats(s) { localStorage.setItem(STATS_KEY, JSON.stringify(s)); }
+function trackStat(id, type) {
+  const s = loadStats();
+  if (!s[id]) s[id] = { views: 0, saved: 0, contacted: 0 };
+  s[id][type] = (s[id][type] || 0) + 1;
+  saveStats(s);
+}
+function getStat(id, type) {
+  const s = loadStats();
+  return (s[id] && s[id][type]) || 0;
+}
+
+function loadSaved() {
+  const raw = localStorage.getItem(SAVED_KEY);
+  return raw ? JSON.parse(raw) : [];
+}
+function saveSaved(arr) { localStorage.setItem(SAVED_KEY, JSON.stringify(arr)); }
+function isSaved(id) { return loadSaved().includes(id); }
+function toggleSaved(id) {
+  let arr = loadSaved();
+  if (arr.includes(id)) arr = arr.filter(x => x !== id);
+  else { arr.push(id); trackStat(id, 'saved'); }
+  saveSaved(arr);
+  updateSavedBanner();
+  renderBrowse();
+}
+
 function saveData(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
 let DB = loadData();
 
-function loadUsers() {
-  const raw = localStorage.getItem(USERS_KEY);
-  return raw ? JSON.parse(raw) : [];
-}
-function saveUsers(users) { localStorage.setItem(USERS_KEY, JSON.stringify(users)); }
-function getSession() {
-  const raw = localStorage.getItem(SESSION_KEY);
-  return raw ? JSON.parse(raw) : null;
-}
-function setSession(user) {
-  if (user) localStorage.setItem(SESSION_KEY, JSON.stringify(user));
-  else localStorage.removeItem(SESSION_KEY);
-}
+function loadUsers() { const raw = localStorage.getItem(USERS_KEY); return raw ? JSON.parse(raw) : []; }
+function saveUsers(u) { localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
+function getSession() { const raw = localStorage.getItem(SESSION_KEY); return raw ? JSON.parse(raw) : null; }
+function setSession(u) { if (u) localStorage.setItem(SESSION_KEY, JSON.stringify(u)); else localStorage.removeItem(SESSION_KEY); }
 function updateAuthUI() {
   const user = getSession();
   const badge = document.getElementById('user-badge');
@@ -761,7 +1086,7 @@ function renderStats() {
   document.getElementById('stat-protected').textContent = DB.filter(d => d.hash).length;
 }
 
-// ================= CARD =================
+// ================= HOME CARDS =================
 function cardHTML(item) {
   const isProtected = item.visibility !== 'public';
   const abstract = isProtected
@@ -779,60 +1104,403 @@ function cardHTML(item) {
       </div>
       <div class="hash" title="SHA-256 proof of authorship">🔒 ${item.hash.slice(0, 24)}…</div>
       <div style="margin-top:10px;">
-        <button class="btn btn-sm" onclick="viewItem('${item.id}')">View Details</button>
+        <button class="btn btn-sm" onclick="openDrawer('${item.id}')">View Details</button>
       </div>
     </div>
   `;
 }
-
-// ================= HOME =================
 function renderHome() {
   const featured = DB.filter(d => d.visibility === 'public').slice(0, 8);
   document.getElementById('home-featured').innerHTML = featured.length
     ? featured.map(cardHTML).join('')
-    : '<div class="empty"><div class="icon">🔬</div><p>No innovations yet. Be the first to submit!</p></div>';
+    : '<div class="empty"><div class="icon">🔬</div><p>No innovations yet.</p></div>';
 }
 
-// ================= BROWSE =================
-function populateFilters() {
-  const sectors = [...new Set(DB.map(d => d.sector))].sort();
-  const unis = [...new Set(DB.map(d => d.university))].sort();
-  document.getElementById('filter-sector').innerHTML = '<option value="">All Sectors</option>' + sectors.map(s => `<option>${escapeHtml(s)}</option>`).join('');
-  document.getElementById('filter-university').innerHTML = '<option value="">All Universities</option>' + unis.map(u => `<option>${escapeHtml(u)}</option>`).join('');
+// =================================================================
+// ================= BROWSE (INVESTOR-GRADE) =======================
+// =================================================================
+let browseState = {
+  query: '',
+  sector: '',
+  university: '',
+  trl: '',
+  sort: 'newest',
+  savedOnly: false
+};
+
+function renderBrowseSidebars() {
+  // Sectors
+  const sectorCounts = {};
+  DB.filter(d => d.visibility !== 'private').forEach(d => {
+    sectorCounts[d.sector] = (sectorCounts[d.sector] || 0) + 1;
+  });
+  const sectorList = document.getElementById('sector-list');
+  sectorList.innerHTML = `
+    <li class="${browseState.sector === '' ? 'active' : ''}" data-sector="">
+      <span><span class="ico">📋</span>All Sectors</span>
+      <span class="count">${DB.filter(d => d.visibility !== 'private').length}</span>
+    </li>
+    ${Object.entries(sectorCounts).sort((a,b) => b[1] - a[1]).map(([s, c]) => `
+      <li class="${browseState.sector === s ? 'active' : ''}" data-sector="${escapeHtml(s)}">
+        <span><span class="ico">${SECTOR_ICONS[s] || '📌'}</span>${escapeHtml(s.length > 22 ? s.slice(0,20) + '…' : s)}</span>
+        <span class="count">${c}</span>
+      </li>
+    `).join('')}
+  `;
+  sectorList.querySelectorAll('li').forEach(li => {
+    li.onclick = () => {
+      browseState.sector = li.dataset.sector;
+      browseState.savedOnly = false;
+      updateSavedBanner();
+      renderBrowse();
+    };
+  });
+
+  // Universities
+  const uniCounts = {};
+  DB.filter(d => d.visibility !== 'private').forEach(d => {
+    uniCounts[d.university] = (uniCounts[d.university] || 0) + 1;
+  });
+  const uniList = document.getElementById('uni-list');
+  uniList.innerHTML = `
+    <li class="${browseState.university === '' ? 'active' : ''}" data-uni="">
+      <span><span class="ico">🎓</span>All Universities</span>
+      <span class="count">${DB.filter(d => d.visibility !== 'private').length}</span>
+    </li>
+    ${Object.entries(uniCounts).sort((a,b) => b[1] - a[1]).map(([u, c]) => `
+      <li class="${browseState.university === u ? 'active' : ''}" data-uni="${escapeHtml(u)}">
+        <span><span class="ico">🏛️</span>${escapeHtml(u.length > 22 ? u.slice(0,20) + '…' : u)}</span>
+        <span class="count">${c}</span>
+      </li>
+    `).join('')}
+  `;
+  uniList.querySelectorAll('li').forEach(li => {
+    li.onclick = () => {
+      browseState.university = li.dataset.uni;
+      browseState.savedOnly = false;
+      updateSavedBanner();
+      renderBrowse();
+    };
+  });
+
+  // TRL
+  const trlList = document.getElementById('trl-list');
+  trlList.innerHTML = `
+    <li class="${browseState.trl === '' ? 'active' : ''}" data-trl="">
+      <span><span class="ico">📊</span>All TRL Levels</span>
+    </li>
+    ${[9,8,7,6,5,4,3,2,1].map(t => {
+      const c = DB.filter(d => d.visibility !== 'private' && d.trl === t).length;
+      return `
+        <li class="${browseState.trl === String(t) ? 'active' : ''}" data-trl="${t}">
+          <span><span class="ico">TRL ${t}</span> ${TRL_LABELS[t]}</span>
+          <span class="count">${c}</span>
+        </li>
+      `;
+    }).join('')}
+  `;
+  trlList.querySelectorAll('li').forEach(li => {
+    li.onclick = () => {
+      browseState.trl = li.dataset.trl;
+      browseState.savedOnly = false;
+      updateSavedBanner();
+      renderBrowse();
+    };
+  });
 }
-function renderBrowse() {
-  populateFilters();
-  const q = document.getElementById('search-input').value.toLowerCase().trim();
-  const sector = document.getElementById('filter-sector').value;
-  const uni = document.getElementById('filter-university').value;
-  const trl = document.getElementById('filter-trl').value;
+
+function renderTopInnovators() {
+  const byAuthor = {};
+  DB.forEach(d => {
+    if (!byAuthor[d.author]) byAuthor[d.author] = { count: 0, uni: d.university };
+    byAuthor[d.author].count += 1;
+  });
+  const top = Object.entries(byAuthor)
+    .map(([name, v]) => ({ name, ...v }))
+    .sort((a,b) => b.count - a.count)
+    .slice(0, 6);
+  const el = document.getElementById('top-innovators');
+  el.innerHTML = top.map(t => `
+    <div class="top-innovator">
+      <div class="avatar">${escapeHtml(t.name.split(' ').map(n=>n[0]).join('').slice(0,2))}</div>
+      <div class="info">
+        <div class="name">${escapeHtml(t.name)}</div>
+        <div class="sub">${escapeHtml(t.uni)}</div>
+      </div>
+      <div class="badge-count">${t.count}</div>
+    </div>
+  `).join('');
+}
+
+function renderTrendingSectors() {
+  const sectorCounts = {};
+  DB.filter(d => d.visibility !== 'private').forEach(d => {
+    sectorCounts[d.sector] = (sectorCounts[d.sector] || 0) + 1;
+  });
+  const sorted = Object.entries(sectorCounts).sort((a,b) => b[1] - a[1]).slice(0, 6);
+  const el = document.getElementById('trending-sectors');
+  el.innerHTML = sorted.map(([s, c], i) => `
+    <div class="lb-row" style="padding:8px 0;">
+      <div class="lb-rank">${i+1}</div>
+      <div class="lb-info">
+        <div class="lb-name" style="font-size:13px;">${SECTOR_ICONS[s] || '📌'} ${escapeHtml(s)}</div>
+      </div>
+      <div class="lb-count">${c}</div>
+    </div>
+  `).join('');
+}
+
+function getFilteredResults() {
   let results = DB.filter(d => d.visibility !== 'private');
-  if (q) results = results.filter(d =>
-    (d.title + ' ' + d.author + ' ' + d.abstract + ' ' + (d.keywords||'') + ' ' + d.university).toLowerCase().includes(q)
-  );
-  if (sector) results = results.filter(d => d.sector === sector);
-  if (uni) results = results.filter(d => d.university === uni);
-  if (trl) results = results.filter(d => String(d.trl) === trl);
-  document.getElementById('browse-results').innerHTML = results.length
-    ? results.map(cardHTML).join('')
-    : '<div class="empty"><div class="icon">🔍</div><p>No innovations match your filters.</p></div>';
+  if (browseState.savedOnly) {
+    const saved = loadSaved();
+    results = results.filter(d => saved.includes(d.id));
+  }
+  if (browseState.query) {
+    const q = browseState.query.toLowerCase();
+    results = results.filter(d =>
+      (d.title + ' ' + d.author + ' ' + d.abstract + ' ' + (d.keywords||'') + ' ' + d.university + ' ' + d.sector).toLowerCase().includes(q)
+    );
+  }
+  if (browseState.sector) results = results.filter(d => d.sector === browseState.sector);
+  if (browseState.university) results = results.filter(d => d.university === browseState.university);
+  if (browseState.trl) results = results.filter(d => String(d.trl) === browseState.trl);
+
+  // Sort
+  switch (browseState.sort) {
+    case 'trending':
+      results.sort((a,b) => {
+        const sa = getStat(a.id, 'views') + getStat(a.id, 'saved')*2 + getStat(a.id, 'contacted')*3;
+        const sb = getStat(b.id, 'views') + getStat(b.id, 'saved')*2 + getStat(b.id, 'contacted')*3;
+        return sb - sa;
+      });
+      break;
+    case 'trl': results.sort((a,b) => b.trl - a.trl); break;
+    case 'views': results.sort((a,b) => getStat(b.id, 'views') - getStat(a.id, 'views')); break;
+    case 'contacted': results.sort((a,b) => getStat(b.id, 'contacted') - getStat(a.id, 'contacted')); break;
+    default: results.sort((a,b) => new Date(b.date) - new Date(a.date));
+  }
+  return results;
 }
-['search-input','filter-sector','filter-university','filter-trl'].forEach(id => {
-  document.addEventListener('input', e => { if (e.target.id === id) renderBrowse(); });
-  document.addEventListener('change', e => { if (e.target.id === id) renderBrowse(); });
-});
-document.getElementById('clear-filters').addEventListener('click', () => {
-  document.getElementById('search-input').value = '';
-  document.getElementById('filter-sector').value = '';
-  document.getElementById('filter-university').value = '';
-  document.getElementById('filter-trl').value = '';
+
+function innCardHTML(item) {
+  const isProtected = item.visibility !== 'public';
+  const views = getStat(item.id, 'views');
+  const saves = getStat(item.id, 'saved');
+  const contacted = getStat(item.id, 'contacted');
+  const saved = isSaved(item.id);
+  const sectorIco = SECTOR_ICONS[item.sector] || '📌';
+  const abstract = isProtected
+    ? '🔒 Details protected. Register as an investor and contact the PIYS/IP Support Centre to request access from the author.'
+    : item.abstract;
+  const kwList = item.keywords ? item.keywords.split(',').map(k => k.trim()).filter(Boolean).slice(0, 5) : [];
+  const trlHigh = item.trl >= 6;
+  const initials = item.author.split(' ').map(n=>n[0]).join('').slice(0,2);
+
+  return `
+    <article class="inn-card ${isProtected ? 'protected' : ''}" data-id="${item.id}">
+      <div class="inn-card-body">
+        <div class="inn-card-top">
+          <span class="inn-sector-chip"><span class="ico">${sectorIco}</span>${escapeHtml(item.sector)}</span>
+          <div class="inn-badges">
+            <span class="pill trl">TRL ${item.trl}</span>
+            ${trlHigh ? `<span class="pill investment">💰 Investment Ready</span>` : ''}
+            ${isProtected ? `<span class="pill protected">🔒 Protected</span>` : ''}
+          </div>
+        </div>
+
+        <h4 class="inn-title" onclick="openDrawer('${item.id}')">${escapeHtml(item.title)}</h4>
+
+        <div class="inn-author-line">
+          <div class="mini-avatar">${escapeHtml(initials)}</div>
+          <div><strong>${escapeHtml(item.author)}</strong> · ${escapeHtml(item.university)}</div>
+        </div>
+
+        <p class="inn-abstract ${isProtected ? 'protected-text' : ''}">${escapeHtml(abstract)}</p>
+
+        ${kwList.length ? `
+          <div class="inn-keywords">
+            ${kwList.map(k => `<span class="kw">#${escapeHtml(k)}</span>`).join('')}
+          </div>
+        ` : ''}
+
+        <div class="inn-card-bottom">
+          <div class="inn-stats">
+            <span class="stat-item">👁️ <span class="n">${views}</span></span>
+            <span class="stat-item">💾 <span class="n">${saves}</span></span>
+            <span class="stat-item">📩 <span class="n">${contacted}</span></span>
+            <span class="stat-item">🕐 ${new Date(item.date).toLocaleDateString('en-GB', { day:'numeric', month:'short' })}</span>
+          </div>
+          <div class="inn-actions">
+            <button class="btn-tiny ${saved ? 'saved' : 'outline'}" onclick="event.stopPropagation(); toggleSaved('${item.id}')">
+              ${saved ? '✓ Saved' : '💾 Save'}
+            </button>
+            <button class="btn-tiny yellow" onclick="event.stopPropagation(); openDrawer('${item.id}')">View →</button>
+          </div>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function renderBrowse() {
+  renderBrowseSidebars();
+  renderTopInnovators();
+  renderTrendingSectors();
+  updateSavedBanner();
+
+  const results = getFilteredResults();
+  document.getElementById('results-count').textContent = results.length;
+
+  // Active filters label
+  const parts = [];
+  if (browseState.sector) parts.push(browseState.sector);
+  if (browseState.university) parts.push(browseState.university);
+  if (browseState.trl) parts.push('TRL ' + browseState.trl);
+  if (browseState.savedOnly) parts.push('Shortlist');
+  document.getElementById('active-filters-label').textContent =
+    parts.length ? '· Filtered by: ' + parts.join(', ') : '';
+
+  const container = document.getElementById('browse-results');
+  if (!results.length) {
+    container.innerHTML = `
+      <div class="browse-empty">
+        <div class="icon">🔍</div>
+        <h4>No innovations match your filters</h4>
+        <p>Try clearing filters or searching a different keyword.</p>
+        <button class="btn btn-sm" onclick="document.getElementById('clear-filters').click()">Clear All Filters</button>
+      </div>
+    `;
+    return;
+  }
+  container.innerHTML = results.map(innCardHTML).join('');
+}
+
+function updateSavedBanner() {
+  const saved = loadSaved();
+  const banner = document.getElementById('saved-banner');
+  document.getElementById('saved-count').textContent = saved.length;
+  if (saved.length) banner.classList.remove('hidden');
+  else banner.classList.add('hidden');
+}
+
+function showSavedOnly() {
+  browseState.savedOnly = true;
+  renderBrowse();
+}
+
+// Filter interactions
+document.getElementById('search-input').addEventListener('input', e => {
+  browseState.query = e.target.value;
   renderBrowse();
 });
+document.getElementById('sort-select').addEventListener('change', e => {
+  browseState.sort = e.target.value;
+  renderBrowse();
+});
+document.getElementById('clear-filters').addEventListener('click', () => {
+  browseState = { query: '', sector: '', university: '', trl: '', sort: 'newest', savedOnly: false };
+  document.getElementById('search-input').value = '';
+  document.getElementById('sort-select').value = 'newest';
+  renderBrowse();
+});
+
+// =================================================================
+// ================= DRAWER =================
+// =================================================================
+function openDrawer(id) {
+  const d = DB.find(x => x.id === id);
+  if (!d) return;
+  trackStat(id, 'views');
+  const isProtected = d.visibility !== 'public';
+  const saved = isSaved(id);
+  const sectorIco = SECTOR_ICONS[d.sector] || '📌';
+
+  document.getElementById('drawer-title').textContent = d.title;
+  document.getElementById('drawer-subtitle').textContent = `${d.author} · ${d.university}`;
+
+  document.getElementById('drawer-body').innerHTML = `
+    <div class="drawer-section">
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
+        <span class="pill trl">TRL ${d.trl} — ${TRL_LABELS[d.trl]}</span>
+        ${d.trl >= 6 ? `<span class="pill investment">💰 Investment Ready</span>` : ''}
+        ${isProtected ? `<span class="pill protected">🔒 Protected</span>` : `<span class="pill published">🌐 Public</span>`}
+      </div>
+      <span class="inn-sector-chip"><span class="ico">${sectorIco}</span>${escapeHtml(d.sector)}</span>
+    </div>
+
+    <div class="drawer-section">
+      <h5>Abstract</h5>
+      <p>${isProtected
+        ? '🔒 <em>Details of this research are protected. Registered investors may request access to the full abstract via the PIYS/IP Support Centre.</em>'
+        : escapeHtml(d.abstract)}</p>
+    </div>
+
+    <div class="drawer-section">
+      <h5>Innovator</h5>
+      <div class="drawer-kv">
+        <span class="k">Name</span><span class="v">${escapeHtml(d.author)}</span>
+        <span class="k">University</span><span class="v">${escapeHtml(d.university)}</span>
+        <span class="k">Course</span><span class="v">${escapeHtml(d.course || 'N/A')}</span>
+        <span class="k">Email</span><span class="v">${isProtected ? '🔒 Available on request' : escapeHtml(d.email)}</span>
+      </div>
+    </div>
+
+    <div class="drawer-section">
+      <h5>Readiness &amp; Status</h5>
+      <div class="drawer-kv">
+        <span class="k">TRL Level</span><span class="v">TRL ${d.trl} — ${TRL_LABELS[d.trl]}</span>
+        <span class="k">Status</span><span class="v">${escapeHtml(d.status)}</span>
+        <span class="k">Submitted</span><span class="v">${new Date(d.date).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' })}</span>
+      </div>
+    </div>
+
+    ${d.keywords ? `
+      <div class="drawer-section">
+        <h5>Keywords</h5>
+        <div class="inn-keywords">
+          ${d.keywords.split(',').map(k => `<span class="kw">#${escapeHtml(k.trim())}</span>`).join('')}
+        </div>
+      </div>
+    ` : ''}
+
+    <div class="drawer-section">
+      <h5>Proof of Authorship (SHA-256)</h5>
+      <div class="hash" style="background:var(--grey); padding:10px; border-radius:6px; font-size:10px; word-break:break-all;">${d.hash}</div>
+      <p style="font-size:11px; color:var(--mid-grey); margin-top:8px;">Timestamped and hashed on submission — verifiable evidence of authorship.</p>
+    </div>
+
+    <div class="drawer-actions">
+      <button class="btn btn-sm ${saved ? 'btn-black' : ''}" onclick="toggleSaved('${d.id}'); openDrawer('${d.id}');">
+        ${saved ? '✓ Saved to Shortlist' : '💾 Save to Shortlist'}
+      </button>
+      ${!isProtected ? `
+        <a class="btn btn-sm btn-red" href="mailto:${escapeHtml(d.email)}?subject=Investment Interest: ${encodeURIComponent(d.title)}"
+           onclick="trackStat('${d.id}','contacted')">📩 Contact Innovator</a>
+      ` : `
+        <button class="btn btn-sm btn-red" onclick="trackStat('${d.id}','contacted'); openModal('<h3>🔒 Protected Innovation</h3><p style=\\'margin:12px 0;\\'>This research is protected. To request access, please contact the PIYS/IP Support Centre at <strong>ip@piys.go.ug</strong>.</p><button class=\\'btn\\' onclick=\\'closeModal()\\'>Close</button>')">📩 Request Access</button>
+      `}
+      <button class="btn btn-sm btn-outline" onclick="downloadCertificate('${d.id}')">📄 Certificate</button>
+    </div>
+  `;
+
+  document.getElementById('drawer').classList.add('active');
+  document.getElementById('drawer-bg').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('active');
+  document.getElementById('drawer-bg').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+document.getElementById('drawer-bg').addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeDrawer(); closeModal(); } });
 
 // ================= SUBMIT =================
 document.getElementById('submit-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const user = getSession();
   const payload = {
     title: document.getElementById('f-title').value.trim(),
     author: document.getElementById('f-author').value.trim(),
@@ -844,8 +1512,7 @@ document.getElementById('submit-form').addEventListener('submit', async (e) => {
     abstract: document.getElementById('f-abstract').value.trim(),
     keywords: document.getElementById('f-keywords').value.trim(),
     visibility: document.getElementById('f-visibility').value,
-    date: new Date().toISOString(),
-    submittedBy: user ? user.email : null
+    date: new Date().toISOString()
   };
   const hash = await sha256(JSON.stringify(payload) + Date.now());
   const item = { ...payload, id: 'item-' + Date.now(), hash, status: 'Submitted' };
@@ -854,17 +1521,12 @@ document.getElementById('submit-form').addEventListener('submit', async (e) => {
   renderStats(); renderHome(); renderBrowse(); renderAdmin(); renderChapterDashboard();
   openModal(`
     <h3 style="color:var(--green);">✅ Research Submitted &amp; Protected</h3>
-    <div class="alert alert-success">
-      Your innovation has been timestamped and assigned a unique SHA-256 hash — a verifiable proof of authorship.
-    </div>
+    <div class="alert alert-success">Your innovation has been timestamped and hashed.</div>
     <p style="margin:12px 0;"><strong>Title:</strong> ${escapeHtml(payload.title)}</p>
-    <p style="margin:12px 0;"><strong>Author:</strong> ${escapeHtml(payload.author)}</p>
-    <p style="margin:12px 0;"><strong>Submitted:</strong> ${new Date(item.date).toLocaleString('en-GB')}</p>
     <p style="margin:12px 0;"><strong>SHA-256 Hash:</strong></p>
     <div class="hash" style="background:var(--grey); padding:10px; border-radius:6px;">${hash}</div>
-    <p style="margin-top:16px; font-size:13px; color:var(--mid-grey);">Keep this hash safe. It proves you submitted this work on this date. For formal IP protection, contact URSB or the PIYS IP Support Centre.</p>
     <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
-      <button class="btn" onclick="downloadCertificate('${item.id}')">📄 Download Certificate</button>
+      <button class="btn" onclick="downloadCertificate('${item.id}')">📄 Certificate</button>
       <button class="btn btn-black" onclick="closeModal()">Close</button>
     </div>
   `);
@@ -884,40 +1546,21 @@ window.downloadCertificate = function(id) {
 
            CERTIFICATE OF RESEARCH SUBMISSION
 
-This certifies that the following research/innovation has been
-officially recorded in the National Young Scientists Repository
-under the Presidential Initiative for Young Scientists (PIYS).
-
 Title:        ${item.title}
 Author:       ${item.author}
-Email:        ${item.email}
 University:   ${item.university}
-Course:       ${item.course || 'N/A'}
 Sector:       ${item.sector}
 TRL Level:    ${item.trl}
 Submitted:    ${new Date(item.date).toLocaleString('en-GB')}
 
-SHA-256 HASH (Proof of Authorship):
-${item.hash}
-
-------------------------------------------------------------
-This certificate provides verifiable evidence of prior art and
-authorship as of the submission date above. It does not replace
-formal patent or IP registration with URSB.
+SHA-256 HASH: ${item.hash}
 
 Verify at: https://piys.go.ug/verify/${item.id}
-------------------------------------------------------------
-
-Wamezaya Ebenezer
-Chief Scientist, IUYSC
-Presented to the STI Office of the President
   `.trim();
   const blob = new Blob([cert], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = `PIYS_Certificate_${item.id}.txt`;
-  a.click();
+  a.href = url; a.download = `PIYS_Certificate_${item.id}.txt`; a.click();
   URL.revokeObjectURL(url);
 };
 
@@ -938,14 +1581,14 @@ function renderAdmin() {
       <td><span class="badge-trl">${d.trl}</span></td>
       <td>${d.status}</td>
       <td>
-        <button class="btn btn-sm" onclick="viewItem('${d.id}')">View</button>
+        <button class="btn btn-sm" onclick="openDrawer('${d.id}')">View</button>
         <button class="btn btn-sm btn-red" onclick="deleteItem('${d.id}')">Delete</button>
       </td>
     </tr>
   `).join('');
 }
 window.deleteItem = function(id) {
-  if (!confirm('Delete this submission? This cannot be undone.')) return;
+  if (!confirm('Delete this submission?')) return;
   DB = DB.filter(d => d.id !== id);
   saveData(DB);
   renderStats(); renderHome(); renderBrowse(); renderAdmin(); renderChapterDashboard();
@@ -953,7 +1596,6 @@ window.deleteItem = function(id) {
 
 // ================= CHAPTER DASHBOARD =================
 let currentChapter = 'Makerere University';
-
 function initChapterSelect() {
   const sel = document.getElementById('chapter-select');
   const unisInDB = [...new Set(DB.map(d => d.university))].sort();
@@ -961,42 +1603,21 @@ function initChapterSelect() {
   sel.innerHTML = allUnis.map(u => `<option ${u === currentChapter ? 'selected' : ''}>${escapeHtml(u)}</option>`).join('');
   sel.onchange = () => { currentChapter = sel.value; renderChapterDashboard(); };
 }
-
 function renderChapterDashboard() {
   initChapterSelect();
   const items = DB.filter(d => d.university === currentChapter);
-
-  // KPIs
   const total = items.length;
   const sectors = new Set(items.map(d => d.sector)).size;
-  const avgTrl = total ? (items.reduce((s, d) => s + d.trl, 0) / total).toFixed(1) : '—';
+  const avgTrl = total ? (items.reduce((s,d) => s+d.trl, 0) / total).toFixed(1) : '—';
   const protectedCount = items.filter(d => d.hash).length;
   const publicCount = items.filter(d => d.visibility === 'public').length;
-
   document.getElementById('chapter-kpis').innerHTML = `
-    <div class="kpi">
-      <div class="kpi-label">Total Submissions</div>
-      <div class="kpi-value">${total}</div>
-    </div>
-    <div class="kpi red">
-      <div class="kpi-label">Sectors Covered</div>
-      <div class="kpi-value">${sectors}</div>
-    </div>
-    <div class="kpi black">
-      <div class="kpi-label">Avg. TRL</div>
-      <div class="kpi-value">${avgTrl}</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">IP Protected</div>
-      <div class="kpi-value">${protectedCount}</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Publicly Visible</div>
-      <div class="kpi-value">${publicCount}</div>
-    </div>
+    <div class="kpi"><div class="kpi-label">Total Submissions</div><div class="kpi-value">${total}</div></div>
+    <div class="kpi red"><div class="kpi-label">Sectors Covered</div><div class="kpi-value">${sectors}</div></div>
+    <div class="kpi black"><div class="kpi-label">Avg. TRL</div><div class="kpi-value">${avgTrl}</div></div>
+    <div class="kpi"><div class="kpi-label">IP Protected</div><div class="kpi-value">${protectedCount}</div></div>
+    <div class="kpi"><div class="kpi-label">Publicly Visible</div><div class="kpi-value">${publicCount}</div></div>
   `;
-
-  // Submissions table
   const tbody = document.getElementById('chapter-table');
   if (!items.length) {
     tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:var(--mid-grey);">No submissions from ${escapeHtml(currentChapter)} yet.</td></tr>`;
@@ -1009,131 +1630,85 @@ function renderChapterDashboard() {
         <td>${escapeHtml(d.sector)}</td>
         <td><span class="badge-trl">${d.trl}</span></td>
         <td>${d.status}</td>
-        <td>
-          <button class="btn btn-sm" onclick="viewItem('${d.id}')">View</button>
-        </td>
+        <td><button class="btn btn-sm" onclick="openDrawer('${d.id}')">View</button></td>
       </tr>
     `).join('');
   }
-
-  // Chapter leaderboard (top contributors within the university)
   const byAuthor = {};
   items.forEach(d => {
     if (!byAuthor[d.author]) byAuthor[d.author] = { count: 0, sectors: new Set() };
     byAuthor[d.author].count += 1;
     byAuthor[d.author].sectors.add(d.sector);
   });
-  const leaders = Object.entries(byAuthor)
-    .map(([name, v]) => ({ name, count: v.count, sectors: v.sectors.size }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
+  const leaders = Object.entries(byAuthor).map(([name, v]) => ({ name, count: v.count, sectors: v.sectors.size }))
+    .sort((a,b) => b.count - a.count).slice(0,5);
   document.getElementById('lb-university-name').textContent = currentChapter;
   document.getElementById('chapter-leaderboard').innerHTML = leaders.length
-    ? leaders.map((l, i) => `
+    ? leaders.map((l,i) => `
       <div class="lb-row">
-        <div class="lb-rank">${i + 1}</div>
-        <div class="lb-info">
-          <div class="lb-name">${escapeHtml(l.name)}</div>
-          <div class="lb-sub">${l.sectors} sector${l.sectors !== 1 ? 's' : ''}</div>
-        </div>
+        <div class="lb-rank">${i+1}</div>
+        <div class="lb-info"><div class="lb-name">${escapeHtml(l.name)}</div><div class="lb-sub">${l.sectors} sector${l.sectors!==1?'s':''}</div></div>
         <div class="lb-count">${l.count}</div>
-      </div>
-    `).join('')
+      </div>`).join('')
     : '<p style="color:var(--mid-grey); font-size:13px;">No contributors yet.</p>';
-
-  // National university leaderboard
   const byUni = {};
   DB.forEach(d => {
     if (!byUni[d.university]) byUni[d.university] = { count: 0, trlSum: 0 };
     byUni[d.university].count += 1;
     byUni[d.university].trlSum += d.trl;
   });
-  const national = Object.entries(byUni)
-    .map(([name, v]) => ({ name, count: v.count, avgTrl: (v.trlSum / v.count).toFixed(1) }))
-    .sort((a, b) => b.count - a.count);
+  const national = Object.entries(byUni).map(([name, v]) => ({ name, count: v.count, avgTrl: (v.trlSum/v.count).toFixed(1) }))
+    .sort((a,b) => b.count - a.count);
   document.getElementById('national-leaderboard').innerHTML = national.length
-    ? national.map((u, i) => `
+    ? national.map((u,i) => `
       <div class="lb-row">
-        <div class="lb-rank">${i + 1}</div>
-        <div class="lb-info">
-          <div class="lb-name">${escapeHtml(u.name)}</div>
-          <div class="lb-sub">Avg TRL ${u.avgTrl}</div>
-        </div>
+        <div class="lb-rank">${i+1}</div>
+        <div class="lb-info"><div class="lb-name">${escapeHtml(u.name)}</div><div class="lb-sub">Avg TRL ${u.avgTrl}</div></div>
         <div class="lb-count">${u.count}</div>
-      </div>
-    `).join('')
+      </div>`).join('')
     : '<p style="color:var(--mid-grey); font-size:13px;">No submissions yet.</p>';
 }
 
-// ===== CHAPTER EXPORT =====
 document.getElementById('chapter-export').addEventListener('click', () => {
   const items = DB.filter(d => d.university === currentChapter);
-  if (!items.length) { alert('No submissions to export for this chapter.'); return; }
+  if (!items.length) { alert('No submissions to export.'); return; }
   const lines = [
-    '============================================================',
-    '   PRESIDENTIAL INITIATIVE FOR YOUNG SCIENTISTS (PIYS)',
-    '        Inter-University Young Scientists Consortium',
-    '                 CHAPTER REPORT',
-    '============================================================',
-    '',
-    `University: ${currentChapter}`,
+    'PRESIDENTIAL INITIATIVE FOR YOUNG SCIENTISTS (PIYS)',
+    'Inter-University Young Scientists Consortium',
+    'CHAPTER REPORT',
+    '='.repeat(60),
+    '', `University: ${currentChapter}`,
     `Generated:  ${new Date().toLocaleString('en-GB')}`,
-    `Total Submissions: ${items.length}`,
-    `Sectors Covered:   ${new Set(items.map(d => d.sector)).size}`,
-    `Average TRL:       ${(items.reduce((s, d) => s + d.trl, 0) / items.length).toFixed(1)}`,
-    '',
-    '------------------------------------------------------------',
-    'SUBMISSIONS',
-    '------------------------------------------------------------'
+    `Total:      ${items.length}`, ''
   ];
   items.forEach((d, i) => {
-    lines.push('');
-    lines.push(`${i + 1}. ${d.title}`);
-    lines.push(`   Author:     ${d.author}`);
-    lines.push(`   Course:     ${d.course || 'N/A'}`);
-    lines.push(`   Sector:     ${d.sector}`);
-    lines.push(`   TRL:        ${d.trl}`);
-    lines.push(`   Status:     ${d.status}`);
-    lines.push(`   Submitted:  ${new Date(d.date).toLocaleDateString('en-GB')}`);
-    lines.push(`   Hash:       ${d.hash}`);
+    lines.push(`${i+1}. ${d.title}`, `   Author: ${d.author}`, `   Sector: ${d.sector}`, `   TRL: ${d.trl}`, `   Hash: ${d.hash}`, '');
   });
-  lines.push('');
-  lines.push('------------------------------------------------------------');
-  lines.push('Generated by the PIYS National Repository');
-  lines.push('Wamezaya Ebenezer · Chief Scientist, IUYSC');
-  lines.push('------------------------------------------------------------');
   const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = `PIYS_Chapter_Report_${currentChapter.replace(/\s+/g, '_')}.txt`;
+  a.href = URL.createObjectURL(blob);
+  a.download = `PIYS_Chapter_${currentChapter.replace(/\s+/g,'_')}.txt`;
   a.click();
-  URL.revokeObjectURL(url);
 });
 
-// ===== CHAPTER BULK UPLOAD =====
 document.getElementById('chapter-bulk').addEventListener('click', () => {
   openModal(`
     <h3>📥 Bulk Upload — ${escapeHtml(currentChapter)}</h3>
     <div class="alert alert-info">
-      Paste one project per line in this format:<br/>
-      <code style="display:block; margin-top:8px; background:var(--grey); padding:8px; border-radius:4px; font-size:11px;">
-        Title | Author | Email | Course | Sector | TRL | Abstract
-      </code>
-      Sectors must match one of the standard sectors. TRL must be 1–9.
+      Format: Title | Author | Email | Course | Sector | TRL | Abstract
     </div>
     <div class="form-row">
       <label>Paste bulk entries</label>
-      <textarea id="bulk-input" style="min-height:180px; font-family:monospace; font-size:12px;" placeholder="Solar Water Purifier for Rural Schools | Namuli Grace | grace@mak.ac.ug | BSc. Civil Engineering | Renewable Energy | 5 | A low-cost solar purifier that provides clean drinking water for rural primary schools."></textarea>
+      <textarea id="bulk-input" style="min-height:180px; font-family:monospace; font-size:12px;"></textarea>
     </div>
     <div style="display:flex; gap:10px;">
-      <button class="btn" id="bulk-process">Process &amp; Upload</button>
+      <button class="btn" id="bulk-process">Upload</button>
       <button class="btn btn-black" onclick="closeModal()">Cancel</button>
     </div>
   `);
   document.getElementById('bulk-process').addEventListener('click', async () => {
     const raw = document.getElementById('bulk-input').value.trim();
-    if (!raw) { alert('Please paste at least one entry.'); return; }
+    if (!raw) return;
     const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
     let added = 0, skipped = 0;
     for (const line of lines) {
@@ -1141,25 +1716,17 @@ document.getElementById('chapter-bulk').addEventListener('click', () => {
       if (parts.length < 7) { skipped++; continue; }
       const [title, author, email, course, sector, trl, abstract] = parts;
       const trlNum = parseInt(trl);
-      if (!title || !author || !email || !sector || isNaN(trlNum) || trlNum < 1 || trlNum > 9) { skipped++; continue; }
-      const payload = {
-        title, author, email, university: currentChapter, course,
-        sector, trl: trlNum, abstract, keywords: '', visibility: 'public',
-        date: new Date().toISOString(), submittedBy: 'bulk-upload'
-      };
+      if (!title || !author || !email || isNaN(trlNum)) { skipped++; continue; }
+      const payload = { title, author, email, university: currentChapter, course, sector, trl: trlNum, abstract, keywords: '', visibility: 'public', date: new Date().toISOString() };
       const hash = await sha256(JSON.stringify(payload) + Date.now() + Math.random());
-      DB.push({ ...payload, id: 'item-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7), hash, status: 'Submitted' });
+      DB.push({ ...payload, id: 'item-' + Date.now() + '-' + Math.random().toString(36).slice(2,7), hash, status: 'Submitted' });
       added++;
     }
     saveData(DB);
     renderStats(); renderHome(); renderBrowse(); renderAdmin(); renderChapterDashboard();
-    openModal(`
-      <h3 style="color:var(--green);">✅ Bulk Upload Complete</h3>
-      <div class="alert alert-success">
-        <strong>${added}</strong> entries added successfully.${skipped ? ` <br/><strong>${skipped}</strong> lines skipped (malformed).` : ''}
-      </div>
-      <button class="btn" onclick="closeModal()">Close</button>
-    `);
+    openModal(`<h3 style="color:var(--green);">✅ Bulk Upload Complete</h3>
+      <div class="alert alert-success"><strong>${added}</strong> added.${skipped?` ${skipped} skipped.`:''}</div>
+      <button class="btn" onclick="closeModal()">Close</button>`);
   });
 });
 
@@ -1172,47 +1739,22 @@ window.closeModal = function() { document.getElementById('modal-bg').classList.r
 document.getElementById('modal-close').addEventListener('click', closeModal);
 document.getElementById('modal-bg').addEventListener('click', e => { if (e.target.id === 'modal-bg') closeModal(); });
 
-window.viewItem = function(id) {
-  const d = DB.find(x => x.id === id);
-  if (!d) return;
-  const isProtected = d.visibility !== 'public';
-  openModal(`
-    <span class="tag" style="background:var(--yellow); color:var(--black);">${escapeHtml(d.sector)}</span>
-    <h3 style="margin:10px 0;">${escapeHtml(d.title)}</h3>
-    <p style="color:var(--mid-grey); margin-bottom:14px;">
-      <strong>${escapeHtml(d.author)}</strong> · ${escapeHtml(d.university)}<br/>
-      ${d.course ? escapeHtml(d.course) + ' · ' : ''}Submitted ${new Date(d.date).toLocaleDateString('en-GB')}
-    </p>
-    <p style="margin-bottom:14px;"><span class="badge-trl">TRL ${d.trl}</span> <span class="badge-trl" style="background:var(--red); color:white;">${d.status}</span></p>
-    <h4 style="margin-bottom:8px;">Abstract</h4>
-    <p style="margin-bottom:16px;">${isProtected ? '<em>This research is protected. Contact the PIYS/IUYSC to request access from the author.</em>' : escapeHtml(d.abstract)}</p>
-    ${d.keywords ? `<p style="font-size:13px; color:var(--mid-grey);"><strong>Keywords:</strong> ${escapeHtml(d.keywords)}</p>` : ''}
-    <h4 style="margin:16px 0 8px;">Proof of Authorship (SHA-256)</h4>
-    <div class="hash" style="background:var(--grey); padding:10px; border-radius:6px;">${d.hash}</div>
-    <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
-      <button class="btn" onclick="downloadCertificate('${d.id}')">📄 Certificate</button>
-      ${!isProtected ? `<a class="btn btn-black" href="mailto:${escapeHtml(d.email)}?subject=Interest in: ${encodeURIComponent(d.title)}">✉️ Contact Innovator</a>` : ''}
-      <button class="btn btn-black" onclick="closeModal()">Close</button>
-    </div>
-  `);
-};
+// Legacy alias
+window.viewItem = openDrawer;
 
 // ================= AUTH =================
 let selectedRole = 'Young Scientist';
 let selectedChapterUni = 'Makerere University';
-
 const ROLES = [
   { id: 'Young Scientist', icon: '🔬', desc: 'Student or early-career researcher with an innovation to protect.' },
   { id: 'University Chapter', icon: '🎓', desc: 'Representing a university IUYSC chapter or research office.' },
   { id: 'Industry / Investor', icon: '🏭', desc: 'Looking to license, fund, or manufacture innovations.' },
   { id: 'Government / Policy', icon: '🏛️', desc: 'STI-OP, ministry, regulator, or development partner.' }
 ];
-
 document.getElementById('open-auth').addEventListener('click', () => openAuthModal('signin'));
 
 function openAuthModal(tab = 'signin') {
   selectedRole = 'Young Scientist';
-  selectedChapterUni = 'Makerere University';
   openModal(`
     <div class="tab-switch">
       <button id="tab-signin" class="${tab === 'signin' ? 'active' : ''}">Sign In</button>
@@ -1231,26 +1773,16 @@ function switchAuthTab(tab) {
   const c = document.getElementById('auth-form-container');
   if (tab === 'signin') {
     c.innerHTML = `
-      <div class="alert alert-info">Welcome back. Sign in to manage your submissions.</div>
       <form id="signin-form">
-        <div class="form-row">
-          <label>Email <span class="req">*</span></label>
-          <input type="email" id="si-email" required placeholder="you@university.ac.ug" />
-        </div>
-        <div class="form-row">
-          <label>Password <span class="req">*</span></label>
-          <input type="password" id="si-password" required placeholder="Your password" />
-        </div>
+        <div class="form-row"><label>Email <span class="req">*</span></label><input type="email" id="si-email" required /></div>
+        <div class="form-row"><label>Password <span class="req">*</span></label><input type="password" id="si-password" required /></div>
         <button type="submit" class="btn" style="width:100%;">Sign In</button>
       </form>
-      <p style="margin-top:14px; font-size:12px; color:var(--mid-grey); text-align:center;">
-        New here? <a href="#" onclick="switchAuthTab('signup'); return false;" style="color:var(--red); font-weight:700;">Create an account</a>
-      </p>
+      <p style="margin-top:14px; font-size:12px; text-align:center;">New here? <a href="#" onclick="switchAuthTab('signup'); return false;" style="color:var(--red); font-weight:700;">Create an account</a></p>
     `;
     document.getElementById('signin-form').addEventListener('submit', handleSignIn);
   } else {
     c.innerHTML = `
-      <div class="alert alert-info">Join the national network of young scientists, universities, industry, and government partners.</div>
       <p style="font-size:13px; font-weight:600; margin-bottom:4px;">I am registering as a: <span class="req">*</span></p>
       <div class="role-cards" id="role-cards">
         ${ROLES.map(r => `
@@ -1258,51 +1790,29 @@ function switchAuthTab(tab) {
             <div class="role-icon">${r.icon}</div>
             <div class="role-name">${r.id}</div>
             <div class="role-desc">${r.desc}</div>
-          </div>
-        `).join('')}
+          </div>`).join('')}
       </div>
       <div id="chapter-picker" style="display:none;">
         <div class="form-row">
-          <label>Which university chapter do you represent? <span class="req">*</span></label>
-          <select id="su-chapter-uni">
-            ${UNIVERSITIES.map(u => `<option ${u === selectedChapterUni ? 'selected' : ''}>${u}</option>`).join('')}
-          </select>
+          <label>Which university chapter? <span class="req">*</span></label>
+          <select id="su-chapter-uni">${UNIVERSITIES.map(u => `<option>${u}</option>`).join('')}</select>
         </div>
       </div>
       <form id="signup-form">
-        <div class="form-row">
-          <label>Full Name <span class="req">*</span></label>
-          <input type="text" id="su-name" required placeholder="e.g., Musoga Reagan" />
-        </div>
-        <div class="form-row">
-          <label>Email <span class="req">*</span></label>
-          <input type="email" id="su-email" required placeholder="you@university.ac.ug" />
-        </div>
-        <div class="form-row">
-          <label>Phone (optional)</label>
-          <input type="tel" id="su-phone" placeholder="+256 7XX XXX XXX" />
-        </div>
-        <div class="form-row">
-          <label>Password <span class="req">*</span></label>
-          <input type="password" id="su-password" required minlength="6" placeholder="At least 6 characters" />
-        </div>
-        <div class="form-row">
-          <label>Confirm Password <span class="req">*</span></label>
-          <input type="password" id="su-password2" required minlength="6" placeholder="Repeat password" />
-        </div>
-        <button type="submit" class="btn btn-red" style="width:100%;">Create My Account</button>
+        <div class="form-row"><label>Full Name <span class="req">*</span></label><input type="text" id="su-name" required /></div>
+        <div class="form-row"><label>Email <span class="req">*</span></label><input type="email" id="su-email" required /></div>
+        <div class="form-row"><label>Phone (optional)</label><input type="tel" id="su-phone" /></div>
+        <div class="form-row"><label>Password <span class="req">*</span></label><input type="password" id="su-password" required minlength="6" /></div>
+        <div class="form-row"><label>Confirm <span class="req">*</span></label><input type="password" id="su-password2" required minlength="6" /></div>
+        <button type="submit" class="btn btn-red" style="width:100%;">Create Account</button>
       </form>
-      <p style="margin-top:14px; font-size:12px; color:var(--mid-grey); text-align:center;">
-        Already have an account? <a href="#" onclick="switchAuthTab('signin'); return false;" style="color:var(--red); font-weight:700;">Sign in</a>
-      </p>
     `;
     document.querySelectorAll('#role-cards .role-card').forEach(card => {
       card.addEventListener('click', () => {
         document.querySelectorAll('#role-cards .role-card').forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
         selectedRole = card.dataset.role;
-        document.getElementById('chapter-picker').style.display =
-          selectedRole === 'University Chapter' ? 'block' : 'none';
+        document.getElementById('chapter-picker').style.display = selectedRole === 'University Chapter' ? 'block' : 'none';
       });
     });
     document.getElementById('signup-form').addEventListener('submit', handleSignUp);
@@ -1316,55 +1826,20 @@ async function handleSignUp(e) {
   const phone = document.getElementById('su-phone').value.trim();
   const pw = document.getElementById('su-password').value;
   const pw2 = document.getElementById('su-password2').value;
-  const chapterUni = selectedRole === 'University Chapter'
-    ? document.getElementById('su-chapter-uni').value
-    : null;
+  const chapterUni = selectedRole === 'University Chapter' ? document.getElementById('su-chapter-uni').value : null;
   if (pw !== pw2) { alert('Passwords do not match.'); return; }
   const users = loadUsers();
-  if (users.find(u => u.email === email)) { alert('An account with this email already exists. Please sign in.'); return; }
+  if (users.find(u => u.email === email)) { alert('Email already exists.'); return; }
   const pwHash = await sha256(pw);
-  const user = {
-    id: 'user-' + Date.now(), name, email, phone,
-    role: selectedRole, chapterUniversity: chapterUni,
-    pwHash, joined: new Date().toISOString()
-  };
-  users.push(user);
-  saveUsers(users);
-  setSession({ id: user.id, name: user.name, email: user.email, role: user.role, chapterUniversity: user.chapterUniversity });
+  const user = { id: 'user-'+Date.now(), name, email, phone, role: selectedRole, chapterUniversity: chapterUni, pwHash, joined: new Date().toISOString() };
+  users.push(user); saveUsers(users);
+  setSession({ id: user.id, name, email, role: selectedRole, chapterUniversity: chapterUni });
   updateAuthUI();
-
-  // If chapter coordinator, jump them to the chapter dashboard
-  if (selectedRole === 'University Chapter') {
-    currentChapter = chapterUni;
-    openModal(`
-      <h3 style="color:var(--green);">🎉 Welcome, ${escapeHtml(name.split(' ')[0])}!</h3>
-      <div class="alert alert-success">
-        Your chapter account for <strong>${escapeHtml(chapterUni)}</strong> has been created.
-      </div>
-      <p style="margin:12px 0;">You can now:</p>
-      <ul style="padding-left:20px; margin-bottom:16px; line-height:1.9;">
-        <li>See all submissions from your university</li>
-        <li>Bulk-upload final-year projects</li>
-        <li>Export a chapter report for your records</li>
-        <li>Track your university on the national leaderboard</li>
-      </ul>
-      <button class="btn" onclick="closeModal(); document.querySelector('nav button[data-view=chapters]').click();">Go to Chapter Dashboard →</button>
-    `);
-    return;
-  }
-
+  if (selectedRole === 'University Chapter' && chapterUni) { currentChapter = chapterUni; }
   openModal(`
-    <h3 style="color:var(--green);">🎉 Welcome to PIYS, ${escapeHtml(name.split(' ')[0])}!</h3>
-    <div class="alert alert-success">
-      Your account has been created. You are now registered as a <strong>${escapeHtml(selectedRole)}</strong>.
-    </div>
-    <p style="margin:12px 0;">You can now:</p>
-    <ul style="padding-left:20px; margin-bottom:16px; line-height:1.9;">
-      ${selectedRole === 'Young Scientist' ? '<li>Submit your research to the national repository</li><li>Get a verifiable certificate of authorship</li><li>Track your submission status</li>' : ''}
-      ${selectedRole === 'Industry / Investor' ? '<li>Browse innovations ready for licensing</li><li>Express interest to innovators directly</li><li>Receive alerts on new submissions in your sector</li>' : ''}
-      ${selectedRole === 'Government / Policy' ? '<li>Access national analytics and trends</li><li>Export reports for policy use</li><li>Coordinate with university chapters</li>' : ''}
-    </ul>
-    <button class="btn" onclick="closeModal(); document.querySelector('nav button[data-view=submit]').click();">Go to Submit Research →</button>
+    <h3 style="color:var(--green);">🎉 Welcome, ${escapeHtml(name.split(' ')[0])}!</h3>
+    <div class="alert alert-success">Registered as <strong>${escapeHtml(selectedRole)}</strong>${chapterUni ? ' — ' + escapeHtml(chapterUni) : ''}.</div>
+    <button class="btn" onclick="closeModal(); ${selectedRole === 'University Chapter' ? "document.querySelector('nav button[data-view=chapters]').click();" : selectedRole === 'Industry / Investor' ? "document.querySelector('nav button[data-view=browse]').click();" : "document.querySelector('nav button[data-view=submit]').click();"}">Continue →</button>
   `);
 }
 
@@ -1375,20 +1850,13 @@ async function handleSignIn(e) {
   const users = loadUsers();
   const pwHash = await sha256(pw);
   const user = users.find(u => u.email === email && u.pwHash === pwHash);
-  if (!user) {
-    alert('Invalid email or password. If you have not registered yet, please create an account.');
-    return;
-  }
+  if (!user) { alert('Invalid credentials.'); return; }
   setSession({ id: user.id, name: user.name, email: user.email, role: user.role, chapterUniversity: user.chapterUniversity });
   updateAuthUI();
-  if (user.role === 'University Chapter' && user.chapterUniversity) {
-    currentChapter = user.chapterUniversity;
-  }
-  openModal(`
-    <h3 style="color:var(--green);">✅ Welcome back, ${escapeHtml(user.name.split(' ')[0])}!</h3>
-    <div class="alert alert-success">You are signed in as <strong>${escapeHtml(user.role)}</strong>${user.chapterUniversity ? ` — ${escapeHtml(user.chapterUniversity)}` : ''}.</div>
-    <button class="btn" onclick="closeModal()">Continue</button>
-  `);
+  if (user.role === 'University Chapter' && user.chapterUniversity) currentChapter = user.chapterUniversity;
+  openModal(`<h3 style="color:var(--green);">✅ Welcome back, ${escapeHtml(user.name.split(' ')[0])}!</h3>
+    <div class="alert alert-success">Signed in as <strong>${escapeHtml(user.role)}</strong>.</div>
+    <button class="btn" onclick="closeModal()">Continue</button>`);
 }
 
 function openProfile() {
@@ -1396,23 +1864,18 @@ function openProfile() {
   if (!user) return;
   openModal(`
     <h3>My Account</h3>
-    <p style="margin:12px 0;"><strong>Name:</strong> ${escapeHtml(user.name)}</p>
-    <p style="margin:12px 0;"><strong>Email:</strong> ${escapeHtml(user.email)}</p>
-    <p style="margin:12px 0;"><strong>Role:</strong> ${escapeHtml(user.role)}</p>
-    ${user.chapterUniversity ? `<p style="margin:12px 0;"><strong>Chapter:</strong> ${escapeHtml(user.chapterUniversity)}</p>` : ''}
-    <div style="margin-top:20px; display:flex; gap:10px;">
+    <p style="margin:8px 0;"><strong>Name:</strong> ${escapeHtml(user.name)}</p>
+    <p style="margin:8px 0;"><strong>Email:</strong> ${escapeHtml(user.email)}</p>
+    <p style="margin:8px 0;"><strong>Role:</strong> ${escapeHtml(user.role)}</p>
+    ${user.chapterUniversity ? `<p style="margin:8px 0;"><strong>Chapter:</strong> ${escapeHtml(user.chapterUniversity)}</p>` : ''}
+    <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
       <button class="btn" onclick="closeModal()">Close</button>
       ${user.role === 'University Chapter' ? `<button class="btn btn-black" onclick="closeModal(); document.querySelector('nav button[data-view=chapters]').click();">Chapter Dashboard</button>` : ''}
       <button class="btn btn-red" onclick="signOut()">Sign Out</button>
     </div>
   `);
 }
-
-window.signOut = function() {
-  setSession(null);
-  updateAuthUI();
-  closeModal();
-};
+window.signOut = function() { setSession(null); updateAuthUI(); closeModal(); };
 
 // ================= INIT =================
 renderStats();
@@ -1421,6 +1884,7 @@ renderBrowse();
 renderAdmin();
 renderChapterDashboard();
 updateAuthUI();
+updateSavedBanner();
 </script>
 </body>
 </html>
