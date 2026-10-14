@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PIYS Young Scientists Repository — Uganda</title>
+<title>PIYS — Presidential Initiative for Young Scientists | National Repository</title>
 <style>
   :root {
     --black: #000000;
@@ -13,15 +13,14 @@
     --grey: #F4F4F4;
     --dark-grey: #1a1a1a;
     --mid-grey: #666;
+    --green: #1e8e3e;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
   body { background: var(--grey); color: var(--black); line-height: 1.6; }
 
   /* ===== HEADER ===== */
   header {
-    background: var(--black);
-    color: var(--white);
-    padding: 0;
+    background: var(--black); color: var(--white);
     position: sticky; top: 0; z-index: 100;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   }
@@ -36,54 +35,75 @@
       var(--red) 83.3%, var(--red) 100%);
   }
   .header-inner {
-    max-width: 1200px; margin: 0 auto;
-    padding: 16px 24px;
+    max-width: 1280px; margin: 0 auto;
+    padding: 14px 24px;
     display: flex; justify-content: space-between; align-items: center;
     flex-wrap: wrap; gap: 12px;
   }
   .logo { display: flex; align-items: center; gap: 12px; }
   .logo-mark {
-    width: 44px; height: 44px; border-radius: 50%;
+    width: 48px; height: 48px; border-radius: 50%;
     background: var(--yellow);
     display: flex; align-items: center; justify-content: center;
-    font-weight: 800; color: var(--black); font-size: 18px;
-    border: 3px solid var(--red);
+    font-weight: 800; color: var(--black); font-size: 13px;
+    border: 3px solid var(--red); line-height: 1; text-align: center;
   }
-  .logo-text h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.3px; }
-  .logo-text p { font-size: 11px; color: var(--yellow); text-transform: uppercase; letter-spacing: 1.5px; }
-  nav ul { display: flex; list-style: none; gap: 6px; flex-wrap: wrap; }
+  .logo-text h1 { font-size: 15px; font-weight: 800; letter-spacing: 0.3px; line-height: 1.2; }
+  .logo-text h1 .piys-accent { color: var(--yellow); }
+  .logo-text p { font-size: 10px; color: #bbb; text-transform: uppercase; letter-spacing: 1.4px; margin-top: 2px; }
+  nav ul { display: flex; list-style: none; gap: 4px; flex-wrap: wrap; align-items: center; }
   nav button {
     background: transparent; color: var(--white);
-    border: 1px solid transparent; padding: 8px 14px;
-    border-radius: 6px; cursor: pointer; font-size: 14px;
+    border: 1px solid transparent; padding: 8px 12px;
+    border-radius: 6px; cursor: pointer; font-size: 13px;
     font-weight: 500; transition: all 0.2s;
   }
   nav button:hover { background: rgba(252,220,4,0.15); color: var(--yellow); }
   nav button.active { background: var(--yellow); color: var(--black); font-weight: 700; }
+  nav .signin-btn {
+    background: var(--red); color: var(--white); font-weight: 700;
+    padding: 8px 16px; margin-left: 6px;
+  }
+  nav .signin-btn:hover { background: #b00000; color: var(--white); }
+  nav .user-badge {
+    background: var(--yellow); color: var(--black);
+    padding: 6px 12px; border-radius: 20px; font-size: 12px;
+    font-weight: 700; margin-left: 6px; cursor: pointer;
+    display: none;
+  }
+  nav .user-badge.active { display: inline-block; }
 
   /* ===== HERO ===== */
   .hero {
     background: linear-gradient(135deg, var(--black) 0%, var(--dark-grey) 100%);
-    color: var(--white); padding: 48px 24px; text-align: center;
+    color: var(--white); padding: 44px 24px 40px; text-align: center;
     border-bottom: 4px solid var(--yellow);
   }
-  .hero h2 { font-size: 32px; margin-bottom: 12px; font-weight: 800; }
+  .hero .eyebrow {
+    display: inline-block; background: rgba(252,220,4,0.15);
+    color: var(--yellow); padding: 6px 14px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.5px; margin-bottom: 16px;
+    border: 1px solid rgba(252,220,4,0.3);
+  }
+  .hero h2 { font-size: 30px; margin-bottom: 10px; font-weight: 800; line-height: 1.2; }
   .hero h2 span { color: var(--yellow); }
-  .hero p { max-width: 720px; margin: 0 auto 20px; color: #ccc; font-size: 16px; }
-  .hero-stats { display: flex; justify-content: center; gap: 40px; margin-top: 28px; flex-wrap: wrap; }
+  .hero p.sub { max-width: 760px; margin: 0 auto 20px; color: #ccc; font-size: 15px; }
+  .hero-stats { display: flex; justify-content: center; gap: 36px; margin-top: 26px; flex-wrap: wrap; }
   .stat { text-align: center; }
-  .stat .num { font-size: 28px; font-weight: 800; color: var(--yellow); }
-  .stat .lbl { font-size: 12px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+  .stat .num { font-size: 26px; font-weight: 800; color: var(--yellow); }
+  .stat .lbl { font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
 
   /* ===== MAIN ===== */
-  main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 64px; }
+  main { max-width: 1280px; margin: 0 auto; padding: 32px 24px 64px; }
   .view { display: none; }
   .view.active { display: block; }
 
   h3.section-title {
-    font-size: 22px; margin-bottom: 20px; padding-bottom: 10px;
+    font-size: 20px; margin-bottom: 18px; padding-bottom: 8px;
     border-bottom: 3px solid var(--yellow); display: inline-block;
   }
+  .section-header-row { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
 
   /* ===== CARDS ===== */
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
@@ -92,18 +112,20 @@
     border-left: 5px solid var(--yellow);
     box-shadow: 0 2px 6px rgba(0,0,0,0.06);
     transition: transform 0.2s, box-shadow 0.2s;
+    display: flex; flex-direction: column;
   }
   .card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
   .card .tag {
     display: inline-block; background: var(--red); color: var(--white);
     font-size: 10px; padding: 3px 9px; border-radius: 12px;
     text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700;
-    margin-bottom: 8px;
+    margin-bottom: 8px; align-self: flex-start;
   }
   .card .tag.yellow { background: var(--yellow); color: var(--black); }
-  .card h4 { font-size: 16px; margin-bottom: 6px; line-height: 1.3; }
+  .card h4 { font-size: 15px; margin-bottom: 6px; line-height: 1.3; }
   .card .meta { font-size: 12px; color: var(--mid-grey); margin-bottom: 10px; }
-  .card .abstract { font-size: 13px; color: #333; margin-bottom: 12px; }
+  .card .meta strong { color: var(--black); }
+  .card .abstract { font-size: 13px; color: #333; margin-bottom: 12px; flex-grow: 1; }
   .card .footer { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--mid-grey); border-top: 1px solid #eee; padding-top: 10px; }
   .hash { font-family: monospace; font-size: 10px; color: var(--mid-grey); word-break: break-all; }
 
@@ -127,6 +149,7 @@
     padding: 12px 24px; border-radius: 6px; font-size: 14px;
     font-weight: 700; cursor: pointer; transition: all 0.2s;
     text-transform: uppercase; letter-spacing: 0.5px;
+    display: inline-block; text-decoration: none; text-align: center;
   }
   .btn:hover { background: #e6c800; transform: translateY(-1px); }
   .btn-red { background: var(--red); color: var(--white); }
@@ -134,6 +157,8 @@
   .btn-black { background: var(--black); color: var(--white); }
   .btn-black:hover { background: #333; }
   .btn-sm { padding: 7px 14px; font-size: 12px; }
+  .btn-outline { background: transparent; color: var(--black); border: 2px solid var(--black); }
+  .btn-outline:hover { background: var(--black); color: var(--white); }
 
   /* ===== FILTERS ===== */
   .filters { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
@@ -142,11 +167,11 @@
 
   /* ===== ALERTS ===== */
   .alert { padding: 12px 16px; border-radius: 6px; margin-bottom: 16px; font-size: 14px; }
-  .alert-success { background: #e6f4ea; border-left: 4px solid #1e8e3e; color: #0d5c26; }
+  .alert-success { background: #e6f4ea; border-left: 4px solid var(--green); color: #0d5c26; }
   .alert-info { background: #fff9e0; border-left: 4px solid var(--yellow); color: #665500; }
   .alert-error { background: #fdecea; border-left: 4px solid var(--red); color: #8b0000; }
 
-  /* ===== TABLE (Admin) ===== */
+  /* ===== TABLE ===== */
   table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
   th { background: var(--black); color: var(--yellow); padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; }
   td { padding: 12px; border-bottom: 1px solid #eee; font-size: 13px; }
@@ -155,17 +180,20 @@
 
   /* ===== MODAL ===== */
   .modal-bg {
-    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65);
     z-index: 200; align-items: center; justify-content: center; padding: 20px;
+    overflow-y: auto;
   }
   .modal-bg.active { display: flex; }
   .modal {
     background: var(--white); border-radius: 10px; max-width: 640px; width: 100%;
-    max-height: 90vh; overflow-y: auto; padding: 28px;
-    border-top: 6px solid var(--yellow);
+    max-height: 92vh; overflow-y: auto; padding: 28px;
+    border-top: 6px solid var(--yellow); position: relative;
+    animation: modalIn 0.25s ease-out;
   }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   .modal h3 { margin-bottom: 16px; }
-  .modal .close { float: right; cursor: pointer; font-size: 22px; color: var(--mid-grey); border: none; background: none; }
+  .modal .close { position: absolute; top: 16px; right: 20px; cursor: pointer; font-size: 24px; color: var(--mid-grey); border: none; background: none; line-height: 1; }
 
   /* ===== FOOTER ===== */
   footer {
@@ -174,6 +202,7 @@
   }
   footer .flag-stripe { margin-bottom: 16px; }
   footer strong { color: var(--yellow); }
+  footer .footer-full-name { color: var(--white); font-weight: 700; font-size: 14px; }
 
   .badge-trl {
     display: inline-block; background: var(--black); color: var(--yellow);
@@ -182,6 +211,28 @@
 
   .empty { text-align: center; padding: 48px 20px; color: var(--mid-grey); }
   .empty .icon { font-size: 48px; margin-bottom: 12px; }
+
+  /* ===== SIGN-UP ROLE CARDS ===== */
+  .role-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+  @media (max-width: 520px) { .role-cards { grid-template-columns: 1fr; } }
+  .role-card {
+    border: 2px solid #ddd; border-radius: 8px; padding: 14px;
+    cursor: pointer; transition: all 0.2s; text-align: left;
+    background: var(--white);
+  }
+  .role-card:hover { border-color: var(--yellow); background: #fffdf0; }
+  .role-card.selected { border-color: var(--red); background: #fff5f5; box-shadow: 0 0 0 3px rgba(217,0,0,0.1); }
+  .role-card .role-icon { font-size: 24px; margin-bottom: 6px; }
+  .role-card .role-name { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+  .role-card .role-desc { font-size: 11px; color: var(--mid-grey); line-height: 1.3; }
+
+  .tab-switch { display: flex; border-bottom: 2px solid #eee; margin-bottom: 20px; }
+  .tab-switch button {
+    flex: 1; padding: 12px; background: none; border: none;
+    font-size: 14px; font-weight: 700; cursor: pointer; color: var(--mid-grey);
+    border-bottom: 3px solid transparent; margin-bottom: -2px;
+  }
+  .tab-switch button.active { color: var(--black); border-bottom-color: var(--yellow); }
 </style>
 </head>
 <body>
@@ -191,10 +242,10 @@
   <div class="flag-stripe"></div>
   <div class="header-inner">
     <div class="logo">
-      <div class="logo-mark">YS</div>
+      <div class="logo-mark">PIYS</div>
       <div class="logo-text">
-        <h1>PIYS Young Scientists Repository</h1>
-        <p>Republic of Uganda · STI-OP · IUYSC</p>
+        <h1>Presidential Initiative for <span class="piys-accent">Young Scientists</span></h1>
+        <p>Republic of Uganda · STI-OP · IUYSC National Repository</p>
       </div>
     </div>
     <nav>
@@ -204,6 +255,8 @@
         <li><button data-view="submit">Submit Research</button></li>
         <li><button data-view="admin">Admin</button></li>
         <li><button data-view="about">About</button></li>
+        <li><button class="signin-btn" id="open-auth">Sign In / Sign Up</button></li>
+        <li><button class="user-badge" id="user-badge"></button></li>
       </ul>
     </nav>
   </div>
@@ -211,8 +264,9 @@
 
 <!-- ================= HERO ================= -->
 <section class="hero" id="hero">
-  <h2>From <span>Subsistence Science</span> to <span>Commercial Science</span></h2>
-  <p>Protecting and advancing the research of Uganda's young scientists — one innovation at a time. Every project submitted is timestamped, hashed, and preserved for national development.</p>
+  <div class="eyebrow">🇺🇬 Official National Repository</div>
+  <h2>Presidential Initiative for <span>Young Scientists</span></h2>
+  <p class="sub">Protecting and advancing the research of Uganda's young scientists — from university laboratories to national industries. Every innovation submitted is timestamped, hashed, and preserved for national development.</p>
   <div class="hero-stats">
     <div class="stat"><div class="num" id="stat-total">0</div><div class="lbl">Innovations</div></div>
     <div class="stat"><div class="num" id="stat-universities">0</div><div class="lbl">Universities</div></div>
@@ -226,7 +280,10 @@
 
   <!-- ===== HOME VIEW ===== -->
   <section class="view active" id="view-home">
-    <h3 class="section-title">Featured Innovations</h3>
+    <div class="section-header-row">
+      <h3 class="section-title">Featured Innovations Across Uganda</h3>
+      <button class="btn btn-sm btn-outline" onclick="document.querySelector('nav button[data-view=browse]').click()">View All →</button>
+    </div>
     <div id="home-featured" class="grid"></div>
   </section>
 
@@ -269,7 +326,7 @@
         <div class="two-col">
           <div class="form-row">
             <label>Your Full Name <span class="req">*</span></label>
-            <input type="text" id="f-author" required placeholder="e.g., Wamezaya Ebenezer" />
+            <input type="text" id="f-author" required placeholder="e.g., Musoga Reagan" />
           </div>
           <div class="form-row">
             <label>Email <span class="req">*</span></label>
@@ -364,7 +421,7 @@
   <!-- ===== ADMIN VIEW ===== -->
   <section class="view" id="view-admin">
     <h3 class="section-title">Administrator Dashboard</h3>
-    <div class="alert alert-info">Demo admin view — in production this is role-protected (IUYSC / STI-OP only).</div>
+    <div class="alert alert-info">Demo admin view — in production this is role-protected (PIYS / IUYSC / STI-OP only).</div>
     <div style="overflow-x:auto;">
       <table>
         <thead>
@@ -415,25 +472,27 @@
 <!-- ================= FOOTER ================= -->
 <footer>
   <div class="flag-stripe"></div>
-  <p><strong>Presidential Initiative for Young Scientists (PIYS)</strong> · Inter-University Young Scientists Consortium (IUYSC)</p>
+  <p class="footer-full-name">Presidential Initiative for Young Scientists (PIYS)</p>
+  <p style="margin-top:4px;">Inter-University Young Scientists Consortium (IUYSC)</p>
   <p style="margin-top:8px;">Mobilising Uganda's young scientists for innovation, industrialisation and national transformation.</p>
   <p style="margin-top:12px; font-size:11px;">© 2026 IUYSC · Presented to the Science, Technology and Innovation Office of the President</p>
 </footer>
 
 <script>
 // ================= STATE =================
-const STORAGE_KEY = 'piys_repository_v1';
+const STORAGE_KEY = 'piys_repository_v2';
+const USERS_KEY = 'piys_users_v1';
+const SESSION_KEY = 'piys_session_v1';
 
 function loadData() {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (raw) return JSON.parse(raw);
-  // Seed with demo data
   const seed = [
     {
       id: 'seed-1',
       title: 'Low-Cost Solar-Powered Malaria Diagnostic Kit',
-      author: 'Nakato Sarah',
-      email: 'sarah@mak.ac.ug',
+      author: 'Musoga Reagan',
+      email: 'reagan.musoga@mak.ac.ug',
       university: 'Makerere University',
       course: 'BSc. Biomedical Engineering',
       sector: 'Medical Devices & Diagnostics',
@@ -447,15 +506,15 @@ function loadData() {
     },
     {
       id: 'seed-2',
-      title: 'Cassava Peel Biochar for Soil Restoration',
-      author: 'Okello Brian',
-      email: 'brian@gulu.ac.ug',
-      university: 'Gulu University',
-      course: 'BSc. Agriculture',
+      title: 'Cassava Peel Biochar for Soil Restoration in Northern Uganda',
+      author: 'Wamezaya Ebenezer',
+      email: 'ebenezer.wamezaya@mak.ac.ug',
+      university: 'Makerere University',
+      course: 'BSc. Agricultural Engineering',
       sector: 'Agriculture & Agro-processing',
       trl: 6,
-      abstract: 'Converting cassava peel waste into biochar to restore degraded northern Uganda soils — increasing maize yield by 32% in field trials while reducing agricultural waste.',
-      keywords: 'cassava, biochar, soil, waste, yield',
+      abstract: 'Converting cassava peel waste into biochar to restore degraded northern Uganda soils — increasing maize yield by 32% in field trials while reducing agricultural waste and creating rural jobs.',
+      keywords: 'cassava, biochar, soil, waste, yield, circular economy',
       visibility: 'public',
       date: new Date('2026-09-02').toISOString(),
       hash: 'b4e6d0f2c8a3519e7b2d4f6a0c8e3b5d9f7a2c4e6b8d0f2a4c6e8b1d3f5a7c9e',
@@ -464,41 +523,148 @@ function loadData() {
     {
       id: 'seed-3',
       title: 'AI-Powered Luganda Language Tutor for Primary Schools',
-      author: 'Auma Grace',
-      email: 'grace@kyambogo.ac.ug',
-      university: 'Kyambogo University',
+      author: 'Ssemwogerere Jordan',
+      email: 'jordan.ssemwogerere@must.ac.ug',
+      university: 'Mbarara University of Science & Technology',
       course: 'BSc. Computer Science',
       sector: 'ICT & Artificial Intelligence',
-      trl: 3,
-      abstract: 'A mobile app using speech recognition and NLP to teach Luganda literacy to primary school children, with offline capability for low-connectivity areas.',
-      keywords: 'Luganda, AI, education, mobile, NLP',
-      visibility: 'protected',
+      trl: 5,
+      abstract: 'A mobile app using speech recognition and NLP to teach Luganda literacy to primary school children, with offline capability for low-connectivity areas. Pilot-tested in 12 schools across Ankole.',
+      keywords: 'Luganda, AI, education, mobile, NLP, literacy',
+      visibility: 'public',
       date: new Date('2026-09-20').toISOString(),
       hash: 'c5f7e1a3d9b4620f8c3e5a7b1d9f4c6e0a8b2d4f6c8e0a2b4d6f8c1e3a5b7d9f',
+      status: 'Published'
+    },
+    {
+      id: 'seed-4',
+      title: 'Solar-Powered Cold Chain for Smallholder Dairy Farmers',
+      author: 'Kassaga Andrew',
+      email: 'andrew.kassaga@busitema.ac.ug',
+      university: 'Busitema University',
+      course: 'BSc. Renewable Energy Engineering',
+      sector: 'Renewable Energy',
+      trl: 7,
+      abstract: 'A decentralized solar-powered milk cooling system for smallholder dairy farmers in eastern Uganda — reducing post-harvest milk losses by 68% and increasing farmer incomes. Currently deployed in 3 districts.',
+      keywords: 'solar, cold chain, dairy, milk, off-grid, smallholder',
+      visibility: 'public',
+      date: new Date('2026-08-28').toISOString(),
+      hash: 'd6a8f2b4e0c5731a9d4f6b8c2e0a5d7f1b9c3e5a7d9f1b3c5e7a9d2f4b6c8e0a',
+      status: 'Published'
+    },
+    {
+      id: 'seed-5',
+      title: 'Low-Cost Prosthetic Hand with EMG Signal Control',
+      author: 'Nabukeera Aisha',
+      email: 'aisha.nabukeera@kyambogo.ac.ug',
+      university: 'Kyambogo University',
+      course: 'BSc. Mechatronics Engineering',
+      sector: 'Engineering & Manufacturing',
+      trl: 5,
+      abstract: 'A 3D-printed prosthetic hand controlled by electromyography (EMG) signals from residual limb muscles. Cost: UGX 850,000 vs. UGX 12M for imported alternatives. Tested with 8 amputees in Kampala.',
+      keywords: 'prosthetics, EMG, 3D printing, assistive tech, affordable',
+      visibility: 'public',
+      date: new Date('2026-09-10').toISOString(),
+      hash: 'e7b9a3c5f1d6842b0e5a7c9d3f1b6e8a2c4d6f8b0a2c4e6d8f1b3a5c7e9d2f4b',
+      status: 'Published'
+    },
+    {
+      id: 'seed-6',
+      title: 'Indigenous Herbal Formulation for Wound Healing',
+      author: 'Ochieng Daniel',
+      email: 'daniel.ochieng@gulu.ac.ug',
+      university: 'Gulu University',
+      course: 'BPharm. Pharmacy',
+      sector: 'Health & Pharmaceuticals',
+      trl: 4,
+      abstract: 'A standardized topical formulation from locally available medicinal plants (Bidens pilosa and Vernonia amygdalina) showing 40% faster wound closure in clinical trials compared to conventional dressings.',
+      keywords: 'herbal medicine, wound healing, indigenous knowledge, pharmaceuticals',
+      visibility: 'protected',
+      date: new Date('2026-09-25').toISOString(),
+      hash: 'f8c0b4d6a2e7953c1f6b8d0e4a2c7f9b3d5e7a9c1f3b5d7e9a2c4f6b8d0e2a4c',
       status: 'Under Review'
+    },
+    {
+      id: 'seed-7',
+      title: 'Smart Water Quality Monitoring for Lake Victoria',
+      author: 'Namatovu Patricia',
+      email: 'patricia.namatovu@mak.ac.ug',
+      university: 'Makerere University',
+      course: 'BSc. Environmental Science',
+      sector: 'Environmental Technologies',
+      trl: 6,
+      abstract: 'An IoT-based sensor network that monitors pH, turbidity, and heavy metal contamination in Lake Victoria in real time, alerting fishing communities and regulators via SMS when unsafe levels are detected.',
+      keywords: 'IoT, water quality, Lake Victoria, sensors, environment',
+      visibility: 'public',
+      date: new Date('2026-09-15').toISOString(),
+      hash: 'a9d1c5e7b3f8064d2a7c9e1f5b3d8a0c4e6f8a1b3d5c7e9f2a4b6d8c0e2f4a6b',
+      status: 'Published'
+    },
+    {
+      id: 'seed-8',
+      title: 'Biogas from Market Waste for Urban Households',
+      author: 'Tumusiime Robert',
+      email: 'robert.tumusiime@must.ac.ug',
+      university: 'Mbarara University of Science & Technology',
+      course: 'BSc. Environmental Engineering',
+      sector: 'Renewable Energy',
+      trl: 6,
+      abstract: 'A modular anaerobic digester that converts market vegetable waste into cooking biogas for urban households. One unit serves 4 families, reducing charcoal use by 70% and indoor air pollution.',
+      keywords: 'biogas, waste-to-energy, urban, clean cooking',
+      visibility: 'public',
+      date: new Date('2026-09-05').toISOString(),
+      hash: 'b0e2d6f8c4a9175e3b8d0f2a6c4e9b1d5f7a9c2e4b6d8f0a3c5e7b9d1f3a5c7e',
+      status: 'Published'
     }
   ];
   localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
   return seed;
 }
 
-function saveData(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
+function saveData(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
 
 let DB = loadData();
 
-// ================= HASHING (SHA-256) =================
+// ================= USERS =================
+function loadUsers() {
+  const raw = localStorage.getItem(USERS_KEY);
+  return raw ? JSON.parse(raw) : [];
+}
+function saveUsers(users) { localStorage.setItem(USERS_KEY, JSON.stringify(users)); }
+function getSession() {
+  const raw = localStorage.getItem(SESSION_KEY);
+  return raw ? JSON.parse(raw) : null;
+}
+function setSession(user) {
+  if (user) localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+  else localStorage.removeItem(SESSION_KEY);
+}
+function updateAuthUI() {
+  const user = getSession();
+  const badge = document.getElementById('user-badge');
+  const btn = document.getElementById('open-auth');
+  if (user) {
+    badge.textContent = `${user.name.split(' ')[0]} · ${user.role.split(' ')[0]}`;
+    badge.classList.add('active');
+    badge.onclick = () => openProfile();
+    btn.style.display = 'none';
+  } else {
+    badge.classList.remove('active');
+    btn.style.display = 'inline-block';
+  }
+}
+
+// ================= HASH =================
 async function sha256(text) {
   const buf = new TextEncoder().encode(text);
   const hashBuf = await crypto.subtle.digest('SHA-256', buf);
   return Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-// ================= NAVIGATION =================
-document.querySelectorAll('nav button').forEach(btn => {
+// ================= NAV =================
+document.querySelectorAll('nav button[data-view]').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('nav button[data-view]').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     const view = document.getElementById('view-' + btn.dataset.view);
@@ -518,18 +684,17 @@ function renderStats() {
   document.getElementById('stat-protected').textContent = DB.filter(d => d.hash).length;
 }
 
-// ================= CARD RENDERER =================
+// ================= CARD =================
 function cardHTML(item) {
-  const isProtected = item.visibility === 'protected';
-  const isPrivate = item.visibility === 'private';
-  const abstract = isProtected || isPrivate
+  const isProtected = item.visibility !== 'public';
+  const abstract = isProtected
     ? '<em style="color:var(--mid-grey);">Details protected. Contact author via the consortium to request access.</em>'
     : item.abstract;
   return `
     <div class="card">
-      <span class="tag ${item.visibility === 'public' ? '' : 'yellow'}">${item.sector}</span>
+      <span class="tag ${item.visibility === 'public' ? '' : 'yellow'}">${escapeHtml(item.sector)}</span>
       <h4>${escapeHtml(item.title)}</h4>
-      <div class="meta">${escapeHtml(item.author)} · ${escapeHtml(item.university)}</div>
+      <div class="meta"><strong>${escapeHtml(item.author)}</strong> · ${escapeHtml(item.university)}</div>
       <div class="abstract">${abstract}</div>
       <div class="footer">
         <span class="badge-trl">TRL ${item.trl}</span>
@@ -542,14 +707,13 @@ function cardHTML(item) {
     </div>
   `;
 }
-
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 // ================= HOME =================
 function renderHome() {
-  const featured = DB.filter(d => d.visibility === 'public').slice(0, 6);
+  const featured = DB.filter(d => d.visibility === 'public').slice(0, 8);
   document.getElementById('home-featured').innerHTML = featured.length
     ? featured.map(cardHTML).join('')
     : '<div class="empty"><div class="icon">🔬</div><p>No innovations yet. Be the first to submit!</p></div>';
@@ -559,32 +723,26 @@ function renderHome() {
 function populateFilters() {
   const sectors = [...new Set(DB.map(d => d.sector))].sort();
   const unis = [...new Set(DB.map(d => d.university))].sort();
-  const sectorSel = document.getElementById('filter-sector');
-  const uniSel = document.getElementById('filter-university');
-  sectorSel.innerHTML = '<option value="">All Sectors</option>' + sectors.map(s => `<option>${escapeHtml(s)}</option>`).join('');
-  uniSel.innerHTML = '<option value="">All Universities</option>' + unis.map(u => `<option>${escapeHtml(u)}</option>`).join('');
+  document.getElementById('filter-sector').innerHTML = '<option value="">All Sectors</option>' + sectors.map(s => `<option>${escapeHtml(s)}</option>`).join('');
+  document.getElementById('filter-university').innerHTML = '<option value="">All Universities</option>' + unis.map(u => `<option>${escapeHtml(u)}</option>`).join('');
 }
-
 function renderBrowse() {
   populateFilters();
   const q = document.getElementById('search-input').value.toLowerCase().trim();
   const sector = document.getElementById('filter-sector').value;
   const uni = document.getElementById('filter-university').value;
   const trl = document.getElementById('filter-trl').value;
-
   let results = DB.filter(d => d.visibility !== 'private');
   if (q) results = results.filter(d =>
-    (d.title + ' ' + d.author + ' ' + d.abstract + ' ' + (d.keywords||'')).toLowerCase().includes(q)
+    (d.title + ' ' + d.author + ' ' + d.abstract + ' ' + (d.keywords||'') + ' ' + d.university).toLowerCase().includes(q)
   );
   if (sector) results = results.filter(d => d.sector === sector);
   if (uni) results = results.filter(d => d.university === uni);
   if (trl) results = results.filter(d => String(d.trl) === trl);
-
   document.getElementById('browse-results').innerHTML = results.length
     ? results.map(cardHTML).join('')
     : '<div class="empty"><div class="icon">🔍</div><p>No innovations match your filters.</p></div>';
 }
-
 ['search-input','filter-sector','filter-university','filter-trl'].forEach(id => {
   document.addEventListener('input', e => { if (e.target.id === id) renderBrowse(); });
   document.addEventListener('change', e => { if (e.target.id === id) renderBrowse(); });
@@ -600,47 +758,42 @@ document.getElementById('clear-filters').addEventListener('click', () => {
 // ================= SUBMIT =================
 document.getElementById('submit-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const title = document.getElementById('f-title').value.trim();
-  const author = document.getElementById('f-author').value.trim();
-  const email = document.getElementById('f-email').value.trim();
-  const university = document.getElementById('f-university').value;
-  const course = document.getElementById('f-course').value.trim();
-  const sector = document.getElementById('f-sector').value;
-  const trl = parseInt(document.getElementById('f-trl').value);
-  const abstract = document.getElementById('f-abstract').value.trim();
-  const keywords = document.getElementById('f-keywords').value.trim();
-  const visibility = document.getElementById('f-visibility').value;
-
-  const payload = { title, author, email, university, course, sector, trl, abstract, keywords, visibility, date: new Date().toISOString() };
+  const user = getSession();
+  const payload = {
+    title: document.getElementById('f-title').value.trim(),
+    author: document.getElementById('f-author').value.trim(),
+    email: document.getElementById('f-email').value.trim(),
+    university: document.getElementById('f-university').value,
+    course: document.getElementById('f-course').value.trim(),
+    sector: document.getElementById('f-sector').value,
+    trl: parseInt(document.getElementById('f-trl').value),
+    abstract: document.getElementById('f-abstract').value.trim(),
+    keywords: document.getElementById('f-keywords').value.trim(),
+    visibility: document.getElementById('f-visibility').value,
+    date: new Date().toISOString(),
+    submittedBy: user ? user.email : null
+  };
   const hash = await sha256(JSON.stringify(payload) + Date.now());
-
   const item = { ...payload, id: 'item-' + Date.now(), hash, status: 'Submitted' };
   DB.push(item);
   saveData(DB);
-
-  renderStats();
-  renderHome();
-  renderBrowse();
-  renderAdmin();
-
-  // Show success modal with certificate info
+  renderStats(); renderHome(); renderBrowse(); renderAdmin();
   openModal(`
-    <h3 style="color:#1e8e3e;">✅ Research Submitted &amp; Protected</h3>
+    <h3 style="color:var(--green);">✅ Research Submitted &amp; Protected</h3>
     <div class="alert alert-success">
       Your innovation has been timestamped and assigned a unique SHA-256 hash — a verifiable proof of authorship.
     </div>
-    <p style="margin:12px 0;"><strong>Title:</strong> ${escapeHtml(title)}</p>
-    <p style="margin:12px 0;"><strong>Author:</strong> ${escapeHtml(author)}</p>
+    <p style="margin:12px 0;"><strong>Title:</strong> ${escapeHtml(payload.title)}</p>
+    <p style="margin:12px 0;"><strong>Author:</strong> ${escapeHtml(payload.author)}</p>
     <p style="margin:12px 0;"><strong>Submitted:</strong> ${new Date(item.date).toLocaleString('en-GB')}</p>
     <p style="margin:12px 0;"><strong>SHA-256 Hash:</strong></p>
     <div class="hash" style="background:var(--grey); padding:10px; border-radius:6px;">${hash}</div>
-    <p style="margin-top:16px; font-size:13px; color:var(--mid-grey);">Keep this hash safe. It proves you submitted this work on this date. For formal IP protection, contact URSB or the IUYSC IP Support Centre.</p>
-    <div style="margin-top:20px; display:flex; gap:10px;">
+    <p style="margin-top:16px; font-size:13px; color:var(--mid-grey);">Keep this hash safe. It proves you submitted this work on this date. For formal IP protection, contact URSB or the PIYS IP Support Centre.</p>
+    <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
       <button class="btn" onclick="downloadCertificate('${item.id}')">📄 Download Certificate</button>
       <button class="btn btn-black" onclick="closeModal()">Close</button>
     </div>
   `);
-
   e.target.reset();
 });
 
@@ -649,16 +802,17 @@ window.downloadCertificate = function(id) {
   const item = DB.find(d => d.id === id);
   if (!item) return;
   const cert = `
-PRESIDENTIAL INITIATIVE FOR YOUNG SCIENTISTS (PIYS)
-Inter-University Young Scientists Consortium (IUYSC)
-Republic of Uganda
+============================================================
+   PRESIDENTIAL INITIATIVE FOR YOUNG SCIENTISTS (PIYS)
+        Inter-University Young Scientists Consortium
+                    Republic of Uganda
+============================================================
 
-============================================================
            CERTIFICATE OF RESEARCH SUBMISSION
-============================================================
 
 This certifies that the following research/innovation has been
-officially recorded in the National Young Scientists Repository.
+officially recorded in the National Young Scientists Repository
+under the Presidential Initiative for Young Scientists (PIYS).
 
 Title:        ${item.title}
 Author:       ${item.author}
@@ -716,7 +870,6 @@ function renderAdmin() {
     </tr>
   `).join('');
 }
-
 window.deleteItem = function(id) {
   if (!confirm('Delete this submission? This cannot be undone.')) return;
   DB = DB.filter(d => d.id !== id);
@@ -729,13 +882,9 @@ function openModal(html) {
   document.getElementById('modal-content').innerHTML = html;
   document.getElementById('modal-bg').classList.add('active');
 }
-window.closeModal = function() {
-  document.getElementById('modal-bg').classList.remove('active');
-};
+window.closeModal = function() { document.getElementById('modal-bg').classList.remove('active'); };
 document.getElementById('modal-close').addEventListener('click', closeModal);
-document.getElementById('modal-bg').addEventListener('click', e => {
-  if (e.target.id === 'modal-bg') closeModal();
-});
+document.getElementById('modal-bg').addEventListener('click', e => { if (e.target.id === 'modal-bg') closeModal(); });
 
 window.viewItem = function(id) {
   const d = DB.find(x => x.id === id);
@@ -750,7 +899,7 @@ window.viewItem = function(id) {
     </p>
     <p style="margin-bottom:14px;"><span class="badge-trl">TRL ${d.trl}</span> <span class="badge-trl" style="background:var(--red); color:white;">${d.status}</span></p>
     <h4 style="margin-bottom:8px;">Abstract</h4>
-    <p style="margin-bottom:16px;">${isProtected ? '<em>This research is protected. Contact the IUYSC to request access from the author.</em>' : escapeHtml(d.abstract)}</p>
+    <p style="margin-bottom:16px;">${isProtected ? '<em>This research is protected. Contact the PIYS/IUYSC to request access from the author.</em>' : escapeHtml(d.abstract)}</p>
     ${d.keywords ? `<p style="font-size:13px; color:var(--mid-grey);"><strong>Keywords:</strong> ${escapeHtml(d.keywords)}</p>` : ''}
     <h4 style="margin:16px 0 8px;">Proof of Authorship (SHA-256)</h4>
     <div class="hash" style="background:var(--grey); padding:10px; border-radius:6px;">${d.hash}</div>
@@ -762,10 +911,192 @@ window.viewItem = function(id) {
   `);
 };
 
+// ================= AUTH (SIGN IN / SIGN UP) =================
+let selectedRole = 'Young Scientist';
+
+const ROLES = [
+  { id: 'Young Scientist', icon: '🔬', desc: 'Student or early-career researcher with an innovation to protect.' },
+  { id: 'University Chapter', icon: '🎓', desc: 'Representing a university IUYSC chapter or research office.' },
+  { id: 'Industry / Investor', icon: '🏭', desc: 'Looking to license, fund, or manufacture innovations.' },
+  { id: 'Government / Policy', icon: '🏛️', desc: 'STI-OP, ministry, regulator, or development partner.' }
+];
+
+document.getElementById('open-auth').addEventListener('click', () => openAuthModal('signin'));
+
+function openAuthModal(tab = 'signin') {
+  selectedRole = 'Young Scientist';
+  openModal(`
+    <div class="tab-switch">
+      <button id="tab-signin" class="${tab === 'signin' ? 'active' : ''}">Sign In</button>
+      <button id="tab-signup" class="${tab === 'signup' ? 'active' : ''}">Create Account</button>
+    </div>
+    <div id="auth-form-container"></div>
+  `);
+  document.getElementById('tab-signin').onclick = () => switchAuthTab('signin');
+  document.getElementById('tab-signup').onclick = () => switchAuthTab('signup');
+  switchAuthTab(tab);
+}
+
+function switchAuthTab(tab) {
+  document.getElementById('tab-signin').classList.toggle('active', tab === 'signin');
+  document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+  const c = document.getElementById('auth-form-container');
+  if (tab === 'signin') {
+    c.innerHTML = `
+      <div class="alert alert-info">Welcome back. Sign in to manage your submissions, or create a new account below.</div>
+      <form id="signin-form">
+        <div class="form-row">
+          <label>Email <span class="req">*</span></label>
+          <input type="email" id="si-email" required placeholder="you@university.ac.ug" />
+        </div>
+        <div class="form-row">
+          <label>Password <span class="req">*</span></label>
+          <input type="password" id="si-password" required placeholder="Your password" />
+        </div>
+        <button type="submit" class="btn" style="width:100%;">Sign In</button>
+      </form>
+      <p style="margin-top:14px; font-size:12px; color:var(--mid-grey); text-align:center;">
+        New here? <a href="#" onclick="switchAuthTab('signup'); return false;" style="color:var(--red); font-weight:700;">Create an account</a>
+      </p>
+    `;
+    document.getElementById('signin-form').addEventListener('submit', handleSignIn);
+  } else {
+    c.innerHTML = `
+      <div class="alert alert-info">Join the national network of young scientists, universities, industry, and government partners.</div>
+      <p style="font-size:13px; font-weight:600; margin-bottom:4px;">I am registering as a: <span class="req">*</span></p>
+      <div class="role-cards" id="role-cards">
+        ${ROLES.map(r => `
+          <div class="role-card ${r.id === selectedRole ? 'selected' : ''}" data-role="${r.id}">
+            <div class="role-icon">${r.icon}</div>
+            <div class="role-name">${r.id}</div>
+            <div class="role-desc">${r.desc}</div>
+          </div>
+        `).join('')}
+      </div>
+      <form id="signup-form">
+        <div class="form-row">
+          <label>Full Name <span class="req">*</span></label>
+          <input type="text" id="su-name" required placeholder="e.g., Musoga Reagan" />
+        </div>
+        <div class="form-row">
+          <label>Email <span class="req">*</span></label>
+          <input type="email" id="su-email" required placeholder="you@university.ac.ug" />
+        </div>
+        <div class="two-col">
+          <div class="form-row">
+            <label>University / Organisation</label>
+            <input type="text" id="su-org" placeholder="e.g., Makerere University" />
+          </div>
+          <div class="form-row">
+            <label>Phone (optional)</label>
+            <input type="tel" id="su-phone" placeholder="+256 7XX XXX XXX" />
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Password <span class="req">*</span></label>
+          <input type="password" id="su-password" required minlength="6" placeholder="At least 6 characters" />
+        </div>
+        <div class="form-row">
+          <label>Confirm Password <span class="req">*</span></label>
+          <input type="password" id="su-password2" required minlength="6" placeholder="Repeat password" />
+        </div>
+        <button type="submit" class="btn btn-red" style="width:100%;">Create My Account</button>
+      </form>
+      <p style="margin-top:14px; font-size:12px; color:var(--mid-grey); text-align:center;">
+        Already have an account? <a href="#" onclick="switchAuthTab('signin'); return false;" style="color:var(--red); font-weight:700;">Sign in</a>
+      </p>
+    `;
+    document.querySelectorAll('#role-cards .role-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('#role-cards .role-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedRole = card.dataset.role;
+      });
+    });
+    document.getElementById('signup-form').addEventListener('submit', handleSignUp);
+  }
+}
+
+async function handleSignUp(e) {
+  e.preventDefault();
+  const name = document.getElementById('su-name').value.trim();
+  const email = document.getElementById('su-email').value.trim().toLowerCase();
+  const org = document.getElementById('su-org').value.trim();
+  const phone = document.getElementById('su-phone').value.trim();
+  const pw = document.getElementById('su-password').value;
+  const pw2 = document.getElementById('su-password2').value;
+  if (pw !== pw2) { alert('Passwords do not match.'); return; }
+  const users = loadUsers();
+  if (users.find(u => u.email === email)) { alert('An account with this email already exists. Please sign in.'); return; }
+  const pwHash = await sha256(pw);
+  const user = { id: 'user-' + Date.now(), name, email, org, phone, role: selectedRole, pwHash, joined: new Date().toISOString() };
+  users.push(user);
+  saveUsers(users);
+  setSession({ id: user.id, name: user.name, email: user.email, role: user.role });
+  updateAuthUI();
+  openModal(`
+    <h3 style="color:var(--green);">🎉 Welcome to PIYS, ${escapeHtml(name.split(' ')[0])}!</h3>
+    <div class="alert alert-success">
+      Your account has been created. You are now registered as a <strong>${escapeHtml(selectedRole)}</strong>.
+    </div>
+    <p style="margin:12px 0;">You can now:</p>
+    <ul style="padding-left:20px; margin-bottom:16px; line-height:1.9;">
+      ${selectedRole === 'Young Scientist' ? '<li>Submit your research to the national repository</li><li>Get a verifiable certificate of authorship</li><li>Track your submission status</li>' : ''}
+      ${selectedRole === 'University Chapter' ? '<li>Represent your university in the national consortium</li><li>Bulk-upload final-year projects</li><li>See your university dashboard</li>' : ''}
+      ${selectedRole === 'Industry / Investor' ? '<li>Browse innovations ready for licensing</li><li>Express interest to innovators directly</li><li>Receive alerts on new submissions in your sector</li>' : ''}
+      ${selectedRole === 'Government / Policy' ? '<li>Access national analytics and trends</li><li>Export reports for policy use</li><li>Coordinate with university chapters</li>' : ''}
+    </ul>
+    <button class="btn" onclick="closeModal(); document.querySelector('nav button[data-view=submit]').click();">Go to Submit Research →</button>
+  `);
+}
+
+async function handleSignIn(e) {
+  e.preventDefault();
+  const email = document.getElementById('si-email').value.trim().toLowerCase();
+  const pw = document.getElementById('si-password').value;
+  const users = loadUsers();
+  const pwHash = await sha256(pw);
+  const user = users.find(u => u.email === email && u.pwHash === pwHash);
+  if (!user) {
+    alert('Invalid email or password. If you have not registered yet, please create an account.');
+    return;
+  }
+  setSession({ id: user.id, name: user.name, email: user.email, role: user.role });
+  updateAuthUI();
+  openModal(`
+    <h3 style="color:var(--green);">✅ Welcome back, ${escapeHtml(user.name.split(' ')[0])}!</h3>
+    <div class="alert alert-success">You are signed in as <strong>${escapeHtml(user.role)}</strong>.</div>
+    <button class="btn" onclick="closeModal()">Continue</button>
+  `);
+}
+
+function openProfile() {
+  const user = getSession();
+  if (!user) return;
+  openModal(`
+    <h3>My Account</h3>
+    <p style="margin:12px 0;"><strong>Name:</strong> ${escapeHtml(user.name)}</p>
+    <p style="margin:12px 0;"><strong>Email:</strong> ${escapeHtml(user.email)}</p>
+    <p style="margin:12px 0;"><strong>Role:</strong> ${escapeHtml(user.role)}</p>
+    <div style="margin-top:20px; display:flex; gap:10px;">
+      <button class="btn" onclick="closeModal()">Close</button>
+      <button class="btn btn-red" onclick="signOut()">Sign Out</button>
+    </div>
+  `);
+}
+
+window.signOut = function() {
+  setSession(null);
+  updateAuthUI();
+  closeModal();
+};
+
 // ================= INIT =================
 renderStats();
 renderHome();
 renderBrowse();
+renderAdmin();
+updateAuthUI();
 </script>
 </body>
 </html>
