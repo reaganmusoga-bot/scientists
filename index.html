@@ -73,15 +73,27 @@
     border-radius: 6px; cursor: pointer; font-size: 13px;
     font-weight: 500; transition: all 0.2s; font-family: inherit;
     white-space: nowrap; flex-shrink: 0;
+    position: relative;
   }
   nav button:hover { background: rgba(245,183,0,0.15); color: var(--gold); }
   nav button.active { background: var(--gold); color: var(--charcoal); font-weight: 700; }
   nav .signin-btn { background: var(--flag-red); color: var(--white); font-weight: 700; padding: 9px 16px; margin-left: 10px; flex-shrink: 0; cursor: pointer; }
   nav .signin-btn:hover { background: var(--flag-red-deep); color: var(--white); }
 
-  /* Hide protected nav items by default */
-  li[data-view="submit"], li[data-view="chapters"], li[data-view="admin"] { display: none; }
+  /* Unread badge on nav item */
+  nav .nav-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--flag-red); color: var(--white);
+    font-size: 9px; font-weight: 800;
+    min-width: 16px; height: 16px; border-radius: 8px;
+    padding: 0 5px; margin-left: 5px;
+    line-height: 1;
+  }
+  nav button.active .nav-badge { background: var(--charcoal); color: var(--gold); }
+
+  li[data-view="submit"], li[data-view="chapters"], li[data-view="admin"], li[data-view="messages"] { display: none; }
   body.logged-in li[data-view="submit"] { display: block; }
+  body.logged-in li[data-view="messages"] { display: block; }
   body.role-chapter li[data-view="chapters"] { display: block; }
   body.role-government li[data-view="admin"] { display: block; }
 
@@ -222,11 +234,12 @@
   .mobile-user-actions button.signout { color: var(--gold); }
   .mobile-user-actions button .m-icon { font-size: 18px; width: 22px; text-align: center; }
 
-  /* Hide protected mobile nav items by default */
   .mobile-nav-list li[data-view="submit"],
   .mobile-nav-list li[data-view="chapters"],
-  .mobile-nav-list li[data-view="admin"] { display: none; }
+  .mobile-nav-list li[data-view="admin"],
+  .mobile-nav-list li[data-view="messages"] { display: none; }
   body.logged-in .mobile-nav-list li[data-view="submit"] { display: block; }
+  body.logged-in .mobile-nav-list li[data-view="messages"] { display: block; }
   body.role-chapter .mobile-nav-list li[data-view="chapters"] { display: block; }
   body.role-government .mobile-nav-list li[data-view="admin"] { display: block; }
 
@@ -236,7 +249,18 @@
     min-width: 44px; min-height: 44px;
     align-items: center; justify-content: center;
     flex-direction: column; gap: 4px; flex-shrink: 0;
+    position: relative;
   }
+  .hamburger-btn .hamburger-badge {
+    position: absolute; top: -4px; right: -4px;
+    background: var(--flag-red); color: var(--white);
+    font-size: 9px; font-weight: 800;
+    min-width: 18px; height: 18px; border-radius: 9px;
+    padding: 0 5px; display: none;
+    align-items: center; justify-content: center;
+    border: 2px solid var(--charcoal);
+  }
+  .hamburger-btn .hamburger-badge.active { display: flex; }
   .hamburger-btn span { display: block; width: 22px; height: 2px; background: var(--gold); border-radius: 2px; transition: all 0.3s; }
   .hamburger-btn.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
   .hamburger-btn.open span:nth-child(2) { opacity: 0; }
@@ -278,6 +302,7 @@
   .mobile-nav-list button:hover, .mobile-nav-list button:active { background: rgba(245,183,0,0.08); }
   .mobile-nav-list button.active { background: var(--gold); color: var(--charcoal); }
   .mobile-nav-list .m-icon { font-size: 20px; margin-right: 12px; }
+  .mobile-nav-list .nav-badge { background: var(--flag-red); color: var(--white); font-size: 9px; padding: 2px 6px; border-radius: 8px; margin-left: auto; }
   .mobile-nav-cta { padding: 20px 24px; }
   .mobile-nav-cta button {
     width: 100%; padding: 16px; background: var(--flag-red); color: var(--white);
@@ -739,6 +764,301 @@
   }
   .mobile-chip.active { background: var(--gold); color: var(--charcoal); border-color: var(--gold); }
 
+  /* ============= MESSAGES VIEW ============= */
+  .messages-shell {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 0;
+    background: var(--white);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(90,60,20,0.08);
+    border: 1px solid var(--line);
+    min-height: 600px;
+    max-height: 76vh;
+  }
+  .messages-sidebar {
+    background: var(--cream);
+    border-right: 1px solid var(--line);
+    display: flex; flex-direction: column;
+    min-height: 0;
+  }
+  .messages-sidebar-header {
+    padding: 18px;
+    background: var(--charcoal);
+    color: var(--white);
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 4px solid var(--gold);
+    flex-shrink: 0;
+  }
+  .messages-sidebar-header h3 {
+    font-size: 16px; font-weight: 900; color: var(--white);
+    margin: 0; padding: 0; border: none;
+  }
+  .messages-sidebar-header .compose-btn {
+    background: var(--gold); color: var(--charcoal);
+    border: none; border-radius: 8px;
+    padding: 8px 14px; font-size: 12px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    cursor: pointer; font-family: inherit;
+    transition: all 0.2s;
+  }
+  .messages-sidebar-header .compose-btn:hover { background: var(--gold-deep); }
+  .messages-search {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+    background: var(--cream);
+  }
+  .messages-search input {
+    width: 100%; padding: 10px 12px;
+    border: 2px solid var(--line); border-radius: 8px;
+    font-size: 13px; background: var(--white);
+    color: var(--ink); font-family: inherit; min-height: 40px;
+  }
+  .messages-search input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(245,183,0,0.18); }
+  .conversations-list {
+    flex: 1; overflow-y: auto;
+    padding: 8px 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  .conv-item {
+    display: flex; gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--line);
+    transition: background 0.15s;
+    align-items: flex-start;
+  }
+  .conv-item:hover { background: var(--cream-deep); }
+  .conv-item.active { background: var(--gold-soft); border-left: 4px solid var(--gold); }
+  .conv-item.unread { background: #FFFBF0; }
+  .conv-item.unread .conv-name { font-weight: 800; }
+  .conv-item.unread .conv-preview { color: var(--ink); font-weight: 600; }
+  .conv-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--charcoal); color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 15px;
+    overflow: hidden; flex-shrink: 0;
+    border: 2px solid var(--flag-red);
+    position: relative;
+  }
+  .conv-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .conv-body { flex: 1; min-width: 0; }
+  .conv-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 3px; }
+  .conv-name {
+    font-size: 13.5px; font-weight: 700; color: var(--ink);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .conv-time { font-size: 10px; color: var(--ink-faint); white-space: nowrap; flex-shrink: 0; }
+  .conv-role {
+    font-size: 10px; color: var(--flag-red);
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 3px;
+  }
+  .conv-preview {
+    font-size: 12px; color: var(--ink-faint);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    line-height: 1.4;
+  }
+  .conv-unread-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--flag-red); flex-shrink: 0;
+    margin-top: 8px;
+  }
+
+  .messages-main {
+    display: flex; flex-direction: column;
+    min-height: 0;
+    background: var(--white);
+  }
+  .messages-empty {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--ink-faint);
+  }
+  .messages-empty .icon { font-size: 72px; margin-bottom: 16px; opacity: 0.4; }
+  .messages-empty h4 { font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+  .messages-empty p { font-size: 14px; line-height: 1.6; max-width: 380px; margin-bottom: 20px; }
+
+  .thread-header {
+    padding: 14px 20px;
+    border-bottom: 2px solid var(--line);
+    background: var(--cream);
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; flex-shrink: 0;
+  }
+  .thread-header-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .thread-header-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: var(--charcoal); color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 15px;
+    overflow: hidden; flex-shrink: 0;
+    border: 2px solid var(--flag-red);
+  }
+  .thread-header-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .thread-header-info { min-width: 0; }
+  .thread-header-name { font-size: 14.5px; font-weight: 800; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .thread-header-role { font-size: 11px; color: var(--flag-red); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .thread-header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .thread-header-actions button {
+    background: transparent; color: var(--flag-red);
+    border: 2px solid var(--flag-red); border-radius: 8px;
+    padding: 8px 12px; font-size: 11px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+    text-transform: uppercase; letter-spacing: 0.4px;
+    transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .thread-header-actions button:hover { background: var(--flag-red); color: var(--white); }
+  .thread-header-actions button.back-btn { display: none; }
+
+  .thread-messages {
+    flex: 1; overflow-y: auto;
+    padding: 20px;
+    background: var(--cream);
+    display: flex; flex-direction: column; gap: 12px;
+    min-height: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  .msg-bubble {
+    max-width: 75%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 14px; line-height: 1.5;
+    word-wrap: break-word;
+    position: relative;
+    animation: msgIn 0.2s ease-out;
+  }
+  @keyframes msgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .msg-bubble.mine {
+    background: var(--gold);
+    color: var(--charcoal);
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+  }
+  .msg-bubble.theirs {
+    background: var(--white);
+    color: var(--ink);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+    border: 1px solid var(--line);
+  }
+  .msg-meta {
+    font-size: 10px;
+    margin-top: 6px;
+    opacity: 0.7;
+    display: flex; justify-content: flex-end; align-items: center; gap: 4px;
+  }
+  .msg-bubble.theirs .msg-meta { color: var(--ink-faint); justify-content: flex-start; }
+  .msg-date-separator {
+    align-self: center;
+    font-size: 10px; color: var(--ink-faint);
+    background: var(--cream-deep);
+    padding: 4px 12px; border-radius: 12px;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    margin: 8px 0;
+  }
+
+  .thread-composer {
+    padding: 14px 18px;
+    border-top: 2px solid var(--line);
+    background: var(--white);
+    display: flex; gap: 10px;
+    flex-shrink: 0;
+    align-items: flex-end;
+  }
+  .thread-composer textarea {
+    flex: 1;
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: none;
+    min-height: 48px;
+    max-height: 140px;
+    background: var(--cream);
+    color: var(--ink);
+    transition: border 0.2s;
+    line-height: 1.5;
+  }
+  .thread-composer textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(245,183,0,0.18);
+    background: var(--white);
+  }
+  .thread-composer .send-btn {
+    background: var(--gold); color: var(--charcoal);
+    border: none; border-radius: 10px;
+    padding: 12px 18px; font-size: 14px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    cursor: pointer; font-family: inherit;
+    transition: all 0.2s;
+    min-height: 48px;
+    flex-shrink: 0;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .thread-composer .send-btn:hover { background: var(--gold-deep); }
+  .thread-composer .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Compose modal (uses existing modal system but with specific styling) */
+  .compose-recipient-info {
+    background: var(--cream);
+    border-left: 4px solid var(--gold);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .compose-recipient-info .compose-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--charcoal); color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 15px;
+    overflow: hidden; flex-shrink: 0;
+    border: 2px solid var(--flag-red);
+  }
+  .compose-recipient-info .compose-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .compose-recipient-info .compose-meta { flex: 1; min-width: 0; }
+  .compose-recipient-info .compose-name { font-size: 14px; font-weight: 800; color: var(--ink); }
+  .compose-recipient-info .compose-role { font-size: 11px; color: var(--flag-red); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .user-select-list {
+    max-height: 320px; overflow-y: auto;
+    border: 2px solid var(--line); border-radius: 10px;
+    background: var(--cream);
+    -webkit-overflow-scrolling: touch;
+  }
+  .user-select-item {
+    padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--line);
+    transition: background 0.15s;
+  }
+  .user-select-item:last-child { border-bottom: none; }
+  .user-select-item:hover, .user-select-item.selected { background: var(--gold-soft); }
+  .user-select-item .us-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--charcoal); color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px;
+    overflow: hidden; flex-shrink: 0;
+    border: 2px solid var(--flag-red);
+  }
+  .user-select-item .us-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .user-select-item .us-info { flex: 1; min-width: 0; }
+  .user-select-item .us-name { font-size: 13.5px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-select-item .us-meta { font-size: 11px; color: var(--ink-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-select-item .us-role { font-size: 10px; color: var(--flag-red); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ============= FORMS ============= */
   .form-wrap { background: var(--white); border-radius: 12px; padding: 24px 20px; box-shadow: 0 2px 10px rgba(90,60,20,0.07); max-width: 780px; margin: 0 auto; border-top: 5px solid var(--gold); }
   .form-wrap.wide { max-width: 100%; }
   .form-row { margin-bottom: 18px; }
@@ -1067,6 +1387,7 @@
   @media (max-width: 1180px) {
     .browse-shell { grid-template-columns: 240px 1fr; }
     .browse-side-right { display: none; }
+    .messages-shell { grid-template-columns: 300px 1fr; }
   }
 
   @media (max-width: 1023px) {
@@ -1074,6 +1395,7 @@
     .landing-h1 .scipool-brand { font-size: 52px; }
     .landing-hero-inner { gap: 32px; }
     .section-heading { font-size: 28px; }
+    .messages-shell { grid-template-columns: 260px 1fr; }
   }
 
   @media (max-width: 900px) {
@@ -1189,6 +1511,22 @@
     .profile-header { flex-direction: column; text-align: center; }
     .profile-info-row { flex-direction: column; gap: 4px; }
     .profile-info-row .k { width: 100%; }
+
+    /* Messages on mobile: single column with sliding */
+    .messages-shell {
+      grid-template-columns: 1fr;
+      min-height: auto;
+      max-height: none;
+      border-radius: 12px;
+    }
+    .messages-sidebar { border-right: none; }
+    .messages-main { display: none; }
+    .messages-shell.thread-open .messages-sidebar { display: none; }
+    .messages-shell.thread-open .messages-main { display: flex; }
+    .thread-messages { padding: 16px 14px; max-height: 50vh; }
+    .thread-composer { padding: 12px 14px; }
+    .thread-composer .send-btn { padding: 12px 14px; font-size: 12px; }
+    .thread-header-actions button.back-btn { display: inline-flex; }
   }
 
   @media (max-width: 420px) {
@@ -1200,6 +1538,7 @@
     .big-cta h2 { font-size: 22px; }
     .quote-text { font-size: 14px; }
     .logo-text p { display: none; }
+    .msg-bubble { max-width: 88%; }
   }
 
   @media (max-height: 500px) and (orientation: landscape) {
@@ -1239,6 +1578,7 @@
         <li data-view="home"><button data-view="home" class="active">Home</button></li>
         <li data-view="browse"><button data-view="browse">Browse Innovations</button></li>
         <li data-view="submit"><button data-view="submit">Submit Research</button></li>
+        <li data-view="messages"><button data-view="messages">Messages<span class="nav-badge" id="nav-msg-badge" style="display:none;">0</span></button></li>
         <li data-view="chapters"><button data-view="chapters">Chapter Dashboard</button></li>
         <li data-view="admin"><button data-view="admin">Admin</button></li>
         <li data-view="about"><button data-view="about">About</button></li>
@@ -1260,6 +1600,7 @@
         <ul class="user-dropdown-list">
           <li><button type="button" onclick="closeUserDropdown(); openProfile();"><span class="dd-icon">👤</span>View Profile</button></li>
           <li><button type="button" onclick="closeUserDropdown(); openProfileEdit();"><span class="dd-icon">✏️</span>Edit Profile</button></li>
+          <li><button type="button" onclick="closeUserDropdown(); goTo('messages');"><span class="dd-icon">✉️</span>Messages</button></li>
           <li><button type="button" onclick="closeUserDropdown(); goTo('browse'); setTimeout(showSavedOnly, 300);"><span class="dd-icon">💾</span>My Shortlist</button></li>
           <li><button type="button" class="signout-btn" onclick="closeUserDropdown(); signOut();"><span class="dd-icon">🚪</span>Sign Out</button></li>
         </ul>
@@ -1270,6 +1611,7 @@
       <span></span>
       <span></span>
       <span></span>
+      <span class="hamburger-badge" id="hamburger-badge">0</span>
     </button>
   </div>
 </header>
@@ -1285,6 +1627,7 @@
     <li data-view="home"><button data-view="home" type="button"><span><span class="m-icon">🏠</span>Home</span></button></li>
     <li data-view="browse"><button data-view="browse" type="button"><span><span class="m-icon">🔬</span>Browse Innovations</span></button></li>
     <li data-view="submit"><button data-view="submit" type="button"><span><span class="m-icon">📤</span>Submit Research</span></button></li>
+    <li data-view="messages"><button data-view="messages" type="button"><span><span class="m-icon">✉️</span>Messages</span><span class="nav-badge" id="mobile-msg-badge" style="display:none;">0</span></button></li>
     <li data-view="chapters"><button data-view="chapters" type="button"><span><span class="m-icon">🎓</span>Chapter Dashboard</span></button></li>
     <li data-view="admin"><button data-view="admin" type="button"><span><span class="m-icon">📊</span>Admin</span></button></li>
     <li data-view="about"><button data-view="about" type="button"><span><span class="m-icon">ℹ️</span>About</span></button></li>
@@ -1411,7 +1754,7 @@
           <div class="step-card">
             <div class="step-num">3</div>
             <h4>Get discovered</h4>
-            <p>Your work is shown to investors, manufacturers and government, and tracked through nine commercialisation stages.</p>
+            <p>Your work is shown to investors, manufacturers and government. Investors can message you directly through the platform.</p>
           </div>
         </div>
       </div>
@@ -1426,7 +1769,7 @@
         <div class="preview-lock">
           <div class="preview-lock-cta">
             <h4>Dive into <span class="accent">SciPool UG</span></h4>
-            <p>The national data, research and project repository for young scientific talents. Register to access the full pool, save shortlists and contact innovators directly.</p>
+            <p>The national data, research and project repository for young scientific talents. Register to access the full pool, save shortlists and message innovators directly.</p>
             <button class="btn" onclick="openAuthModal('signup')" type="button">Create Free Account</button>
           </div>
         </div>
@@ -1532,7 +1875,7 @@
         <div class="side-box"><h5>Trending Sectors</h5><div id="trending-sectors"></div></div>
         <div class="side-box" style="background: var(--charcoal); color: var(--white);">
           <h5 style="color: var(--gold);">For Investors</h5>
-          <p style="font-size: 12px; line-height: 1.65; color: #c8bcac;">Register as an Industry or Investor to receive alerts, save shortlists and contact innovators directly.</p>
+          <p style="font-size: 12px; line-height: 1.65; color: #c8bcac;">Register as an Industry or Investor to receive alerts, save shortlists and message innovators directly.</p>
           <button class="btn btn-sm" style="margin-top: 12px; width: 100%;" onclick="openAuthModal('signup')" type="button">Register Interest</button>
         </div>
       </aside>
@@ -1636,6 +1979,51 @@
           <button type="submit" class="btn" style="width: 100%;">Submit and Protect My Research</button>
         </div>
       </form>
+    </div>
+  </section>
+
+  <!-- ============= MESSAGES VIEW ============= -->
+  <section class="view" id="view-messages">
+    <h3 class="section-title">Messages</h3>
+    <div class="messages-shell" id="messages-shell">
+      <aside class="messages-sidebar">
+        <div class="messages-sidebar-header">
+          <h3 style="margin:0; padding:0; border:none; color: var(--white); font-size:16px;">Inbox</h3>
+          <button class="compose-btn" id="compose-new-btn" type="button">✏️ New</button>
+        </div>
+        <div class="messages-search">
+          <input type="text" id="msg-search" placeholder="Search conversations" />
+        </div>
+        <div class="conversations-list" id="conversations-list"></div>
+      </aside>
+      <div class="messages-main" id="messages-main">
+        <div class="messages-empty" id="messages-empty">
+          <span class="icon">✉️</span>
+          <h4>No conversation selected</h4>
+          <p>Choose a conversation from the list, or start a new one with any member of the SciPool community.</p>
+          <button class="btn" id="compose-new-btn-2" type="button">Start a New Conversation</button>
+        </div>
+        <div id="thread-container" style="display:none; flex-direction: column; height: 100%; min-height: 0; flex: 1;">
+          <div class="thread-header">
+            <div class="thread-header-left">
+              <button class="back-btn" id="thread-back-btn" type="button" style="background: transparent; border: none; color: var(--flag-red); font-size: 20px; cursor: pointer; padding: 6px 8px; font-weight: 700;">←</button>
+              <div class="thread-header-avatar" id="thread-avatar">SP</div>
+              <div class="thread-header-info">
+                <div class="thread-header-name" id="thread-name">Name</div>
+                <div class="thread-header-role" id="thread-role">Role</div>
+              </div>
+            </div>
+            <div class="thread-header-actions">
+              <button type="button" id="thread-delete-btn" title="Delete conversation">🗑️ Delete</button>
+            </div>
+          </div>
+          <div class="thread-messages" id="thread-messages"></div>
+          <div class="thread-composer">
+            <textarea id="thread-input" placeholder="Type your message..." rows="1"></textarea>
+            <button class="send-btn" id="thread-send-btn" type="button">Send ➤</button>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1773,12 +2161,13 @@ const TRL_LABELS = {
   7: 'System Prototype', 8: 'Qualified System', 9: 'Proven in Market'
 };
 
-const STORAGE_KEY = 'scipool_ug_v9';
-const USERS_KEY = 'scipool_users_v5';
-const SESSION_KEY = 'scipool_session_v5';
+const STORAGE_KEY = 'scipool_ug_v10';
+const USERS_KEY = 'scipool_users_v6';
+const SESSION_KEY = 'scipool_session_v6';
 const SAVED_KEY = 'scipool_saved_v1';
 const STATS_KEY = 'scipool_stats_v1';
 const RESET_KEY = 'scipool_reset_codes_v1';
+const MESSAGES_KEY = 'scipool_messages_v1';
 
 function loadData() {
   const raw = localStorage.getItem(STORAGE_KEY);
@@ -1883,6 +2272,117 @@ function toggleSaved(id) {
   renderBrowse();
 }
 
+// ============= MESSAGES STORAGE =============
+function loadMessages() {
+  const raw = localStorage.getItem(MESSAGES_KEY);
+  if (raw) return JSON.parse(raw);
+  return { conversations: [], messages: [] };
+}
+function saveMessages(data) {
+  localStorage.setItem(MESSAGES_KEY, JSON.stringify(data));
+}
+function getConversationId(userA, userB) {
+  return [userA, userB].sort().join('::');
+}
+function findOrCreateConversation(emailA, emailB) {
+  const data = loadMessages();
+  const id = getConversationId(emailA, emailB);
+  let conv = data.conversations.find(c => c.id === id);
+  if (!conv) {
+    conv = {
+      id,
+      participants: [emailA, emailB],
+      createdAt: new Date().toISOString(),
+      lastMessageAt: new Date().toISOString(),
+      readBy: { [emailA]: new Date().toISOString(), [emailB]: new Date().toISOString() }
+    };
+    data.conversations.push(conv);
+    saveMessages(data);
+  }
+  return conv;
+}
+function sendMessage(fromEmail, toEmail, text) {
+  if (!text || !text.trim()) return null;
+  const data = loadMessages();
+  const id = getConversationId(fromEmail, toEmail);
+  let conv = data.conversations.find(c => c.id === id);
+  if (!conv) {
+    conv = {
+      id,
+      participants: [fromEmail, toEmail],
+      createdAt: new Date().toISOString(),
+      lastMessageAt: new Date().toISOString(),
+      readBy: { [fromEmail]: new Date().toISOString(), [toEmail]: new Date().toISOString() }
+    };
+    data.conversations.push(conv);
+  }
+  const msg = {
+    id: 'msg-' + Date.now() + '-' + Math.random().toString(36).slice(2,6),
+    convId: id,
+    from: fromEmail,
+    to: toEmail,
+    text: text.trim(),
+    sentAt: new Date().toISOString(),
+    read: false
+  };
+  data.messages.push(msg);
+  conv.lastMessageAt = msg.sentAt;
+  if (!conv.readBy) conv.readBy = {};
+  conv.readBy[fromEmail] = msg.sentAt;
+  saveMessages(data);
+  return msg;
+}
+function getConversationMessages(convId) {
+  const data = loadMessages();
+  return data.messages
+    .filter(m => m.convId === convId)
+    .sort((a,b) => new Date(a.sentAt) - new Date(b.sentAt));
+}
+function getMyConversations(myEmail) {
+  const data = loadMessages();
+  const users = loadUsers();
+  return data.conversations
+    .filter(c => c.participants.includes(myEmail))
+    .map(c => {
+      const otherEmail = c.participants.find(p => p !== myEmail);
+      const otherUser = users.find(u => u.email === otherEmail);
+      const msgs = data.messages.filter(m => m.convId === c.id);
+      const last = msgs.length ? msgs[msgs.length - 1] : null;
+      const unread = msgs.filter(m => m.from !== myEmail && !m.read).length;
+      return {
+        convId: c.id,
+        otherEmail,
+        otherUser,
+        lastMessage: last,
+        lastMessageAt: c.lastMessageAt,
+        unread,
+        messageCount: msgs.length
+      };
+    })
+    .sort((a,b) => new Date(b.lastMessageAt) - new Date(a.lastMessageAt));
+}
+function markConversationRead(convId, myEmail) {
+  const data = loadMessages();
+  let changed = false;
+  data.messages.forEach(m => {
+    if (m.convId === convId && m.to === myEmail && !m.read) {
+      m.read = true;
+      changed = true;
+    }
+  });
+  if (changed) saveMessages(data);
+}
+function getUnreadCount(myEmail) {
+  const data = loadMessages();
+  return data.messages.filter(m => m.to === myEmail && !m.read).length;
+}
+function deleteConversation(convId, myEmail) {
+  const data = loadMessages();
+  data.conversations = data.conversations.filter(c => c.id !== convId);
+  data.messages = data.messages.filter(m => m.convId !== convId);
+  saveMessages(data);
+}
+
 function saveData(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
 let DB = loadData();
 
@@ -1935,16 +2435,46 @@ function initialsFromName(name) {
 function generateResetCode() {
   return String(Math.floor(100000 + Math.random() * 900000));
 }
+function formatMessageTime(iso) {
+  const d = new Date(iso);
+  const now = new Date();
+  const diff = now - d;
+  const min = Math.floor(diff / 60000);
+  if (min < 1) return 'Just now';
+  if (min < 60) return min + ' min ago';
+  const hr = Math.floor(min / 60);
+  if (hr < 24 && d.getDate() === now.getDate()) {
+    return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  }
+  const yest = new Date(now); yest.setDate(now.getDate() - 1);
+  if (d.getDate() === yest.getDate() && d.getMonth() === yest.getMonth() && d.getFullYear() === yest.getFullYear()) {
+    return 'Yesterday';
+  }
+  const diffDays = Math.floor(diff / (24 * 3600 * 1000));
+  if (diffDays < 7) return diffDays + 'd ago';
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+}
+function formatBubbleTime(iso) {
+  return new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+}
+function formatDateHeader(iso) {
+  const d = new Date(iso);
+  const now = new Date();
+  if (d.toDateString() === now.toDateString()) return 'Today';
+  const yest = new Date(now); yest.setDate(now.getDate() - 1);
+  if (d.toDateString() === yest.toDateString()) return 'Yesterday';
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+}
 
 // ================= NAV PERMISSIONS =================
-// Map view IDs to the roles that can access them. Empty array means everyone.
 const VIEW_PERMISSIONS = {
   'home': [],
   'browse': [],
   'about': [],
   'submit': ['Young Scientist', 'University Chapter', 'Industry / Investor', 'Government / Policy'],
   'chapters': ['University Chapter'],
-  'admin': ['Government / Policy']
+  'admin': ['Government / Policy'],
+  'messages': ['Young Scientist', 'University Chapter', 'Industry / Investor', 'Government / Policy']
 };
 
 function canAccess(view) {
@@ -2024,8 +2554,9 @@ document.getElementById('mobile-open-auth').addEventListener('click', () => {
 });
 
 // ================= NAV =================
+let currentView = 'home';
+
 function goTo(view) {
-  // Access control
   if (!canAccess(view)) {
     if (!getSession()) {
       openModal(`
@@ -2051,6 +2582,7 @@ function goTo(view) {
     return;
   }
 
+  currentView = view;
   document.querySelectorAll('nav button[data-view]').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('#mobile-nav-list button').forEach(b => b.classList.remove('active'));
   const desktopBtn = document.querySelector(`nav button[data-view="${view}"]`);
@@ -2067,6 +2599,7 @@ function goTo(view) {
   if (view === 'browse') renderBrowse();
   if (view === 'admin') renderAdmin();
   if (view === 'chapters') renderChapterDashboard();
+  if (view === 'messages') renderMessages();
   const sticky = document.getElementById('mobile-sticky-cta');
   if (sticky) {
     sticky.style.display = (view === 'home' && !getSession()) ? 'block' : 'none';
@@ -2080,6 +2613,325 @@ document.getElementById('open-auth').addEventListener('click', (e) => {
   e.preventDefault();
   openAuthModal('signin');
 });
+
+// ================= MESSAGES UI =================
+let activeConvId = null;
+let messageRefreshInterval = null;
+
+function renderMessages() {
+  if (!getSession()) return;
+  const myEmail = getSession().email;
+  const convs = getMyConversations(myEmail);
+  const search = (document.getElementById('msg-search').value || '').toLowerCase().trim();
+
+  const filtered = search
+    ? convs.filter(c => {
+        const other = c.otherUser ? c.otherUser.name.toLowerCase() : '';
+        return other.includes(search) || (c.lastMessage && c.lastMessage.text.toLowerCase().includes(search));
+      })
+    : convs;
+
+  const list = document.getElementById('conversations-list');
+  if (!filtered.length) {
+    list.innerHTML = `
+      <div style="padding: 40px 20px; text-align: center; color: var(--ink-faint);">
+        <div style="font-size: 48px; opacity: 0.4; margin-bottom: 12px;">✉️</div>
+        <p style="font-size: 13px; line-height: 1.5;">${search ? 'No conversations match your search.' : 'No conversations yet. Click New to start one.'}</p>
+      </div>
+    `;
+  } else {
+    list.innerHTML = filtered.map(c => {
+      const u = c.otherUser;
+      const avatarHTML = (u && u.avatar)
+        ? `<img src="${u.avatar}" alt="" />`
+        : escapeHtml(u ? initialsFromName(u.name) : '?');
+      const roleText = u ? u.role : 'Unknown user';
+      const preview = c.lastMessage
+        ? (c.lastMessage.from === myEmail ? 'You: ' : '') + c.lastMessage.text
+        : 'No messages yet';
+      const time = formatMessageTime(c.lastMessageAt);
+      const unreadClass = c.unread > 0 ? 'unread' : '';
+      const activeClass = c.convId === activeConvId ? 'active' : '';
+      return `
+        <div class="conv-item ${unreadClass} ${activeClass}" data-conv-id="${c.convId}" data-other-email="${escapeHtml(c.otherEmail)}">
+          <div class="conv-avatar">${avatarHTML}</div>
+          <div class="conv-body">
+            <div class="conv-top">
+              <div class="conv-name">${escapeHtml(u ? u.name : c.otherEmail)}</div>
+              <div class="conv-time">${time}</div>
+            </div>
+            <div class="conv-role">${escapeHtml(roleText)}</div>
+            <div class="conv-preview">${escapeHtml(preview).slice(0, 80)}</div>
+          </div>
+          ${c.unread > 0 ? `<div class="conv-unread-dot"></div>` : ''}
+        </div>
+      `;
+    }).join('');
+    list.querySelectorAll('.conv-item').forEach(el => {
+      el.addEventListener('click', () => openConversation(el.dataset.convId, el.dataset.otherEmail));
+    });
+  }
+
+  updateUnreadBadges();
+}
+
+function openConversation(convId, otherEmail) {
+  const myEmail = getSession().email;
+  activeConvId = convId;
+  markConversationRead(convId, myEmail);
+
+  const users = loadUsers();
+  const other = users.find(u => u.email === otherEmail);
+
+  const shell = document.getElementById('messages-shell');
+  if (window.innerWidth <= 900) shell.classList.add('thread-open');
+
+  document.getElementById('messages-empty').style.display = 'none';
+  document.getElementById('thread-container').style.display = 'flex';
+
+  const avatarHTML = (other && other.avatar)
+    ? `<img src="${other.avatar}" alt="" />`
+    : escapeHtml(other ? initialsFromName(other.name) : '?');
+  document.getElementById('thread-avatar').innerHTML = avatarHTML;
+  document.getElementById('thread-name').textContent = other ? other.name : otherEmail;
+  document.getElementById('thread-role').textContent = other ? other.role : '';
+
+  renderThreadMessages(convId, myEmail);
+  renderMessages();
+  setTimeout(() => {
+    const input = document.getElementById('thread-input');
+    if (input) input.focus();
+  }, 100);
+  document.getElementById('thread-input').value = '';
+}
+
+function renderThreadMessages(convId, myEmail) {
+  const msgs = getConversationMessages(convId);
+  const el = document.getElementById('thread-messages');
+  if (!msgs.length) {
+    el.innerHTML = `
+      <div style="text-align: center; padding: 40px 20px; color: var(--ink-faint); font-size: 13px;">
+        No messages in this conversation yet. Say hello!
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+  let lastDate = null;
+  msgs.forEach(m => {
+    const d = new Date(m.sentAt);
+    const dateStr = d.toDateString();
+    if (dateStr !== lastDate) {
+      html += `<div class="msg-date-separator">${formatDateHeader(m.sentAt)}</div>`;
+      lastDate = dateStr;
+    }
+    const isMine = m.from === myEmail;
+    const metaHTML = `<div class="msg-meta">${formatBubbleTime(m.sentAt)}${isMine ? ' ✓' + (m.read ? '✓' : '') : ''}</div>`;
+    html += `
+      <div class="msg-bubble ${isMine ? 'mine' : 'theirs'}">
+        ${escapeHtml(m.text).replace(/\n/g, '<br/>')}
+        ${metaHTML}
+      </div>
+    `;
+  });
+  el.innerHTML = html;
+  el.scrollTop = el.scrollHeight;
+}
+
+function updateUnreadBadges() {
+  const user = getSession();
+  const total = user ? getUnreadCount(user.email) : 0;
+  const navBadge = document.getElementById('nav-msg-badge');
+  const mobileBadge = document.getElementById('mobile-msg-badge');
+  const hamburgerBadge = document.getElementById('hamburger-badge');
+  [navBadge, mobileBadge].forEach(b => {
+    if (b) {
+      if (total > 0) { b.textContent = total > 9 ? '9+' : total; b.style.display = 'inline-flex'; }
+      else b.style.display = 'none';
+    }
+  });
+  if (hamburgerBadge) {
+    if (total > 0) { hamburgerBadge.textContent = total > 9 ? '9+' : total; hamburgerBadge.classList.add('active'); }
+    else hamburgerBadge.classList.remove('active');
+  }
+}
+
+// Compose new message
+function openCompose(recipientEmail, presetSubject) {
+  if (!getSession()) {
+    openModal(`
+      <h3>Sign in to send messages</h3>
+      <div class="alert alert-info">You need a SciPool UG account to message other members.</div>
+      <button class="btn" onclick="closeModal(); openAuthModal('signin');" style="width:100%;" type="button">Sign In</button>
+    `);
+    return;
+  }
+  const myEmail = getSession().email;
+  const allUsers = loadUsers().filter(u => u.email !== myEmail);
+  const preselected = recipientEmail ? allUsers.find(u => u.email === recipientEmail) : null;
+
+  const userListHTML = allUsers.map(u => {
+    const avatarHTML = u.avatar
+      ? `<img src="${u.avatar}" alt="" />`
+      : escapeHtml(initialsFromName(u.name));
+    const selected = preselected && preselected.email === u.email ? 'selected' : '';
+    return `
+      <div class="user-select-item ${selected}" data-email="${escapeHtml(u.email)}">
+        <div class="us-avatar">${avatarHTML}</div>
+        <div class="us-info">
+          <div class="us-name">${escapeHtml(u.name)}</div>
+          <div class="us-meta">${escapeHtml(u.email)}</div>
+          <div class="us-role">${escapeHtml(u.role)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  openModal(`
+    <h3>New message</h3>
+    <form id="compose-form">
+      <div class="form-row">
+        <label>Send to <span class="req">*</span></label>
+        ${preselected ? `
+          <div class="compose-recipient-info">
+            <div class="compose-avatar">
+              ${preselected.avatar ? `<img src="${preselected.avatar}" alt="" />` : escapeHtml(initialsFromName(preselected.name))}
+            </div>
+            <div class="compose-meta">
+              <div class="compose-name">${escapeHtml(preselected.name)}</div>
+              <div class="compose-role">${escapeHtml(preselected.role)}</div>
+            </div>
+          </div>
+          <input type="hidden" id="compose-recipient" value="${escapeHtml(preselected.email)}" />
+        ` : `
+          <input type="text" id="compose-search" placeholder="Search users by name or email" style="margin-bottom: 8px;" />
+          <div class="user-select-list" id="compose-user-list">
+            ${userListHTML || '<div style="padding: 20px; text-align: center; color: var(--ink-faint); font-size: 13px;">No other users yet.</div>'}
+          </div>
+          <input type="hidden" id="compose-recipient" value="" />
+        `}
+      </div>
+      ${presetSubject ? `<div class="form-row"><label>Subject</label><input type="text" id="compose-subject" value="${escapeHtml(presetSubject)}" readonly style="background: var(--cream-deep);" /></div>` : ''}
+      <div class="form-row">
+        <label>Message <span class="req">*</span></label>
+        <textarea id="compose-text" required placeholder="Write your message here..." style="min-height: 120px;"></textarea>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button type="button" class="btn btn-black" onclick="closeModal()" style="flex: 1;">Cancel</button>
+        <button type="submit" class="btn" style="flex: 2;">Send Message</button>
+      </div>
+    </form>
+  `);
+
+  // Wire user selection if not preselected
+  if (!preselected) {
+    const userList = document.getElementById('compose-user-list');
+    const searchInput = document.getElementById('compose-search');
+    userList.querySelectorAll('.user-select-item').forEach(el => {
+      el.addEventListener('click', () => {
+        userList.querySelectorAll('.user-select-item').forEach(x => x.classList.remove('selected'));
+        el.classList.add('selected');
+        document.getElementById('compose-recipient').value = el.dataset.email;
+      });
+    });
+    searchInput.addEventListener('input', e => {
+      const q = e.target.value.toLowerCase().trim();
+      userList.querySelectorAll('.user-select-item').forEach(el => {
+        const name = el.querySelector('.us-name').textContent.toLowerCase();
+        const email = el.querySelector('.us-meta').textContent.toLowerCase();
+        el.style.display = (name.includes(q) || email.includes(q)) ? '' : 'none';
+      });
+    });
+  }
+
+  document.getElementById('compose-form').addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    const recipient = document.getElementById('compose-recipient').value;
+    if (!recipient) { alert('Please select a recipient.'); return; }
+    const text = document.getElementById('compose-text').value;
+    if (!text.trim()) { alert('Please write a message.'); return; }
+    sendMessage(myEmail, recipient, text);
+    closeModal();
+    // Open the conversation
+    const convId = getConversationId(myEmail, recipient);
+    goTo('messages');
+    setTimeout(() => openConversation(convId, recipient), 200);
+  });
+}
+
+// Wire compose buttons
+document.getElementById('compose-new-btn').addEventListener('click', () => openCompose());
+document.getElementById('compose-new-btn-2').addEventListener('click', () => openCompose());
+document.getElementById('msg-search').addEventListener('input', renderMessages);
+
+// Thread composer
+document.getElementById('thread-send-btn').addEventListener('click', sendCurrentThreadMessage);
+document.getElementById('thread-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendCurrentThreadMessage();
+  }
+});
+document.getElementById('thread-input').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 140) + 'px';
+});
+
+function sendCurrentThreadMessage() {
+  if (!activeConvId) return;
+  const input = document.getElementById('thread-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const myEmail = getSession().email;
+  const data = loadMessages();
+  const conv = data.conversations.find(c => c.id === activeConvId);
+  if (!conv) return;
+  const otherEmail = conv.participants.find(p => p !== myEmail);
+  sendMessage(myEmail, otherEmail, text);
+  input.value = '';
+  input.style.height = 'auto';
+  renderThreadMessages(activeConvId, myEmail);
+  renderMessages();
+  updateUnreadBadges();
+}
+
+// Thread delete
+document.getElementById('thread-delete-btn').addEventListener('click', () => {
+  if (!activeConvId) return;
+  if (!confirm('Delete this entire conversation? This cannot be undone.')) return;
+  const myEmail = getSession().email;
+  deleteConversation(activeConvId, myEmail);
+  activeConvId = null;
+  document.getElementById('thread-container').style.display = 'none';
+  document.getElementById('messages-empty').style.display = 'flex';
+  document.getElementById('messages-shell').classList.remove('thread-open');
+  renderMessages();
+  updateUnreadBadges();
+});
+
+// Thread back (mobile)
+document.getElementById('thread-back-btn').addEventListener('click', () => {
+  document.getElementById('messages-shell').classList.remove('thread-open');
+  activeConvId = null;
+  document.getElementById('thread-container').style.display = 'none';
+  document.getElementById('messages-empty').style.display = 'flex';
+});
+
+// Start background refresh of messages
+function startMessageRefresh() {
+  if (messageRefreshInterval) clearInterval(messageRefreshInterval);
+  messageRefreshInterval = setInterval(() => {
+    updateUnreadBadges();
+    if (currentView === 'messages') {
+      const user = getSession();
+      if (user && activeConvId) {
+        renderThreadMessages(activeConvId, user.email);
+      }
+      renderMessages();
+    }
+  }, 3000);
+}
 
 // ================= AUTH UI =================
 function updateAuthUI() {
@@ -2120,6 +2972,7 @@ function updateAuthUI() {
         <div class="mobile-user-actions">
           <button type="button" onclick="closeMobileNav(); setTimeout(() => openProfile(), 200);"><span class="m-icon">👤</span>View Profile</button>
           <button type="button" onclick="closeMobileNav(); setTimeout(() => openProfileEdit(), 200);"><span class="m-icon">✏️</span>Edit Profile</button>
+          <button type="button" onclick="closeMobileNav(); setTimeout(() => goTo('messages'), 200);"><span class="m-icon">✉️</span>Messages</button>
           <button type="button" onclick="closeMobileNav(); setTimeout(() => { goTo('browse'); showSavedOnly(); }, 200);"><span class="m-icon">💾</span>My Shortlist</button>
           <button type="button" class="signout" onclick="closeMobileNav(); setTimeout(() => signOut(), 200);"><span class="m-icon">🚪</span>Sign Out</button>
         </div>
@@ -2132,6 +2985,7 @@ function updateAuthUI() {
     mobileAuthBlock.style.display = 'block';
     mobileUserContainer.innerHTML = '';
   }
+  updateUnreadBadges();
   swapHomeView();
 }
 
@@ -2230,6 +3084,7 @@ function renderDashboard() {
 
   const mySubmissions = DB.filter(d => d.email === user.email).length;
   const mySaved = loadSaved().length;
+  const myMessages = getUnreadCount(user.email);
   const totalInnovations = DB.length;
   const totalSectors = new Set(DB.map(d => d.sector)).size;
   const investmentReady = DB.filter(d => d.trl >= 6).length;
@@ -2241,28 +3096,28 @@ function renderDashboard() {
       { lbl: 'My submissions', val: mySubmissions, cls: '' },
       { lbl: 'Innovations in SciPool', val: totalInnovations, cls: 'red' },
       { lbl: 'Investment ready', val: investmentReady, cls: 'black' },
-      { lbl: 'Sectors active', val: totalSectors, cls: '' }
+      { lbl: 'Unread messages', val: myMessages, cls: '' }
     ];
   } else if (user.role === 'University Chapter') {
     kpis = [
       { lbl: 'My chapter submissions', val: myUniItems, cls: '' },
       { lbl: 'Total in SciPool', val: totalInnovations, cls: 'red' },
       { lbl: 'Investment ready', val: investmentReady, cls: 'black' },
-      { lbl: 'My saved shortlist', val: mySaved, cls: '' }
+      { lbl: 'Unread messages', val: myMessages, cls: '' }
     ];
   } else if (user.role === 'Industry / Investor') {
     kpis = [
       { lbl: 'Innovations available', val: totalInnovations, cls: '' },
       { lbl: 'Investment ready', val: investmentReady, cls: 'red' },
       { lbl: 'My shortlist', val: mySaved, cls: 'black' },
-      { lbl: 'Sectors active', val: totalSectors, cls: '' }
+      { lbl: 'Unread messages', val: myMessages, cls: '' }
     ];
   } else {
     kpis = [
       { lbl: 'National innovations', val: totalInnovations, cls: '' },
       { lbl: 'Universities represented', val: new Set(DB.map(d => d.university)).size, cls: 'red' },
       { lbl: 'Investment ready', val: investmentReady, cls: 'black' },
-      { lbl: 'Sectors active', val: totalSectors, cls: '' }
+      { lbl: 'Unread messages', val: myMessages, cls: '' }
     ];
   }
 
@@ -2274,6 +3129,8 @@ function renderDashboard() {
   `).join('');
 
   const actions = [];
+  actions.push({ icon: '✉️', title: 'Messages', desc: myMessages > 0 ? `${myMessages} unread message(s)` : 'Chat with other members', action: "goTo('messages')" });
+
   if (user.role === 'Young Scientist') {
     actions.push({ icon: '🔬', title: 'Submit new research', desc: 'Protect and publish your work', action: "goTo('submit')" });
     actions.push({ icon: '🌐', title: 'Browse the pool', desc: 'See what peers are building', action: "goTo('browse')" });
@@ -2487,7 +3344,7 @@ function innCardHTML(item) {
   const saves = getStat(item.id, 'saved');
   const saved = isSaved(item.id);
   const sectorIco = SECTOR_ICONS[item.sector] || '📌';
-  const abstract = isProtected ? 'Details protected. Register as an investor and contact SciPool UG to request access.' : item.abstract;
+  const abstract = isProtected ? 'Details protected. Register as an investor and message the innovator through SciPool UG.' : item.abstract;
   const kwList = item.keywords ? item.keywords.split(',').map(k => k.trim()).filter(Boolean).slice(0, 5) : [];
   const trlHigh = item.trl >= 6;
   const users = loadUsers();
@@ -2584,6 +3441,8 @@ function openDrawer(id) {
     ? `<img src="${authorUser.avatar}" alt="" />`
     : escapeHtml(d.author.split(' ').map(n=>n[0]).join('').slice(0,2));
   const media = d.media || [];
+  const session = getSession();
+  const canMessage = session && session.email !== d.email;
 
   document.getElementById('drawer-title').textContent = d.title;
   document.getElementById('drawer-subtitle').textContent = `${d.author} from ${d.university}`;
@@ -2605,6 +3464,10 @@ function openDrawer(id) {
       </div>
       <p style="font-size:11px; color:var(--ink-faint); margin-top:10px;">Tap any file to download or open it.</p>
     </div>
+  ` : '';
+
+  const messageButton = canMessage ? `
+    <button class="btn btn-sm btn-red" onclick="openCompose('${escapeHtml(d.email)}', 'Interest in: ${escapeHtml(d.title).replace(/'/g, "&#39;")}')" type="button">✉️ Message innovator</button>
   ` : '';
 
   document.getElementById('drawer-body').innerHTML = `
@@ -2654,11 +3517,7 @@ function openDrawer(id) {
       <button class="btn btn-sm ${saved ? 'btn-black' : ''}" onclick="toggleSaved('${d.id}'); openDrawer('${d.id}');" type="button">
         ${saved ? 'Saved to shortlist' : 'Save to shortlist'}
       </button>
-      ${!isProtected ? `
-        <a class="btn btn-sm btn-red" href="mailto:${escapeHtml(d.email)}?subject=Investment Interest via SciPool UG: ${encodeURIComponent(d.title)}" onclick="trackStat('${d.id}','contacted')">Contact innovator</a>
-      ` : `
-        <button class="btn btn-sm btn-red" onclick="trackStat('${d.id}','contacted'); openModal('<h3>Protected innovation</h3><p style=\\'margin:12px 0; line-height:1.7;\\'>This research is protected. Contact <strong>ip@scipool.ug</strong> to request access.</p><button class=\\'btn\\' onclick=\\'closeModal()\\' type=\\'button\\'>Close</button>')" type="button">Request access</button>
-      `}
+      ${messageButton}
       <button class="btn btn-sm btn-outline" onclick="downloadCertificate('${d.id}')" type="button">Certificate</button>
     </div>
   `;
@@ -3257,7 +4116,7 @@ async function handleSignUp(e) {
   openModal(`
     <h3 style="color:var(--green);">Welcome to SciPool UG, ${escapeHtml(name.split(' ')[0])}</h3>
     <div class="alert alert-success">You are registered as <strong>${escapeHtml(selectedRole)}</strong>.</div>
-    <p style="margin:14px 0; font-size:14px; color:var(--ink-soft); line-height:1.7;">You have joined the national data, research and project repository for young scientific talents.</p>
+    <p style="margin:14px 0; font-size:14px; color:var(--ink-soft); line-height:1.7;">You have joined the national data, research and project repository for young scientific talents. You can now message other members directly.</p>
     <button class="btn" onclick="closeModal()" style="width:100%;" type="button">Continue to dashboard</button>
   `);
 }
@@ -3667,6 +4526,7 @@ window.signOut = function() {
   closeUserDropdown();
   updateAuthUI();
   closeModal();
+  activeConvId = null;
   goTo('home');
 };
 
@@ -3679,6 +4539,8 @@ renderAdmin();
 renderChapterDashboard();
 updateAuthUI();
 updateSavedBanner();
+updateUnreadBadges();
+startMessageRefresh();
 </script>
 </body>
 </html>
