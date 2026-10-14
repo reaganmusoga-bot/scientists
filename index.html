@@ -29,12 +29,7 @@
   html { scroll-behavior: smooth; }
   body { background: var(--cream); color: var(--ink); line-height: 1.65; overflow-x: hidden; }
 
-  /* ===== HEADER ===== */
-  header {
-    background: var(--charcoal); color: var(--white);
-    position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 2px 10px rgba(26,20,16,0.25);
-  }
+  header { background: var(--charcoal); color: var(--white); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(26,20,16,0.25); }
   .flag-stripe {
     height: 6px;
     background: linear-gradient(to right,
@@ -46,8 +41,7 @@
       var(--flag-red) 83.3%, var(--flag-red) 100%);
   }
   .header-inner {
-    max-width: 1400px; margin: 0 auto;
-    padding: 12px 18px;
+    max-width: 1400px; margin: 0 auto; padding: 12px 18px;
     display: flex; justify-content: space-between; align-items: center;
     flex-wrap: nowrap; gap: 16px;
   }
@@ -82,18 +76,13 @@
   }
   nav button:hover { background: rgba(245,183,0,0.15); color: var(--gold); }
   nav button.active { background: var(--gold); color: var(--charcoal); font-weight: 700; }
-  nav .signin-btn {
-    background: var(--flag-red); color: var(--white);
-    font-weight: 700; padding: 9px 16px; margin-left: 10px;
-    flex-shrink: 0; cursor: pointer;
-  }
+  nav .signin-btn { background: var(--flag-red); color: var(--white); font-weight: 700; padding: 9px 16px; margin-left: 10px; flex-shrink: 0; cursor: pointer; }
   nav .signin-btn:hover { background: var(--flag-red-deep); color: var(--white); }
   nav .user-badge {
     background: var(--gold); color: var(--charcoal);
     padding: 4px 12px 4px 4px; border-radius: 24px; font-size: 12px;
     font-weight: 700; margin-left: 10px; cursor: pointer; display: none;
-    flex-shrink: 0; white-space: nowrap;
-    align-items: center; gap: 8px;
+    flex-shrink: 0; white-space: nowrap; align-items: center; gap: 8px;
   }
   nav .user-badge.active { display: inline-flex; }
   nav .user-badge .badge-avatar {
@@ -106,31 +95,21 @@
   nav .user-badge .badge-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
   .hamburger-btn {
-    display: none;
-    background: transparent; border: 2px solid rgba(245,183,0,0.4);
-    border-radius: 8px; padding: 8px 10px;
-    cursor: pointer; color: var(--gold);
+    display: none; background: transparent; border: 2px solid rgba(245,183,0,0.4);
+    border-radius: 8px; padding: 8px 10px; cursor: pointer; color: var(--gold);
     min-width: 44px; min-height: 44px;
     align-items: center; justify-content: center;
     flex-direction: column; gap: 4px; flex-shrink: 0;
   }
-  .hamburger-btn span {
-    display: block; width: 22px; height: 2px;
-    background: var(--gold); border-radius: 2px; transition: all 0.3s;
-  }
+  .hamburger-btn span { display: block; width: 22px; height: 2px; background: var(--gold); border-radius: 2px; transition: all 0.3s; }
   .hamburger-btn.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
   .hamburger-btn.open span:nth-child(2) { opacity: 0; }
   .hamburger-btn.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
-  .mobile-nav-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(26,20,16,0.7); z-index: 200;
-    opacity: 0; transition: opacity 0.25s;
-  }
+  .mobile-nav-overlay { display: none; position: fixed; inset: 0; background: rgba(26,20,16,0.7); z-index: 200; opacity: 0; transition: opacity 0.25s; }
   .mobile-nav-overlay.active { display: block; opacity: 1; }
   .mobile-nav-drawer {
-    display: none;
-    position: fixed; top: 0; right: 0; bottom: 0;
+    display: none; position: fixed; top: 0; right: 0; bottom: 0;
     width: 82%; max-width: 340px;
     background: var(--charcoal); color: var(--white);
     z-index: 201; transform: translateX(100%);
@@ -170,18 +149,13 @@
     letter-spacing: 0.6px; cursor: pointer; font-family: inherit;
   }
 
-  /* ===== MAIN ===== */
   main { max-width: 1400px; margin: 0 auto; padding: 24px 18px 80px; }
   .view { display: none; }
   .view.active { display: block; }
 
-  h3.section-title {
-    font-size: 20px; margin-bottom: 18px; padding-bottom: 8px;
-    border-bottom: 3px solid var(--gold); display: inline-block; color: var(--ink);
-  }
+  h3.section-title { font-size: 20px; margin-bottom: 18px; padding-bottom: 8px; border-bottom: 3px solid var(--gold); display: inline-block; color: var(--ink); }
   .section-header-row { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
 
-  /* ===== CARDS ===== */
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
   .card {
     background: var(--white); border-radius: 12px; padding: 20px;
@@ -205,28 +179,23 @@
   .card .footer { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 10px; }
   .hash { font-family: monospace; font-size: 10px; color: var(--ink-faint); word-break: break-all; }
 
-  /* ===== LANDING HERO ===== */
   .landing-hero {
     background: linear-gradient(135deg, var(--charcoal) 0%, var(--charcoal-soft) 55%, #3a2c1f 100%);
     color: var(--white); padding: 56px 18px 60px;
-    position: relative; overflow: hidden;
-    border-bottom: 6px solid var(--gold);
+    position: relative; overflow: hidden; border-bottom: 6px solid var(--gold);
   }
   .landing-hero::before {
     content: ''; position: absolute; top: -80px; right: -80px;
     width: 400px; height: 400px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(245,183,0,0.14) 0%, transparent 70%);
-    pointer-events: none;
+    background: radial-gradient(circle, rgba(245,183,0,0.14) 0%, transparent 70%); pointer-events: none;
   }
   .landing-hero::after {
     content: ''; position: absolute; bottom: -120px; left: -120px;
     width: 500px; height: 500px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(200,16,46,0.1) 0%, transparent 70%);
-    pointer-events: none;
+    background: radial-gradient(circle, rgba(200,16,46,0.1) 0%, transparent 70%); pointer-events: none;
   }
   .landing-hero-inner {
-    max-width: 1280px; margin: 0 auto;
-    position: relative; z-index: 2;
+    max-width: 1280px; margin: 0 auto; position: relative; z-index: 2;
     display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: center;
   }
   .identity-banner {
@@ -634,12 +603,12 @@
   }
   .mobile-chip.active { background: var(--gold); color: var(--charcoal); border-color: var(--gold); }
 
-  /* ===== FORMS ===== */
   .form-wrap { background: var(--white); border-radius: 12px; padding: 24px 20px; box-shadow: 0 2px 10px rgba(90,60,20,0.07); max-width: 780px; margin: 0 auto; border-top: 5px solid var(--gold); }
   .form-wrap.wide { max-width: 100%; }
   .form-row { margin-bottom: 18px; }
   label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 7px; color: var(--ink); }
   label .req { color: var(--flag-red); }
+  label .opt { color: var(--ink-faint); font-weight: 500; font-size: 11px; }
   input, select, textarea {
     width: 100%; padding: 12px 14px; border: 2px solid var(--line);
     border-radius: 8px; font-size: 16px; font-family: inherit;
@@ -649,6 +618,7 @@
   input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(245,183,0,0.18); background: var(--white); }
   textarea { resize: vertical; min-height: 110px; }
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
 
   .btn {
     background: var(--gold); color: var(--charcoal); border: none;
@@ -666,16 +636,19 @@
   .btn-sm { padding: 9px 16px; font-size: 12px; min-height: 42px; }
   .btn-outline { background: transparent; color: var(--ink); border: 2px solid var(--ink); }
   .btn-outline:hover { background: var(--ink); color: var(--white); }
+  .btn-link {
+    background: none; border: none; color: var(--flag-red);
+    font-weight: 700; cursor: pointer; padding: 0;
+    font-family: inherit; font-size: 13px; text-decoration: underline;
+  }
+  .btn-link:hover { color: var(--flag-red-deep); }
 
   .alert { padding: 14px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 14px; line-height: 1.6; }
   .alert-success { background: #E8F3E3; border-left: 4px solid var(--green); color: #1e3a0f; }
   .alert-info { background: var(--gold-soft); border-left: 4px solid var(--gold); color: #6b4a00; }
+  .alert-warn { background: #FFF4E5; border-left: 4px solid #C77700; color: #6b3d00; }
 
-  /* ===== PROFILE PICTURE UPLOAD ===== */
-  .avatar-upload {
-    display: flex; flex-direction: column; align-items: center;
-    gap: 12px; margin-bottom: 20px;
-  }
+  .avatar-upload { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 20px; }
   .avatar-preview {
     width: 100px; height: 100px; border-radius: 50%;
     background: var(--cream); border: 3px dashed var(--line);
@@ -693,18 +666,15 @@
     border: 2px solid var(--flag-red); border-radius: 6px;
     padding: 8px 16px; font-size: 12px; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.6px;
-    cursor: pointer; font-family: inherit;
-    transition: all 0.2s;
+    cursor: pointer; font-family: inherit; transition: all 0.2s;
   }
   .avatar-upload-btn:hover { background: var(--flag-red); color: var(--white); }
   .avatar-upload-hint { font-size: 11px; color: var(--ink-faint); text-align: center; }
 
-  /* ===== MEDIA UPLOAD ===== */
   .media-drop {
     background: var(--cream); border: 3px dashed var(--line);
     border-radius: 12px; padding: 30px 20px; text-align: center;
-    cursor: pointer; transition: all 0.2s;
-    position: relative;
+    cursor: pointer; transition: all 0.2s; position: relative;
   }
   .media-drop:hover, .media-drop.dragover { border-color: var(--gold); background: var(--gold-soft); }
   .media-drop input[type="file"] { display: none; }
@@ -713,30 +683,20 @@
   .media-drop-sub { font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
   .media-drop-sub strong { color: var(--flag-red); }
 
-  .media-preview-list {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 10px; margin-top: 14px;
-  }
+  .media-preview-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 14px; }
   .media-item {
     background: var(--white); border: 2px solid var(--line);
     border-radius: 10px; padding: 10px;
-    position: relative; overflow: hidden;
-    transition: all 0.2s;
+    position: relative; overflow: hidden; transition: all 0.2s;
   }
   .media-item:hover { border-color: var(--gold); }
   .media-item-preview {
-    width: 100%; height: 80px;
-    background: var(--cream); border-radius: 6px;
+    width: 100%; height: 80px; background: var(--cream); border-radius: 6px;
     display: flex; align-items: center; justify-content: center;
     font-size: 32px; overflow: hidden; margin-bottom: 8px;
   }
   .media-item-preview img { width: 100%; height: 100%; object-fit: cover; }
-  .media-item-name {
-    font-size: 10px; color: var(--ink);
-    font-weight: 700; white-space: nowrap;
-    overflow: hidden; text-overflow: ellipsis;
-    margin-bottom: 3px;
-  }
+  .media-item-name { font-size: 10px; color: var(--ink); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
   .media-item-size { font-size: 10px; color: var(--ink-faint); }
   .media-item-remove {
     position: absolute; top: 4px; right: 4px;
@@ -748,36 +708,15 @@
   }
   .media-item-remove:hover { background: var(--flag-red-deep); }
 
-  .drawer-media-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 10px; margin-top: 10px;
-  }
-  .drawer-media-item {
-    background: var(--cream); border-radius: 8px; overflow: hidden;
-    border: 2px solid var(--line); cursor: pointer;
-    transition: border-color 0.2s;
-  }
+  .drawer-media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 10px; }
+  .drawer-media-item { background: var(--cream); border-radius: 8px; overflow: hidden; border: 2px solid var(--line); cursor: pointer; transition: border-color 0.2s; }
   .drawer-media-item:hover { border-color: var(--gold); }
   .drawer-media-item img { width: 100%; height: 120px; object-fit: cover; display: block; }
-  .drawer-media-item .file-icon {
-    height: 120px; display: flex; align-items: center;
-    justify-content: center; font-size: 44px;
-    background: var(--cream-deep);
-  }
-  .drawer-media-item .file-name {
-    padding: 8px 10px; font-size: 11px;
-    color: var(--ink); font-weight: 600;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    background: var(--white);
-  }
+  .drawer-media-item .file-icon { height: 120px; display: flex; align-items: center; justify-content: center; font-size: 44px; background: var(--cream-deep); }
+  .drawer-media-item .file-name { padding: 8px 10px; font-size: 11px; color: var(--ink); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: var(--white); }
 
   .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; }
-  .table-scroll::after {
-    content: 'Swipe to see more →'; display: block;
-    text-align: center; font-size: 10px;
-    color: var(--ink-faint); padding: 8px 0;
-    letter-spacing: 1px; text-transform: uppercase;
-  }
+  .table-scroll::after { content: 'Swipe to see more →'; display: block; text-align: center; font-size: 10px; color: var(--ink-faint); padding: 8px 0; letter-spacing: 1px; text-transform: uppercase; }
   table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(90,60,20,0.06); min-width: 620px; }
   th { background: var(--charcoal); color: var(--gold); padding: 12px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; white-space: nowrap; }
   td { padding: 12px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--ink-soft); }
@@ -797,10 +736,27 @@
     animation: modalIn 0.28s ease-out;
     box-shadow: 0 20px 60px rgba(26,20,16,0.3);
   }
+  .modal.modal-wide { max-width: 760px; }
   @keyframes modalIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
   .modal h3 { margin-bottom: 16px; color: var(--ink); font-weight: 800; font-size: 18px; line-height: 1.3; }
   .modal .close { position: absolute; top: 14px; right: 16px; cursor: pointer; font-size: 26px; color: var(--ink-faint); border: none; background: none; line-height: 1; min-width: 40px; min-height: 40px; }
   .modal .close:hover { color: var(--flag-red); }
+
+  .step-indicator { display: flex; gap: 8px; margin-bottom: 20px; justify-content: center; }
+  .step-dot {
+    width: 30px; height: 6px; border-radius: 3px;
+    background: var(--line); transition: background 0.2s;
+  }
+  .step-dot.active { background: var(--gold); }
+  .step-dot.done { background: var(--green); }
+
+  .section-label {
+    font-size: 11px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 1.4px; color: var(--earth);
+    margin: 22px 0 12px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-label:first-child { margin-top: 0; }
 
   .drawer-bg { display: none; position: fixed; inset: 0; background: rgba(26,20,16,0.6); z-index: 300; animation: fadeIn 0.2s; }
   .drawer-bg.active { display: block; }
@@ -931,6 +887,22 @@
   }
   .tab-switch button.active { color: var(--ink); border-bottom-color: var(--gold); }
 
+  /* ===== PROFILE EDIT MODE ===== */
+  .profile-section { margin-bottom: 20px; }
+  .profile-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+  .profile-avatar-display {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--charcoal); color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 26px;
+    border: 3px solid var(--gold); overflow: hidden; flex-shrink: 0;
+  }
+  .profile-avatar-display img { width: 100%; height: 100%; object-fit: cover; }
+  .profile-info-row { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .profile-info-row:last-child { border-bottom: none; }
+  .profile-info-row .k { color: var(--ink-faint); font-weight: 700; width: 140px; flex-shrink: 0; }
+  .profile-info-row .v { color: var(--ink); font-weight: 600; }
+
   /* ================================================================= */
   /* ==================== RESPONSIVE BREAKPOINTS ===================== */
   /* ================================================================= */
@@ -1053,7 +1025,7 @@
     .quick-actions { grid-template-columns: 1fr; gap: 12px; }
 
     .form-wrap { padding: 20px 18px; }
-    .two-col { grid-template-columns: 1fr; gap: 0; }
+    .two-col, .three-col { grid-template-columns: 1fr; gap: 0; }
 
     .two-panel { grid-template-columns: 1fr; }
     .kpi-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -1085,6 +1057,10 @@
     .role-cards { grid-template-columns: 1fr; }
 
     .media-preview-list { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+
+    .profile-header { flex-direction: column; text-align: center; }
+    .profile-info-row { flex-direction: column; gap: 4px; }
+    .profile-info-row .k { width: 100%; }
   }
 
   @media (max-width: 420px) {
@@ -1178,7 +1154,6 @@
 <!-- ================= MAIN ================= -->
 <main>
 
-  <!-- ===== HOME, PUBLIC LANDING ===== -->
   <section class="view active" id="view-home-public">
     <div class="landing-hero">
       <div class="landing-hero-inner">
@@ -1242,18 +1217,9 @@
           <p>SciPool UG exists to close that gap. It captures each innovation the moment it is finished, protects it with a timestamped hash, and puts it in front of the investors, manufacturers and government agencies who can turn it into a product, a business and a job.</p>
         </div>
         <div class="story-visual">
-          <div class="story-stat">
-            <div class="num">9</div>
-            <div class="lbl">Stages of the national commercialisation pipeline</div>
-          </div>
-          <div class="story-stat">
-            <div class="num">10</div>
-            <div class="lbl">Sectors where young scientists are already innovating</div>
-          </div>
-          <div class="story-stat">
-            <div class="num">1</div>
-            <div class="lbl">Pool. Every university. Every sector. One national effort.</div>
-          </div>
+          <div class="story-stat"><div class="num">9</div><div class="lbl">Stages of the national commercialisation pipeline</div></div>
+          <div class="story-stat"><div class="num">10</div><div class="lbl">Sectors where young scientists are already innovating</div></div>
+          <div class="story-stat"><div class="num">1</div><div class="lbl">Pool. Every university. Every sector. One national effort.</div></div>
         </div>
       </div>
     </section>
@@ -1360,12 +1326,11 @@
     </div>
   </section>
 
-  <!-- ===== HOME, LOGGED IN DASHBOARD ===== -->
   <section class="view" id="view-home-dashboard">
     <div class="dash-hero">
       <div>
         <h2>Karibu to <span>SciPool UG</span>, <span id="dash-name">Friend</span></h2>
-        <p id="dash-greeting">Here is your SciPool dashboard. The latest in Uganda's scientific community, tailored to you.</p>
+        <p id="dash-greeting">Here is your SciPool dashboard.</p>
       </div>
       <div class="dash-hero-role" id="dash-role">Young Scientist</div>
     </div>
@@ -1378,7 +1343,6 @@
     <div id="home-featured" class="grid"></div>
   </section>
 
-  <!-- ===== BROWSE ===== -->
   <section class="view" id="view-browse">
     <div class="browse-toolbar">
       <div class="search-big">
@@ -1433,7 +1397,6 @@
     </div>
   </section>
 
-  <!-- ===== SUBMIT ===== -->
   <section class="view" id="view-submit">
     <h3 class="section-title">Submit your research</h3>
     <div class="form-wrap">
@@ -1534,7 +1497,6 @@
     </div>
   </section>
 
-  <!-- ===== CHAPTER DASHBOARD ===== -->
   <section class="view" id="view-chapters">
     <div class="chapter-header">
       <h2>University <span>Chapter Dashboard</span></h2>
@@ -1568,7 +1530,6 @@
     </div>
   </section>
 
-  <!-- ===== ADMIN ===== -->
   <section class="view" id="view-admin">
     <h3 class="section-title">Administrator dashboard</h3>
     <div class="alert alert-info">Demo admin view. In production it is role protected.</div>
@@ -1580,7 +1541,6 @@
     </div>
   </section>
 
-  <!-- ===== ABOUT ===== -->
   <section class="view" id="view-about">
     <h3 class="section-title">About SciPool UG</h3>
     <div class="form-wrap wide">
@@ -1601,7 +1561,6 @@
 
 </main>
 
-<!-- ================= STICKY MOBILE CTA ================= -->
 <div class="mobile-sticky-cta" id="mobile-sticky-cta">
   <div class="mobile-sticky-cta-inner">
     <button class="sticky-explore" onclick="goTo('browse')" type="button">Explore</button>
@@ -1609,7 +1568,6 @@
   </div>
 </div>
 
-<!-- ================= DRAWER ================= -->
 <div class="drawer-bg" id="drawer-bg"></div>
 <aside class="drawer" id="drawer">
   <div class="drawer-header">
@@ -1620,15 +1578,13 @@
   <div class="drawer-body" id="drawer-body"></div>
 </aside>
 
-<!-- ================= MODAL ================= -->
 <div class="modal-bg" id="modal-bg">
-  <div class="modal">
+  <div class="modal" id="modal-box">
     <button class="close" id="modal-close" type="button">&times;</button>
     <div id="modal-content"></div>
   </div>
 </div>
 
-<!-- ================= FOOTER ================= -->
 <footer>
   <div class="flag-stripe"></div>
   <div class="footer-brand">Sci<span class="pool">Pool</span> <span class="ug">UG</span></div>
@@ -1647,6 +1603,13 @@ const UNIVERSITIES = [
   'Uganda Christian University','Mbarara University of Science and Technology',
   'Gulu University','Busitema University','Muni University','Kabale University',
   'Lira University','Soroti University','Other'
+];
+
+const UG_DISTRICTS = [
+  'Kampala','Wakiso','Mukono','Jinja','Entebbe','Masaka','Mbarara','Gulu','Lira','Mbale',
+  'Arua','Fort Portal','Soroti','Kabale','Hoima','Masindi','Kasese','Tororo','Iganga','Busia',
+  'Nebbi','Apac','Moroto','Kotido','Kitgum','Adjumani','Yumbe','Moyo','Koboko','Nakasongola',
+  'Other'
 ];
 
 const SECTOR_ICONS = {
@@ -1668,11 +1631,12 @@ const TRL_LABELS = {
   7: 'System Prototype', 8: 'Qualified System', 9: 'Proven in Market'
 };
 
-const STORAGE_KEY = 'scipool_ug_v6';
-const USERS_KEY = 'scipool_users_v2';
-const SESSION_KEY = 'scipool_session_v2';
+const STORAGE_KEY = 'scipool_ug_v7';
+const USERS_KEY = 'scipool_users_v3';
+const SESSION_KEY = 'scipool_session_v3';
 const SAVED_KEY = 'scipool_saved_v1';
 const STATS_KEY = 'scipool_stats_v1';
+const RESET_KEY = 'scipool_reset_codes_v1';
 
 function loadData() {
   const raw = localStorage.getItem(STORAGE_KEY);
@@ -1718,7 +1682,7 @@ function loadData() {
       author: 'Nabukeera Aisha', email: 'aisha.nabukeera@kyambogo.ac.ug',
       university: 'Kyambogo University', course: 'BSc Mechatronics Engineering',
       sector: 'Engineering and Manufacturing', trl: 5,
-      abstract: 'A 3D printed prosthetic hand controlled by electromyography signals from residual limb muscles. Cost is UGX 850,000 compared to UGX 12 million for imported alternatives. Tested with eight amputees in Kampala.',
+      abstract: 'A 3D printed prosthetic hand controlled by electromyography signals from residual limb muscles. Cost is UGX 850,000 compared to UGX 12 million for imported alternatives.',
       keywords: 'prosthetics, EMG, 3D printing, assistive tech', visibility: 'public',
       date: new Date('2026-09-10').toISOString(),
       hash: 'e7b9a3c5f1d6842b0e5a7c9d3f1b6e8a2c4d6f8b0a2c4e6d8f1b3a5c7e9d2f4b',
@@ -1785,6 +1749,9 @@ function saveUsers(u) { localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
 function getSession() { const raw = localStorage.getItem(SESSION_KEY); return raw ? JSON.parse(raw) : null; }
 function setSession(u) { if (u) localStorage.setItem(SESSION_KEY, JSON.stringify(u)); else localStorage.removeItem(SESSION_KEY); }
 
+function loadResetCodes() { const raw = localStorage.getItem(RESET_KEY); return raw ? JSON.parse(raw) : {}; }
+function saveResetCodes(c) { localStorage.setItem(RESET_KEY, JSON.stringify(c)); }
+
 async function sha256(text) {
   const buf = new TextEncoder().encode(text);
   const hashBuf = await crypto.subtle.digest('SHA-256', buf);
@@ -1794,7 +1761,6 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-// ================= FILE UTILITIES =================
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -1826,6 +1792,9 @@ function isImage(name) {
 function initialsFromName(name) {
   return (name || '').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 }
+function generateResetCode() {
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
 
 // ================= MOBILE NAV =================
 function openMobileNav() {
@@ -1846,7 +1815,6 @@ document.getElementById('hamburger-btn').addEventListener('click', () => {
 });
 document.getElementById('mobile-nav-close').addEventListener('click', closeMobileNav);
 document.getElementById('mobile-nav-overlay').addEventListener('click', closeMobileNav);
-
 document.querySelectorAll('#mobile-nav-list button').forEach(btn => {
   btn.addEventListener('click', () => {
     closeMobileNav();
@@ -1886,12 +1854,9 @@ function goTo(view) {
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
 document.querySelectorAll('nav button[data-view]').forEach(btn => {
   btn.addEventListener('click', () => goTo(btn.dataset.view));
 });
-
-// ================= SIGN IN BUTTON — DIRECT ATTACH =================
 document.getElementById('open-auth').addEventListener('click', (e) => {
   e.preventDefault();
   openAuthModal('signin');
@@ -1975,13 +1940,11 @@ function renderSectorsLanding() {
     `;
   }).join('');
 }
-
 function browseBySector(sector) {
   browseState.sector = sector;
   browseState.savedOnly = false;
   goTo('browse');
 }
-
 function renderLandingPreview() {
   const preview = DB.filter(d => d.visibility === 'public').slice(0, 6);
   const el = document.getElementById('landing-preview');
@@ -2002,7 +1965,6 @@ function renderLandingPreview() {
     `;
   }).join('');
 }
-
 function renderPublicLanding() {
   renderSectorsLanding();
   renderLandingPreview();
@@ -2099,7 +2061,7 @@ function renderDashboard() {
 
 function cardHTML(item) {
   const isProtected = item.visibility !== 'public';
-  const abstract = isProtected ? '<em style="color:var(--ink-faint);">Details protected. Contact the author through the consortium to request access.</em>' : item.abstract;
+  const abstract = isProtected ? '<em style="color:var(--ink-faint);">Details protected.</em>' : item.abstract;
   const sectorIco = SECTOR_ICONS[item.sector] || '📌';
   const hasMedia = item.media && item.media.length > 0;
   return `
@@ -2481,7 +2443,7 @@ window.downloadMedia = function(itemId, mediaIndex) {
   document.body.removeChild(a);
 };
 
-// ================= MEDIA UPLOAD HANDLING =================
+// ================= MEDIA UPLOAD =================
 let pendingMedia = [];
 const MAX_MEDIA_FILES = 5;
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -2511,7 +2473,7 @@ async function handleFiles(files) {
       break;
     }
     if (f.size > MAX_FILE_SIZE) {
-      alert(`File "${f.name}" is larger than 5MB. Please choose a smaller file.`);
+      alert(`File "${f.name}" is larger than 5MB.`);
       continue;
     }
     try {
@@ -2525,14 +2487,9 @@ async function handleFiles(files) {
 }
 
 function renderMediaPreview() {
-  if (!pendingMedia.length) {
-    mediaPreviewList.innerHTML = '';
-    return;
-  }
+  if (!pendingMedia.length) { mediaPreviewList.innerHTML = ''; return; }
   mediaPreviewList.innerHTML = pendingMedia.map((m, i) => {
-    const preview = isImage(m.name)
-      ? `<img src="${m.data}" alt="${escapeHtml(m.name)}" />`
-      : getFileIcon(m.name);
+    const preview = isImage(m.name) ? `<img src="${m.data}" alt="${escapeHtml(m.name)}" />` : getFileIcon(m.name);
     return `
       <div class="media-item">
         <button class="media-item-remove" onclick="removePendingMedia(${i})" type="button" aria-label="Remove">×</button>
@@ -2543,10 +2500,7 @@ function renderMediaPreview() {
     `;
   }).join('');
 }
-window.removePendingMedia = function(i) {
-  pendingMedia.splice(i, 1);
-  renderMediaPreview();
-};
+window.removePendingMedia = function(i) { pendingMedia.splice(i, 1); renderMediaPreview(); };
 
 // ================= SUBMIT =================
 document.getElementById('submit-form').addEventListener('submit', async (e) => {
@@ -2746,6 +2700,13 @@ document.getElementById('chapter-bulk').addEventListener('click', () => {
 
 function openModal(html) {
   document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('modal-box').classList.remove('modal-wide');
+  document.getElementById('modal-bg').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function openWideModal(html) {
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('modal-box').classList.add('modal-wide');
   document.getElementById('modal-bg').classList.add('active');
   document.body.style.overflow = 'hidden';
 }
@@ -2753,7 +2714,7 @@ window.closeModal = function() { document.getElementById('modal-bg').classList.r
 document.getElementById('modal-close').addEventListener('click', closeModal);
 document.getElementById('modal-bg').addEventListener('click', e => { if (e.target.id === 'modal-bg') closeModal(); });
 
-// ================= AUTH MODAL =================
+// ================= AUTH FLOW =================
 let selectedRole = 'Young Scientist';
 let signupAvatarData = null;
 
@@ -2790,77 +2751,198 @@ function switchAuthTab(tab) {
         <div class="form-row"><label>Password <span class="req">*</span></label><input type="password" id="si-password" required autocomplete="current-password" /></div>
         <button type="submit" class="btn" style="width:100%;">Sign in to SciPool UG</button>
       </form>
+      <div style="text-align:center; margin-top:14px;">
+        <button type="button" class="btn-link" id="forgot-link">Forgot password?</button>
+      </div>
       <p style="margin-top:16px; font-size:12px; text-align:center; color:var(--ink-soft);">New to SciPool? <a href="#" onclick="switchAuthTab('signup'); return false;" style="color:var(--flag-red); font-weight:700;">Create an account</a></p>
     `;
     document.getElementById('signin-form').addEventListener('submit', handleSignIn);
+    document.getElementById('forgot-link').addEventListener('click', startForgotPassword);
   } else {
-    c.innerHTML = `
-      <p style="font-size:13px; font-weight:700; margin-bottom:6px; color:var(--ink);">I am registering as a <span class="req">*</span></p>
-      <div class="role-cards" id="role-cards">
-        ${ROLES.map(r => `<div class="role-card ${r.id === selectedRole ? 'selected' : ''}" data-role="${r.id}"><span class="role-icon">${r.icon}</span><div class="role-name">${r.id}</div><div class="role-desc">${r.desc}</div></div>`).join('')}
-      </div>
-      <div id="chapter-picker" style="display:none;">
-        <div class="form-row">
-          <label>Which university chapter? <span class="req">*</span></label>
-          <select id="su-chapter-uni">${UNIVERSITIES.map(u => `<option>${u}</option>`).join('')}</select>
+    renderSignupForm();
+  }
+}
+
+function renderSignupForm() {
+  const c = document.getElementById('auth-form-container');
+  c.innerHTML = `
+    <div class="step-indicator">
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+    </div>
+    <p style="font-size:13px; font-weight:700; margin-bottom:6px; color:var(--ink);">I am registering as a <span class="req">*</span></p>
+    <div class="role-cards" id="role-cards">
+      ${ROLES.map(r => `<div class="role-card ${r.id === selectedRole ? 'selected' : ''}" data-role="${r.id}"><span class="role-icon">${r.icon}</span><div class="role-name">${r.id}</div><div class="role-desc">${r.desc}</div></div>`).join('')}
+    </div>
+    <form id="signup-form">
+      <div class="avatar-upload">
+        <div class="avatar-preview" id="avatar-preview" title="Add a profile picture">
+          <span id="avatar-placeholder">📷</span>
         </div>
+        <input type="file" id="signup-avatar-input" accept="image/*" style="display:none;" />
+        <button type="button" class="avatar-upload-btn" id="avatar-upload-trigger">Add profile picture</button>
+        <div class="avatar-upload-hint">Optional. Helps investors and peers recognise you.</div>
       </div>
-      <form id="signup-form">
-        <div class="avatar-upload">
-          <div class="avatar-preview" id="avatar-preview" title="Add a profile picture">
-            <span id="avatar-placeholder">📷</span>
-            <input type="file" id="signup-avatar-input" accept="image/*" />
-          </div>
-          <button type="button" class="avatar-upload-btn" id="avatar-upload-trigger">Add profile picture</button>
-          <div class="avatar-upload-hint">Optional. Helps investors and peers recognise you.</div>
-        </div>
-        <div class="form-row"><label>Full name <span class="req">*</span></label><input type="text" id="su-name" required autocomplete="name" /></div>
+
+      <div class="section-label">Personal information</div>
+      <div class="form-row"><label>Full name <span class="req">*</span></label><input type="text" id="su-name" required autocomplete="name" /></div>
+      <div class="two-col">
         <div class="form-row"><label>Email <span class="req">*</span></label><input type="email" id="su-email" required autocomplete="email" /></div>
+        <div class="form-row"><label>Phone number <span class="req">*</span></label><input type="tel" id="su-phone" required placeholder="+256 7XX XXX XXX" autocomplete="tel" /></div>
+      </div>
+      <div class="two-col">
+        <div class="form-row">
+          <label>District <span class="req">*</span></label>
+          <select id="su-district" required>
+            <option value="">Select district</option>
+            ${UG_DISTRICTS.map(d => `<option>${d}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Gender <span class="opt">(optional)</span></label>
+          <select id="su-gender">
+            <option value="">Prefer not to say</option>
+            <option>Female</option>
+            <option>Male</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="role-specific-fields"></div>
+
+      <div class="section-label">Account security</div>
+      <div class="two-col">
         <div class="form-row"><label>Password <span class="req">*</span></label><input type="password" id="su-password" required minlength="6" autocomplete="new-password" /></div>
         <div class="form-row"><label>Confirm password <span class="req">*</span></label><input type="password" id="su-password2" required minlength="6" autocomplete="new-password" /></div>
-        <button type="submit" class="btn btn-red" style="width:100%;">Join SciPool UG</button>
-      </form>
+      </div>
+
+      <div style="background: var(--gold-soft); padding: 12px; border-radius: 8px; font-size: 12px; color: #6b4a00; margin-bottom: 16px; line-height: 1.6;">
+        <strong>Your data.</strong> We collect this information to verify your identity, match you with opportunities, and inform national STI policy. We never sell your data.
+      </div>
+
+      <button type="submit" class="btn btn-red" style="width:100%;">Create my SciPool account</button>
+    </form>
+  `;
+
+  document.querySelectorAll('#role-cards .role-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('#role-cards .role-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedRole = card.dataset.role;
+      renderRoleSpecificFields();
+    });
+  });
+
+  const avatarInput = document.getElementById('signup-avatar-input');
+  const avatarPreview = document.getElementById('avatar-preview');
+  const avatarTrigger = document.getElementById('avatar-upload-trigger');
+  avatarPreview.addEventListener('click', () => avatarInput.click());
+  avatarTrigger.addEventListener('click', () => avatarInput.click());
+  avatarInput.addEventListener('change', async e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    if (f.size > 2 * 1024 * 1024) { alert('Please choose an image under 2MB.'); return; }
+    try {
+      const data = await fileToBase64(f);
+      signupAvatarData = data;
+      avatarPreview.innerHTML = `<img src="${data}" alt="" />`;
+      avatarPreview.classList.add('has-image');
+    } catch (err) {
+      alert('Could not read that image.');
+    }
+  });
+
+  renderRoleSpecificFields();
+  document.getElementById('signup-form').addEventListener('submit', handleSignUp);
+}
+
+function renderRoleSpecificFields() {
+  const c = document.getElementById('role-specific-fields');
+  if (selectedRole === 'Young Scientist') {
+    c.innerHTML = `
+      <div class="section-label">Academic information</div>
+      <div class="two-col">
+        <div class="form-row">
+          <label>University <span class="req">*</span></label>
+          <select id="su-university" required>
+            <option value="">Select university</option>
+            ${UNIVERSITIES.map(u => `<option>${u}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-row"><label>Course or programme <span class="req">*</span></label><input type="text" id="su-course" required placeholder="Example: BSc Biomedical Engineering" /></div>
+      </div>
+      <div class="two-col">
+        <div class="form-row">
+          <label>Year of study <span class="req">*</span></label>
+          <select id="su-year" required>
+            <option value="">Select year</option>
+            <option>Year 1</option>
+            <option>Year 2</option>
+            <option>Year 3</option>
+            <option>Year 4</option>
+            <option>Year 5</option>
+            <option>Postgraduate</option>
+            <option>Recent graduate</option>
+          </select>
+        </div>
+        <div class="form-row"><label>Student number <span class="opt">(optional)</span></label><input type="text" id="su-student-id" placeholder="For verification purposes" /></div>
+      </div>
     `;
-    document.querySelectorAll('#role-cards .role-card').forEach(card => {
-      card.addEventListener('click', () => {
-        document.querySelectorAll('#role-cards .role-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        selectedRole = card.dataset.role;
-        document.getElementById('chapter-picker').style.display = selectedRole === 'University Chapter' ? 'block' : 'none';
-      });
-    });
-
-    // Avatar upload
-    const avatarInput = document.getElementById('signup-avatar-input');
-    const avatarPreview = document.getElementById('avatar-preview');
-    const avatarTrigger = document.getElementById('avatar-upload-trigger');
-    avatarPreview.addEventListener('click', () => avatarInput.click());
-    avatarTrigger.addEventListener('click', () => avatarInput.click());
-    avatarInput.addEventListener('change', async e => {
-      const f = e.target.files[0];
-      if (!f) return;
-      if (f.size > 2 * 1024 * 1024) { alert('Please choose an image under 2MB.'); return; }
-      try {
-        const data = await fileToBase64(f);
-        signupAvatarData = data;
-        avatarPreview.innerHTML = `<img src="${data}" alt="" /><input type="file" id="signup-avatar-input" accept="image/*" />`;
-        avatarPreview.classList.add('has-image');
-        // Re-wire click on new input
-        const newInput = document.getElementById('signup-avatar-input');
-        newInput.addEventListener('change', async ev => {
-          const nf = ev.target.files[0];
-          if (!nf) return;
-          const nd = await fileToBase64(nf);
-          signupAvatarData = nd;
-          avatarPreview.innerHTML = `<img src="${nd}" alt="" /><input type="file" id="signup-avatar-input" accept="image/*" />`;
-        });
-        newInput.click();
-      } catch (err) {
-        alert('Could not read that image.');
-      }
-    });
-
-    document.getElementById('signup-form').addEventListener('submit', handleSignUp);
+  } else if (selectedRole === 'University Chapter') {
+    c.innerHTML = `
+      <div class="section-label">Chapter information</div>
+      <div class="form-row">
+        <label>University chapter <span class="req">*</span></label>
+        <select id="su-chapter-uni" required>
+          <option value="">Select university</option>
+          ${UNIVERSITIES.map(u => `<option>${u}</option>`).join('')}
+        </select>
+      </div>
+      <div class="two-col">
+        <div class="form-row"><label>Position at chapter <span class="req">*</span></label><input type="text" id="su-position" required placeholder="Example: Chapter Coordinator" /></div>
+        <div class="form-row"><label>Staff ID <span class="opt">(optional)</span></label><input type="text" id="su-staff-id" placeholder="For verification purposes" /></div>
+      </div>
+    `;
+  } else if (selectedRole === 'Industry / Investor') {
+    c.innerHTML = `
+      <div class="section-label">Organisation information</div>
+      <div class="form-row"><label>Organisation name <span class="req">*</span></label><input type="text" id="su-org-name" required placeholder="Example: Acacia Innovations Ltd" /></div>
+      <div class="two-col">
+        <div class="form-row">
+          <label>Organisation type <span class="req">*</span></label>
+          <select id="su-org-type" required>
+            <option value="">Select type</option>
+            <option>Startup</option>
+            <option>SME</option>
+            <option>Corporate</option>
+            <option>Investment firm</option>
+            <option>Development partner</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-row"><label>Your role <span class="req">*</span></label><input type="text" id="su-job-title" required placeholder="Example: Investment Manager" /></div>
+      </div>
+      <div class="two-col">
+        <div class="form-row">
+          <label>Sector of interest <span class="req">*</span></label>
+          <select id="su-interest" required>
+            <option value="">Select sector</option>
+            ${Object.keys(SECTOR_ICONS).map(s => `<option>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-row"><label>Website or LinkedIn <span class="opt">(optional)</span></label><input type="url" id="su-website" placeholder="https://" /></div>
+      </div>
+    `;
+  } else if (selectedRole === 'Government / Policy') {
+    c.innerHTML = `
+      <div class="section-label">Government information</div>
+      <div class="form-row"><label>Ministry or agency <span class="req">*</span></label><input type="text" id="su-ministry" required placeholder="Example: Ministry of Science, Technology and Innovation" /></div>
+      <div class="two-col">
+        <div class="form-row"><label>Your position or title <span class="req">*</span></label><input type="text" id="su-gov-position" required placeholder="Example: Policy Analyst" /></div>
+        <div class="form-row"><label>Official email <span class="opt">(optional)</span></label><input type="email" id="su-official-email" placeholder="name@ministry.go.ug" /></div>
+      </div>
+    `;
   }
 }
 
@@ -2868,34 +2950,64 @@ async function handleSignUp(e) {
   e.preventDefault();
   const name = document.getElementById('su-name').value.trim();
   const email = document.getElementById('su-email').value.trim().toLowerCase();
+  const phone = document.getElementById('su-phone').value.trim();
+  const district = document.getElementById('su-district').value;
+  const gender = document.getElementById('su-gender').value;
   const pw = document.getElementById('su-password').value;
   const pw2 = document.getElementById('su-password2').value;
-  const chapterUni = selectedRole === 'University Chapter' ? document.getElementById('su-chapter-uni').value : null;
   if (pw !== pw2) { alert('Passwords do not match.'); return; }
+
   const users = loadUsers();
   if (users.find(u => u.email === email)) { alert('An account with this email already exists.'); return; }
+
+  const profile = {};
+  if (selectedRole === 'Young Scientist') {
+    profile.university = document.getElementById('su-university').value;
+    profile.course = document.getElementById('su-course').value.trim();
+    profile.yearOfStudy = document.getElementById('su-year').value;
+    profile.studentId = document.getElementById('su-student-id').value.trim();
+  } else if (selectedRole === 'University Chapter') {
+    profile.chapterUniversity = document.getElementById('su-chapter-uni').value;
+    profile.position = document.getElementById('su-position').value.trim();
+    profile.staffId = document.getElementById('su-staff-id').value.trim();
+  } else if (selectedRole === 'Industry / Investor') {
+    profile.organisation = document.getElementById('su-org-name').value.trim();
+    profile.orgType = document.getElementById('su-org-type').value;
+    profile.jobTitle = document.getElementById('su-job-title').value.trim();
+    profile.sectorInterest = document.getElementById('su-interest').value;
+    profile.website = document.getElementById('su-website').value.trim();
+  } else if (selectedRole === 'Government / Policy') {
+    profile.ministry = document.getElementById('su-ministry').value.trim();
+    profile.govPosition = document.getElementById('su-gov-position').value.trim();
+    profile.officialEmail = document.getElementById('su-official-email').value.trim();
+  }
+
   const pwHash = await sha256(pw);
   const user = {
-    id: 'user-'+Date.now(),
-    name, email,
+    id: 'user-' + Date.now(),
+    name, email, phone, district, gender,
     role: selectedRole,
-    chapterUniversity: chapterUni,
     avatar: signupAvatarData,
+    profile: profile,
     pwHash,
     joined: new Date().toISOString()
   };
-  users.push(user); saveUsers(users);
+  users.push(user);
+  saveUsers(users);
   setSession({
-    id: user.id, name, email, role: user.role,
-    chapterUniversity: user.chapterUniversity, avatar: user.avatar
+    id: user.id, name: user.name, email: user.email,
+    role: user.role, avatar: user.avatar,
+    chapterUniversity: profile.chapterUniversity || null
   });
-  if (selectedRole === 'University Chapter' && chapterUni) currentChapter = chapterUni;
+  if (selectedRole === 'University Chapter' && profile.chapterUniversity) {
+    currentChapter = profile.chapterUniversity;
+  }
   signupAvatarData = null;
   closeModal();
   updateAuthUI();
   openModal(`
     <h3 style="color:var(--green);">Welcome to SciPool UG, ${escapeHtml(name.split(' ')[0])}</h3>
-    <div class="alert alert-success">You are registered as <strong>${escapeHtml(selectedRole)}</strong>${chapterUni ? ', ' + escapeHtml(chapterUni) : ''}.</div>
+    <div class="alert alert-success">You are registered as <strong>${escapeHtml(selectedRole)}</strong>.</div>
     <p style="margin:14px 0; font-size:14px; color:var(--ink-soft); line-height:1.7;">You have joined the national data, research and project repository for young scientific talents.</p>
     <button class="btn" onclick="closeModal()" style="width:100%;" type="button">Continue to dashboard</button>
   `);
@@ -2911,43 +3023,180 @@ async function handleSignIn(e) {
   if (!user) { alert('Invalid credentials. Please try again.'); return; }
   setSession({
     id: user.id, name: user.name, email: user.email,
-    role: user.role, chapterUniversity: user.chapterUniversity,
-    avatar: user.avatar
+    role: user.role, avatar: user.avatar,
+    chapterUniversity: (user.profile && user.profile.chapterUniversity) || null
   });
-  if (user.role === 'University Chapter' && user.chapterUniversity) currentChapter = user.chapterUniversity;
+  if (user.role === 'University Chapter' && user.profile && user.profile.chapterUniversity) {
+    currentChapter = user.profile.chapterUniversity;
+  }
   closeModal();
   updateAuthUI();
   openModal(`<h3 style="color:var(--green);">Welcome back to SciPool UG, ${escapeHtml(user.name.split(' ')[0])}</h3><button class="btn" onclick="closeModal()" style="width:100%;" type="button">Continue</button>`);
 }
 
-function openProfile() {
-  const user = getSession();
-  if (!user) return;
-  const fullUser = loadUsers().find(u => u.email === user.email);
-  const avatar = (fullUser && fullUser.avatar) || user.avatar;
-  const initials = initialsFromName(user.name);
-  const avatarHTML = avatar
-    ? `<img src="${avatar}" alt="" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid var(--gold);" />`
-    : `<div style="width:80px; height:80px; border-radius:50%; background: var(--charcoal); color: var(--gold); display:flex; align-items:center; justify-content:center; font-weight:900; font-size:26px; border:3px solid var(--gold);">${escapeHtml(initials)}</div>`;
+// ================= FORGOT PASSWORD =================
+window.startForgotPassword = function() {
   openModal(`
+    <h3>Reset your password</h3>
+    <p style="font-size:14px; color:var(--ink-soft); margin-bottom:20px; line-height:1.6;">Enter the email address you used when you joined SciPool UG. We will send you a 6 digit code to reset your password.</p>
+    <form id="forgot-form">
+      <div class="form-row">
+        <label>Email address <span class="req">*</span></label>
+        <input type="email" id="fp-email" required placeholder="you@university.ac.ug" autocomplete="email" />
+      </div>
+      <button type="submit" class="btn" style="width:100%;">Send reset code</button>
+    </form>
+    <p style="margin-top:16px; font-size:12px; text-align:center;">
+      <a href="#" onclick="openAuthModal('signin'); return false;" style="color:var(--flag-red); font-weight:700;">Back to sign in</a>
+    </p>
+  `);
+  document.getElementById('forgot-form').addEventListener('submit', handleForgotStep1);
+};
+
+async function handleForgotStep1(e) {
+  e.preventDefault();
+  const email = document.getElementById('fp-email').value.trim().toLowerCase();
+  const users = loadUsers();
+  const user = users.find(u => u.email === email);
+  if (!user) {
+    alert('No account found with that email. Please check the spelling or create a new account.');
+    return;
+  }
+  const code = generateResetCode();
+  const codes = loadResetCodes();
+  codes[email] = { code, expires: Date.now() + 15 * 60 * 1000 };
+  saveResetCodes(codes);
+
+  // Demo only: reveal code in modal. Production would send by SMS/email.
+  openModal(`
+    <h3>Check your messages</h3>
+    <div class="alert alert-warn">
+      <strong>Demo mode.</strong> In production this code is sent to your phone or email. For this demo, the code is shown below.
+    </div>
+    <div style="text-align:center; padding: 20px; background: var(--gold-soft); border-radius: 10px; margin-bottom: 20px; border: 2px dashed var(--gold);">
+      <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #6b4a00; font-weight: 800; margin-bottom: 8px;">Your reset code</div>
+      <div style="font-size: 36px; font-weight: 900; color: var(--flag-red); letter-spacing: 8px; font-family: monospace;">${code}</div>
+    </div>
+    <p style="font-size: 13px; color: var(--ink-soft); margin-bottom: 20px;">Enter the code below along with your new password. The code expires in 15 minutes.</p>
+    <form id="reset-form">
+      <div class="form-row">
+        <label>Reset code <span class="req">*</span></label>
+        <input type="text" id="rp-code" required maxlength="6" pattern="[0-9]{6}" placeholder="6 digit code" style="font-family: monospace; font-size: 18px; letter-spacing: 4px; text-align: center;" />
+      </div>
+      <div class="form-row">
+        <label>New password <span class="req">*</span></label>
+        <input type="password" id="rp-password" required minlength="6" placeholder="At least 6 characters" autocomplete="new-password" />
+      </div>
+      <div class="form-row">
+        <label>Confirm new password <span class="req">*</span></label>
+        <input type="password" id="rp-password2" required minlength="6" autocomplete="new-password" />
+      </div>
+      <button type="submit" class="btn btn-red" style="width:100%;">Reset my password</button>
+    </form>
+    <p style="margin-top:16px; font-size:12px; text-align:center;">
+      <a href="#" onclick="openAuthModal('signin'); return false;" style="color:var(--flag-red); font-weight:700;">Cancel</a>
+    </p>
+  `);
+  document.getElementById('reset-form').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const entered = document.getElementById('rp-code').value.trim();
+    const pw = document.getElementById('rp-password').value;
+    const pw2 = document.getElementById('rp-password2').value;
+    if (pw !== pw2) { alert('Passwords do not match.'); return; }
+    const codes2 = loadResetCodes();
+    const entry = codes2[email];
+    if (!entry) { alert('Reset code not found. Please start again.'); return; }
+    if (Date.now() > entry.expires) { alert('This reset code has expired. Please start again.'); delete codes2[email]; saveResetCodes(codes2); return; }
+    if (entry.code !== entered) { alert('The code you entered is incorrect.'); return; }
+    const newHash = await sha256(pw);
+    const allUsers = loadUsers();
+    const u = allUsers.find(x => x.email === email);
+    if (u) { u.pwHash = newHash; saveUsers(allUsers); }
+    delete codes2[email];
+    saveResetCodes(codes2);
+    closeModal();
+    openModal(`
+      <h3 style="color:var(--green);">Password reset successful</h3>
+      <div class="alert alert-success">Your password has been updated. You can now sign in with your new password.</div>
+      <button class="btn" onclick="openAuthModal('signin');" style="width:100%;" type="button">Sign in now</button>
+    `);
+  });
+}
+
+// ================= PROFILE VIEW / EDIT =================
+function openProfile() {
+  const session = getSession();
+  if (!session) return;
+  const users = loadUsers();
+  const user = users.find(u => u.email === session.email);
+  if (!user) return;
+  const p = user.profile || {};
+  const initials = initialsFromName(user.name);
+  const avatarHTML = user.avatar
+    ? `<img src="${user.avatar}" alt="" />`
+    : escapeHtml(initials);
+
+  const roleDetails = [];
+  if (user.role === 'Young Scientist') {
+    roleDetails.push(['University', p.university]);
+    roleDetails.push(['Course', p.course]);
+    roleDetails.push(['Year of study', p.yearOfStudy]);
+    if (p.studentId) roleDetails.push(['Student number', p.studentId]);
+  } else if (user.role === 'University Chapter') {
+    roleDetails.push(['Chapter', p.chapterUniversity]);
+    roleDetails.push(['Position', p.position]);
+    if (p.staffId) roleDetails.push(['Staff ID', p.staffId]);
+  } else if (user.role === 'Industry / Investor') {
+    roleDetails.push(['Organisation', p.organisation]);
+    roleDetails.push(['Organisation type', p.orgType]);
+    roleDetails.push(['Your role', p.jobTitle]);
+    roleDetails.push(['Sector of interest', p.sectorInterest]);
+    if (p.website) roleDetails.push(['Website', p.website]);
+  } else if (user.role === 'Government / Policy') {
+    roleDetails.push(['Ministry / Agency', p.ministry]);
+    roleDetails.push(['Position', p.govPosition]);
+    if (p.officialEmail) roleDetails.push(['Official email', p.officialEmail]);
+  }
+
+  openWideModal(`
     <h3>My SciPool account</h3>
-    <div style="display:flex; align-items:center; gap:16px; margin-bottom:18px;">
-      ${avatarHTML}
+    <div class="profile-header">
+      <div class="profile-avatar-display">${avatarHTML}</div>
       <div>
-        <div style="font-weight:800; font-size:16px; color:var(--ink);">${escapeHtml(user.name)}</div>
-        <div style="font-size:13px; color:var(--ink-soft);">${escapeHtml(user.role)}${user.chapterUniversity ? ' · ' + escapeHtml(user.chapterUniversity) : ''}</div>
+        <div style="font-weight: 900; font-size: 18px; color: var(--ink);">${escapeHtml(user.name)}</div>
+        <div style="font-size: 13px; color: var(--flag-red); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">${escapeHtml(user.role)}</div>
       </div>
     </div>
-    <p style="margin:10px 0;"><strong>Email.</strong> ${escapeHtml(user.email)}</p>
-    ${user.chapterUniversity ? `<p style="margin:10px 0;"><strong>Chapter.</strong> ${escapeHtml(user.chapterUniversity)}</p>` : ''}
-    <div style="margin-top:22px; display:flex; gap:10px; flex-wrap:wrap;">
-      <button class="btn" onclick="closeModal()" style="flex:1;" type="button">Close</button>
-      <button class="btn btn-red" onclick="signOut()" style="flex:1;" type="button">Sign out</button>
+    <div class="profile-section">
+      <div class="section-label">Contact</div>
+      <div class="profile-info-row"><div class="k">Email</div><div class="v">${escapeHtml(user.email)}</div></div>
+      ${user.phone ? `<div class="profile-info-row"><div class="k">Phone</div><div class="v">${escapeHtml(user.phone)}</div></div>` : ''}
+      ${user.district ? `<div class="profile-info-row"><div class="k">District</div><div class="v">${escapeHtml(user.district)}</div></div>` : ''}
+      ${user.gender ? `<div class="profile-info-row"><div class="k">Gender</div><div class="v">${escapeHtml(user.gender)}</div></div>` : ''}
+    </div>
+    ${roleDetails.length ? `
+      <div class="profile-section">
+        <div class="section-label">${user.role} details</div>
+        ${roleDetails.map(([k, v]) => v ? `<div class="profile-info-row"><div class="k">${escapeHtml(k)}</div><div class="v">${escapeHtml(v)}</div></div>` : '').join('')}
+      </div>
+    ` : ''}
+    <div class="profile-section">
+      <div class="section-label">Account</div>
+      <div class="profile-info-row"><div class="k">Joined</div><div class="v">${new Date(user.joined).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' })}</div></div>
+      <div class="profile-info-row"><div class="k">Account ID</div><div class="v" style="font-family: monospace; font-size: 11px;">${escapeHtml(user.id)}</div></div>
+    </div>
+    <div style="margin-top: 24px; display: flex; gap: 10px; flex-wrap: wrap;">
+      <button class="btn" onclick="closeModal()" style="flex: 1;" type="button">Close</button>
+      ${user.role === 'University Chapter' ? `<button class="btn btn-black" onclick="closeModal(); goTo('chapters');" style="flex: 1;" type="button">Chapter Dashboard</button>` : ''}
+      <button class="btn btn-red" onclick="signOut()" style="flex: 1;" type="button">Sign out</button>
     </div>
   `);
 }
+
 window.signOut = function() {
-  setSession(null); updateAuthUI(); closeModal();
+  setSession(null);
+  updateAuthUI();
+  closeModal();
   goTo('home');
 };
 
