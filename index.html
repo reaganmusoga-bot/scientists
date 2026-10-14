@@ -78,21 +78,146 @@
   nav button.active { background: var(--gold); color: var(--charcoal); font-weight: 700; }
   nav .signin-btn { background: var(--flag-red); color: var(--white); font-weight: 700; padding: 9px 16px; margin-left: 10px; flex-shrink: 0; cursor: pointer; }
   nav .signin-btn:hover { background: var(--flag-red-deep); color: var(--white); }
-  nav .user-badge {
+
+  /* ===== USER BADGE + DROPDOWN ===== */
+  .user-menu-wrap { position: relative; margin-left: 10px; flex-shrink: 0; display: none; }
+  .user-menu-wrap.active { display: block; }
+  .user-badge {
     background: var(--gold); color: var(--charcoal);
     padding: 4px 12px 4px 4px; border-radius: 24px; font-size: 12px;
-    font-weight: 700; margin-left: 10px; cursor: pointer; display: none;
-    flex-shrink: 0; white-space: nowrap; align-items: center; gap: 8px;
+    font-weight: 700; cursor: pointer;
+    white-space: nowrap; align-items: center; gap: 8px;
+    border: none; font-family: inherit;
+    display: inline-flex; transition: all 0.2s;
   }
-  nav .user-badge.active { display: inline-flex; }
-  nav .user-badge .badge-avatar {
+  .user-badge:hover { background: var(--gold-deep); }
+  .user-badge .badge-avatar {
     width: 26px; height: 26px; border-radius: 50%;
     background: var(--charcoal); color: var(--gold);
     display: flex; align-items: center; justify-content: center;
     font-weight: 800; font-size: 11px;
     overflow: hidden; flex-shrink: 0;
   }
-  nav .user-badge .badge-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .user-badge .badge-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .user-badge .chevron {
+    font-size: 9px; margin-left: 2px; transition: transform 0.2s;
+    display: inline-block;
+  }
+  .user-badge.open .chevron { transform: rotate(180deg); }
+
+  /* Dropdown panel */
+  .user-dropdown {
+    position: absolute; top: calc(100% + 10px); right: 0;
+    min-width: 280px;
+    background: var(--white); border-radius: 14px;
+    box-shadow: 0 20px 50px rgba(26,20,16,0.28);
+    border-top: 5px solid var(--gold);
+    padding: 0;
+    z-index: 200;
+    opacity: 0; transform: translateY(-8px) scale(0.98);
+    pointer-events: none;
+    transition: opacity 0.18s, transform 0.18s;
+    overflow: hidden;
+  }
+  .user-dropdown.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+  .user-dropdown-header {
+    padding: 18px 20px; background: var(--cream);
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .user-dropdown-header .dd-avatar {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--charcoal); color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px;
+    overflow: hidden; flex-shrink: 0;
+    border: 2px solid var(--flag-red);
+  }
+  .user-dropdown-header .dd-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .user-dropdown-header .dd-info { flex: 1; min-width: 0; }
+  .user-dropdown-header .dd-name {
+    font-weight: 800; font-size: 14px; color: var(--ink);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .user-dropdown-header .dd-role {
+    font-size: 10px; color: var(--flag-red);
+    font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+    margin-top: 2px;
+  }
+  .user-dropdown-header .dd-email {
+    font-size: 11px; color: var(--ink-faint);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin-top: 2px;
+  }
+  .user-dropdown-list { list-style: none; padding: 8px 0; }
+  .user-dropdown-list li { border-bottom: 1px solid var(--line); }
+  .user-dropdown-list li:last-child { border-bottom: none; }
+  .user-dropdown-list button {
+    width: 100%; text-align: left;
+    background: transparent; border: none;
+    padding: 14px 20px;
+    font-size: 14px; font-weight: 600;
+    color: var(--ink); cursor: pointer;
+    font-family: inherit;
+    display: flex; align-items: center; gap: 12px;
+    transition: background 0.15s;
+  }
+  .user-dropdown-list button:hover { background: var(--cream); }
+  .user-dropdown-list button .dd-icon {
+    font-size: 18px; width: 24px; text-align: center; flex-shrink: 0;
+  }
+  .user-dropdown-list button.signout-btn { color: var(--flag-red); }
+  .user-dropdown-list button.signout-btn:hover { background: #FFF0F2; }
+
+  /* ===== MOBILE MENU USER SECTION ===== */
+  .mobile-user-section {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(245,183,0,0.15);
+  }
+  .mobile-user-header {
+    display: flex; align-items: center; gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(245,183,0,0.1);
+    margin-bottom: 12px;
+  }
+  .mobile-user-header .m-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--gold); color: var(--charcoal);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px;
+    overflow: hidden; flex-shrink: 0;
+    border: 2px solid var(--flag-red);
+  }
+  .mobile-user-header .m-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .mobile-user-header .m-info { flex: 1; min-width: 0; }
+  .mobile-user-header .m-name {
+    font-weight: 800; font-size: 15px; color: var(--white);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .mobile-user-header .m-role {
+    font-size: 10px; color: var(--gold);
+    font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+    margin-top: 2px;
+  }
+  .mobile-user-header .m-email {
+    font-size: 11px; color: #a89a85;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin-top: 2px;
+  }
+  .mobile-user-actions { display: flex; flex-direction: column; gap: 4px; }
+  .mobile-user-actions button {
+    width: 100%; text-align: left;
+    background: transparent; border: none;
+    color: var(--white); padding: 12px 8px;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    display: flex; align-items: center; gap: 10px;
+    border-radius: 6px;
+    transition: background 0.15s;
+  }
+  .mobile-user-actions button:hover { background: rgba(245,183,0,0.08); }
+  .mobile-user-actions button.signout { color: var(--gold); }
+  .mobile-user-actions button .m-icon { font-size: 18px; width: 22px; text-align: center; }
 
   .hamburger-btn {
     display: none; background: transparent; border: 2px solid rgba(245,183,0,0.4);
@@ -887,7 +1012,6 @@
   }
   .tab-switch button.active { color: var(--ink); border-bottom-color: var(--gold); }
 
-  /* ===== PROFILE EDIT MODE ===== */
   .profile-section { margin-bottom: 20px; }
   .profile-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
   .profile-avatar-display {
@@ -954,6 +1078,7 @@
     .hamburger-btn { display: flex; }
     .header-inner { padding: 12px 16px; }
     .logo-text p { display: none; }
+    .user-menu-wrap { display: none !important; }
 
     main { padding: 18px 14px 100px; }
 
@@ -1095,7 +1220,6 @@
 </head>
 <body>
 
-<!-- ================= HEADER ================= -->
 <header>
   <div class="flag-stripe"></div>
   <div class="header-inner">
@@ -1116,9 +1240,29 @@
         <li><button data-view="admin">Admin</button></li>
         <li><button data-view="about">About</button></li>
         <li><button class="signin-btn" id="open-auth" type="button">Sign In or Sign Up</button></li>
-        <li><button class="user-badge" id="user-badge" type="button"></button></li>
       </ul>
     </nav>
+
+    <!-- ========== USER MENU WRAP ========== -->
+    <div class="user-menu-wrap" id="user-menu-wrap">
+      <button class="user-badge" id="user-badge" type="button"></button>
+      <div class="user-dropdown" id="user-dropdown">
+        <div class="user-dropdown-header">
+          <div class="dd-avatar" id="dd-avatar">SP</div>
+          <div class="dd-info">
+            <div class="dd-name" id="dd-name">User</div>
+            <div class="dd-role" id="dd-role">Role</div>
+            <div class="dd-email" id="dd-email">email</div>
+          </div>
+        </div>
+        <ul class="user-dropdown-list">
+          <li><button type="button" onclick="closeUserDropdown(); openProfile();"><span class="dd-icon">👤</span>View Profile</button></li>
+          <li><button type="button" onclick="closeUserDropdown(); openProfileEdit();"><span class="dd-icon">✏️</span>Edit Profile</button></li>
+          <li><button type="button" onclick="closeUserDropdown(); goTo('browse'); setTimeout(showSavedOnly, 300);"><span class="dd-icon">💾</span>My Shortlist</button></li>
+          <li><button type="button" class="signout-btn" onclick="closeUserDropdown(); signOut();"><span class="dd-icon">🚪</span>Sign Out</button></li>
+        </ul>
+      </div>
+    </div>
 
     <button class="hamburger-btn" id="hamburger-btn" aria-label="Open menu" type="button">
       <span></span>
@@ -1128,13 +1272,13 @@
   </div>
 </header>
 
-<!-- ================= MOBILE NAV DRAWER ================= -->
 <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
 <aside class="mobile-nav-drawer" id="mobile-nav-drawer">
   <div class="mobile-nav-header">
     <div class="m-brand">Sci<span class="pool">Pool</span> <span class="ug">UG</span></div>
     <button class="mobile-nav-close" id="mobile-nav-close" aria-label="Close menu" type="button">×</button>
   </div>
+  <div id="mobile-user-section-container"></div>
   <ul class="mobile-nav-list" id="mobile-nav-list">
     <li><button data-view="home" type="button"><span><span class="m-icon">🏠</span>Home</span></button></li>
     <li><button data-view="browse" type="button"><span><span class="m-icon">🔬</span>Browse Innovations</span></button></li>
@@ -1143,15 +1287,11 @@
     <li><button data-view="admin" type="button"><span><span class="m-icon">📊</span>Admin</span></button></li>
     <li><button data-view="about" type="button"><span><span class="m-icon">ℹ️</span>About</span></button></li>
   </ul>
-  <div class="mobile-nav-cta">
+  <div class="mobile-nav-cta" id="mobile-auth-block">
     <button id="mobile-open-auth" type="button">Sign In or Sign Up</button>
-  </div>
-  <div class="mobile-nav-cta" id="mobile-user-block" style="display:none;">
-    <button id="mobile-user-badge" type="button" style="background: var(--gold); color: var(--charcoal);"></button>
   </div>
 </aside>
 
-<!-- ================= MAIN ================= -->
 <main>
 
   <section class="view active" id="view-home-public">
@@ -1631,9 +1771,9 @@ const TRL_LABELS = {
   7: 'System Prototype', 8: 'Qualified System', 9: 'Proven in Market'
 };
 
-const STORAGE_KEY = 'scipool_ug_v7';
-const USERS_KEY = 'scipool_users_v3';
-const SESSION_KEY = 'scipool_session_v3';
+const STORAGE_KEY = 'scipool_ug_v8';
+const USERS_KEY = 'scipool_users_v4';
+const SESSION_KEY = 'scipool_session_v4';
 const SAVED_KEY = 'scipool_saved_v1';
 const STATS_KEY = 'scipool_stats_v1';
 const RESET_KEY = 'scipool_reset_codes_v1';
@@ -1673,7 +1813,7 @@ function loadData() {
       author: 'Kassaga Andrew', email: 'andrew.kassaga@busitema.ac.ug',
       university: 'Busitema University', course: 'BSc Renewable Energy Engineering',
       sector: 'Renewable Energy', trl: 7,
-      abstract: 'A decentralised solar powered milk cooling system for smallholder dairy farmers in eastern Uganda. Post harvest milk losses reduced by 68 percent. Currently deployed in three districts.',
+      abstract: 'A decentralised solar powered milk cooling system for smallholder dairy farmers in eastern Uganda. Post harvest milk losses reduced by 68 percent.',
       keywords: 'solar, cold chain, dairy, milk, off grid', visibility: 'public',
       date: new Date('2026-08-28').toISOString(),
       hash: 'd6a8f2b4e0c5731a9d4f6b8c2e0a5d7f1b9c3e5a7d9f1b3c5e7a9d2f4b6c8e0a',
@@ -1700,7 +1840,7 @@ function loadData() {
       author: 'Namatovu Patricia', email: 'patricia.namatovu@mak.ac.ug',
       university: 'Makerere University', course: 'BSc Environmental Science',
       sector: 'Environmental Technologies', trl: 6,
-      abstract: 'An internet of things sensor network that monitors pH, turbidity and heavy metal contamination in Lake Victoria in real time, alerting fishing communities and regulators by SMS when unsafe levels are detected.',
+      abstract: 'An internet of things sensor network that monitors pH, turbidity and heavy metal contamination in Lake Victoria in real time.',
       keywords: 'IoT, water quality, Lake Victoria, sensors', visibility: 'public',
       date: new Date('2026-09-15').toISOString(),
       hash: 'a9d1c5e7b3f8064d2a7c9e1f5b3d8a0c4e6f8a1b3d5c7e9f2a4b6d8c0e2f4a6b',
@@ -1760,7 +1900,6 @@ async function sha256(text) {
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
-
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -1782,7 +1921,6 @@ function getFileIcon(name) {
   if (['doc','docx'].includes(ext)) return '📝';
   if (['ppt','pptx'].includes(ext)) return '📊';
   if (['xls','xlsx','csv'].includes(ext)) return '📈';
-  if (['zip','rar','7z'].includes(ext)) return '🗜️';
   return '📎';
 }
 function isImage(name) {
@@ -1795,6 +1933,33 @@ function initialsFromName(name) {
 function generateResetCode() {
   return String(Math.floor(100000 + Math.random() * 900000));
 }
+
+// ================= USER DROPDOWN =================
+function openUserDropdown() {
+  document.getElementById('user-dropdown').classList.add('open');
+  document.getElementById('user-badge').classList.add('open');
+}
+function closeUserDropdown() {
+  const dd = document.getElementById('user-dropdown');
+  const badge = document.getElementById('user-badge');
+  if (dd) dd.classList.remove('open');
+  if (badge) badge.classList.remove('open');
+}
+window.closeUserDropdown = closeUserDropdown;
+
+document.getElementById('user-badge').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const dd = document.getElementById('user-dropdown');
+  if (dd.classList.contains('open')) closeUserDropdown();
+  else openUserDropdown();
+});
+document.addEventListener('click', (e) => {
+  const wrap = document.getElementById('user-menu-wrap');
+  if (wrap && !wrap.contains(e.target)) closeUserDropdown();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeUserDropdown();
+});
 
 // ================= MOBILE NAV =================
 function openMobileNav() {
@@ -1824,10 +1989,6 @@ document.querySelectorAll('#mobile-nav-list button').forEach(btn => {
 document.getElementById('mobile-open-auth').addEventListener('click', () => {
   closeMobileNav();
   setTimeout(() => openAuthModal('signin'), 200);
-});
-document.getElementById('mobile-user-badge').addEventListener('click', () => {
-  closeMobileNav();
-  setTimeout(() => openProfile(), 200);
 });
 
 // ================= NAV =================
@@ -1865,28 +2026,54 @@ document.getElementById('open-auth').addEventListener('click', (e) => {
 // ================= AUTH UI =================
 function updateAuthUI() {
   const user = getSession();
-  const badge = document.getElementById('user-badge');
+  const wrap = document.getElementById('user-menu-wrap');
   const btn = document.getElementById('open-auth');
-  const mobileUserBlock = document.getElementById('mobile-user-block');
-  const mobileOpenAuth = document.getElementById('mobile-open-auth');
-  const mobileUserBadge = document.getElementById('mobile-user-badge');
+  const badge = document.getElementById('user-badge');
+  const mobileAuthBlock = document.getElementById('mobile-auth-block');
+  const mobileUserContainer = document.getElementById('mobile-user-section-container');
+
   if (user) {
+    // Build badge
     const initials = initialsFromName(user.name);
     const avatarHTML = user.avatar
       ? `<img src="${user.avatar}" alt="" />`
       : escapeHtml(initials);
-    badge.innerHTML = `<span class="badge-avatar">${avatarHTML}</span><span>${escapeHtml(user.name.split(' ')[0])}</span>`;
-    badge.classList.add('active');
-    badge.onclick = () => openProfile();
+    badge.innerHTML = `<span class="badge-avatar">${avatarHTML}</span><span>${escapeHtml(user.name.split(' ')[0])}</span><span class="chevron">▼</span>`;
+    wrap.classList.add('active');
     btn.style.display = 'none';
-    mobileUserBlock.style.display = 'block';
-    mobileOpenAuth.style.display = 'none';
-    mobileUserBadge.textContent = `Signed in as ${user.name.split(' ')[0]}`;
+
+    // Populate dropdown header
+    document.getElementById('dd-avatar').innerHTML = avatarHTML;
+    document.getElementById('dd-name').textContent = user.name;
+    document.getElementById('dd-role').textContent = user.role;
+    document.getElementById('dd-email').textContent = user.email;
+
+    // Mobile user section
+    mobileAuthBlock.style.display = 'none';
+    mobileUserContainer.innerHTML = `
+      <div class="mobile-user-section">
+        <div class="mobile-user-header">
+          <div class="m-avatar">${avatarHTML}</div>
+          <div class="m-info">
+            <div class="m-name">${escapeHtml(user.name)}</div>
+            <div class="m-role">${escapeHtml(user.role)}</div>
+            <div class="m-email">${escapeHtml(user.email)}</div>
+          </div>
+        </div>
+        <div class="mobile-user-actions">
+          <button type="button" onclick="closeMobileNav(); setTimeout(() => openProfile(), 200);"><span class="m-icon">👤</span>View Profile</button>
+          <button type="button" onclick="closeMobileNav(); setTimeout(() => openProfileEdit(), 200);"><span class="m-icon">✏️</span>Edit Profile</button>
+          <button type="button" onclick="closeMobileNav(); setTimeout(() => { goTo('browse'); showSavedOnly(); }, 200);"><span class="m-icon">💾</span>My Shortlist</button>
+          <button type="button" class="signout" onclick="closeMobileNav(); setTimeout(() => signOut(), 200);"><span class="m-icon">🚪</span>Sign Out</button>
+        </div>
+      </div>
+    `;
   } else {
-    badge.classList.remove('active');
+    wrap.classList.remove('active');
     btn.style.display = 'inline-block';
-    mobileUserBlock.style.display = 'none';
-    mobileOpenAuth.style.display = 'block';
+    closeUserDropdown();
+    mobileAuthBlock.style.display = 'block';
+    mobileUserContainer.innerHTML = '';
   }
   swapHomeView();
 }
@@ -2429,7 +2616,7 @@ function closeDrawer() {
 }
 document.getElementById('drawer-close').addEventListener('click', closeDrawer);
 document.getElementById('drawer-bg').addEventListener('click', closeDrawer);
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeDrawer(); closeModal(); closeMobileNav(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeDrawer(); closeModal(); closeMobileNav(); closeUserDropdown(); } });
 
 window.downloadMedia = function(itemId, mediaIndex) {
   const d = DB.find(x => x.id === itemId);
@@ -2717,6 +2904,7 @@ document.getElementById('modal-bg').addEventListener('click', e => { if (e.targe
 // ================= AUTH FLOW =================
 let selectedRole = 'Young Scientist';
 let signupAvatarData = null;
+let editAvatarData = null;
 
 const ROLES = [
   { id: 'Young Scientist', icon: '🔬', desc: 'Student or early career researcher with an innovation to protect.' },
@@ -2766,10 +2954,6 @@ function switchAuthTab(tab) {
 function renderSignupForm() {
   const c = document.getElementById('auth-form-container');
   c.innerHTML = `
-    <div class="step-indicator">
-      <div class="step-dot active"></div>
-      <div class="step-dot"></div>
-    </div>
     <p style="font-size:13px; font-weight:700; margin-bottom:6px; color:var(--ink);">I am registering as a <span class="req">*</span></p>
     <div class="role-cards" id="role-cards">
       ${ROLES.map(r => `<div class="role-card ${r.id === selectedRole ? 'selected' : ''}" data-role="${r.id}"><span class="role-icon">${r.icon}</span><div class="role-name">${r.id}</div><div class="role-desc">${r.desc}</div></div>`).join('')}
@@ -2886,7 +3070,7 @@ function renderRoleSpecificFields() {
             <option>Recent graduate</option>
           </select>
         </div>
-        <div class="form-row"><label>Student number <span class="opt">(optional)</span></label><input type="text" id="su-student-id" placeholder="For verification purposes" /></div>
+        <div class="form-row"><label>Student number <span class="opt">(optional)</span></label><input type="text" id="su-student-id" /></div>
       </div>
     `;
   } else if (selectedRole === 'University Chapter') {
@@ -2901,7 +3085,7 @@ function renderRoleSpecificFields() {
       </div>
       <div class="two-col">
         <div class="form-row"><label>Position at chapter <span class="req">*</span></label><input type="text" id="su-position" required placeholder="Example: Chapter Coordinator" /></div>
-        <div class="form-row"><label>Staff ID <span class="opt">(optional)</span></label><input type="text" id="su-staff-id" placeholder="For verification purposes" /></div>
+        <div class="form-row"><label>Staff ID <span class="opt">(optional)</span></label><input type="text" id="su-staff-id" /></div>
       </div>
     `;
   } else if (selectedRole === 'Industry / Investor') {
@@ -3059,7 +3243,7 @@ async function handleForgotStep1(e) {
   const users = loadUsers();
   const user = users.find(u => u.email === email);
   if (!user) {
-    alert('No account found with that email. Please check the spelling or create a new account.');
+    alert('No account found with that email.');
     return;
   }
   const code = generateResetCode();
@@ -3067,7 +3251,6 @@ async function handleForgotStep1(e) {
   codes[email] = { code, expires: Date.now() + 15 * 60 * 1000 };
   saveResetCodes(codes);
 
-  // Demo only: reveal code in modal. Production would send by SMS/email.
   openModal(`
     <h3>Check your messages</h3>
     <div class="alert alert-warn">
@@ -3085,7 +3268,7 @@ async function handleForgotStep1(e) {
       </div>
       <div class="form-row">
         <label>New password <span class="req">*</span></label>
-        <input type="password" id="rp-password" required minlength="6" placeholder="At least 6 characters" autocomplete="new-password" />
+        <input type="password" id="rp-password" required minlength="6" autocomplete="new-password" />
       </div>
       <div class="form-row">
         <label>Confirm new password <span class="req">*</span></label>
@@ -3093,9 +3276,6 @@ async function handleForgotStep1(e) {
       </div>
       <button type="submit" class="btn btn-red" style="width:100%;">Reset my password</button>
     </form>
-    <p style="margin-top:16px; font-size:12px; text-align:center;">
-      <a href="#" onclick="openAuthModal('signin'); return false;" style="color:var(--flag-red); font-weight:700;">Cancel</a>
-    </p>
   `);
   document.getElementById('reset-form').addEventListener('submit', async (ev) => {
     ev.preventDefault();
@@ -3106,7 +3286,7 @@ async function handleForgotStep1(e) {
     const codes2 = loadResetCodes();
     const entry = codes2[email];
     if (!entry) { alert('Reset code not found. Please start again.'); return; }
-    if (Date.now() > entry.expires) { alert('This reset code has expired. Please start again.'); delete codes2[email]; saveResetCodes(codes2); return; }
+    if (Date.now() > entry.expires) { alert('This reset code has expired.'); delete codes2[email]; saveResetCodes(codes2); return; }
     if (entry.code !== entered) { alert('The code you entered is incorrect.'); return; }
     const newHash = await sha256(pw);
     const allUsers = loadUsers();
@@ -3123,7 +3303,7 @@ async function handleForgotStep1(e) {
   });
 }
 
-// ================= PROFILE VIEW / EDIT =================
+// ================= PROFILE VIEW =================
 function openProfile() {
   const session = getSession();
   if (!session) return;
@@ -3176,7 +3356,7 @@ function openProfile() {
     </div>
     ${roleDetails.length ? `
       <div class="profile-section">
-        <div class="section-label">${user.role} details</div>
+        <div class="section-label">${escapeHtml(user.role)} details</div>
         ${roleDetails.map(([k, v]) => v ? `<div class="profile-info-row"><div class="k">${escapeHtml(k)}</div><div class="v">${escapeHtml(v)}</div></div>` : '').join('')}
       </div>
     ` : ''}
@@ -3187,14 +3367,239 @@ function openProfile() {
     </div>
     <div style="margin-top: 24px; display: flex; gap: 10px; flex-wrap: wrap;">
       <button class="btn" onclick="closeModal()" style="flex: 1;" type="button">Close</button>
-      ${user.role === 'University Chapter' ? `<button class="btn btn-black" onclick="closeModal(); goTo('chapters');" style="flex: 1;" type="button">Chapter Dashboard</button>` : ''}
+      <button class="btn btn-black" onclick="closeModal(); openProfileEdit();" style="flex: 1;" type="button">Edit Profile</button>
       <button class="btn btn-red" onclick="signOut()" style="flex: 1;" type="button">Sign out</button>
     </div>
   `);
 }
 
+// ================= PROFILE EDIT =================
+function openProfileEdit() {
+  const session = getSession();
+  if (!session) return;
+  const users = loadUsers();
+  const user = users.find(u => u.email === session.email);
+  if (!user) return;
+  const p = user.profile || {};
+  const initials = initialsFromName(user.name);
+  const avatarHTML = user.avatar
+    ? `<img src="${user.avatar}" alt="" />`
+    : escapeHtml(initials);
+  editAvatarData = user.avatar || null;
+
+  let roleFieldsHTML = '';
+  if (user.role === 'Young Scientist') {
+    roleFieldsHTML = `
+      <div class="section-label">Academic information</div>
+      <div class="two-col">
+        <div class="form-row">
+          <label>University</label>
+          <select id="ed-university">
+            ${UNIVERSITIES.map(u => `<option ${u === p.university ? 'selected' : ''}>${u}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-row"><label>Course or programme</label><input type="text" id="ed-course" value="${escapeHtml(p.course || '')}" /></div>
+      </div>
+      <div class="two-col">
+        <div class="form-row">
+          <label>Year of study</label>
+          <select id="ed-year">
+            ${['Year 1','Year 2','Year 3','Year 4','Year 5','Postgraduate','Recent graduate'].map(y => `<option ${y === p.yearOfStudy ? 'selected' : ''}>${y}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-row"><label>Student number</label><input type="text" id="ed-student-id" value="${escapeHtml(p.studentId || '')}" /></div>
+      </div>
+    `;
+  } else if (user.role === 'University Chapter') {
+    roleFieldsHTML = `
+      <div class="section-label">Chapter information</div>
+      <div class="form-row">
+        <label>University chapter</label>
+        <select id="ed-chapter-uni">
+          ${UNIVERSITIES.map(u => `<option ${u === p.chapterUniversity ? 'selected' : ''}>${u}</option>`).join('')}
+        </select>
+      </div>
+      <div class="two-col">
+        <div class="form-row"><label>Position at chapter</label><input type="text" id="ed-position" value="${escapeHtml(p.position || '')}" /></div>
+        <div class="form-row"><label>Staff ID</label><input type="text" id="ed-staff-id" value="${escapeHtml(p.staffId || '')}" /></div>
+      </div>
+    `;
+  } else if (user.role === 'Industry / Investor') {
+    roleFieldsHTML = `
+      <div class="section-label">Organisation information</div>
+      <div class="form-row"><label>Organisation name</label><input type="text" id="ed-org-name" value="${escapeHtml(p.organisation || '')}" /></div>
+      <div class="two-col">
+        <div class="form-row">
+          <label>Organisation type</label>
+          <select id="ed-org-type">
+            ${['Startup','SME','Corporate','Investment firm','Development partner','Other'].map(t => `<option ${t === p.orgType ? 'selected' : ''}>${t}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-row"><label>Your role</label><input type="text" id="ed-job-title" value="${escapeHtml(p.jobTitle || '')}" /></div>
+      </div>
+      <div class="two-col">
+        <div class="form-row">
+          <label>Sector of interest</label>
+          <select id="ed-interest">
+            ${Object.keys(SECTOR_ICONS).map(s => `<option ${s === p.sectorInterest ? 'selected' : ''}>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-row"><label>Website or LinkedIn</label><input type="url" id="ed-website" value="${escapeHtml(p.website || '')}" /></div>
+      </div>
+    `;
+  } else if (user.role === 'Government / Policy') {
+    roleFieldsHTML = `
+      <div class="section-label">Government information</div>
+      <div class="form-row"><label>Ministry or agency</label><input type="text" id="ed-ministry" value="${escapeHtml(p.ministry || '')}" /></div>
+      <div class="two-col">
+        <div class="form-row"><label>Position</label><input type="text" id="ed-gov-position" value="${escapeHtml(p.govPosition || '')}" /></div>
+        <div class="form-row"><label>Official email</label><input type="email" id="ed-official-email" value="${escapeHtml(p.officialEmail || '')}" /></div>
+      </div>
+    `;
+  }
+
+  openWideModal(`
+    <h3>Edit my profile</h3>
+    <div class="avatar-upload">
+      <div class="avatar-preview has-image" id="edit-avatar-preview">
+        ${user.avatar ? `<img src="${user.avatar}" alt="" />` : `<span>${escapeHtml(initials)}</span>`}
+      </div>
+      <input type="file" id="edit-avatar-input" accept="image/*" style="display:none;" />
+      <button type="button" class="avatar-upload-btn" id="edit-avatar-trigger">Change profile picture</button>
+      <div class="avatar-upload-hint">Max 2MB. JPG, PNG or WebP.</div>
+    </div>
+    <form id="edit-profile-form">
+      <div class="section-label">Personal information</div>
+      <div class="form-row"><label>Full name</label><input type="text" id="ed-name" value="${escapeHtml(user.name)}" required /></div>
+      <div class="two-col">
+        <div class="form-row"><label>Email</label><input type="email" id="ed-email" value="${escapeHtml(user.email)}" disabled style="background: var(--cream-deep); cursor: not-allowed;" /></div>
+        <div class="form-row"><label>Phone number</label><input type="tel" id="ed-phone" value="${escapeHtml(user.phone || '')}" /></div>
+      </div>
+      <div class="two-col">
+        <div class="form-row">
+          <label>District</label>
+          <select id="ed-district">
+            <option value="">Not set</option>
+            ${UG_DISTRICTS.map(d => `<option ${d === user.district ? 'selected' : ''}>${d}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Gender</label>
+          <select id="ed-gender">
+            <option value="">Prefer not to say</option>
+            ${['Female','Male','Other'].map(g => `<option ${g === user.gender ? 'selected' : ''}>${g}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+
+      ${roleFieldsHTML}
+
+      <div class="section-label">Change password <span style="text-transform: none; font-weight: 500; letter-spacing: 0; color: var(--ink-faint); font-size: 11px;">(leave blank to keep current)</span></div>
+      <div class="two-col">
+        <div class="form-row"><label>New password</label><input type="password" id="ed-password" minlength="6" autocomplete="new-password" /></div>
+        <div class="form-row"><label>Confirm new password</label><input type="password" id="ed-password2" minlength="6" autocomplete="new-password" /></div>
+      </div>
+
+      <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+        <button type="button" class="btn btn-black" onclick="closeModal(); openProfile();" style="flex: 1;">Cancel</button>
+        <button type="submit" class="btn" style="flex: 2;">Save changes</button>
+      </div>
+    </form>
+  `);
+
+  const editAvatarInput = document.getElementById('edit-avatar-input');
+  const editAvatarPreview = document.getElementById('edit-avatar-preview');
+  const editAvatarTrigger = document.getElementById('edit-avatar-trigger');
+  editAvatarPreview.addEventListener('click', () => editAvatarInput.click());
+  editAvatarTrigger.addEventListener('click', () => editAvatarInput.click());
+  editAvatarInput.addEventListener('change', async e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    if (f.size > 2 * 1024 * 1024) { alert('Please choose an image under 2MB.'); return; }
+    try {
+      const data = await fileToBase64(f);
+      editAvatarData = data;
+      editAvatarPreview.innerHTML = `<img src="${data}" alt="" />`;
+    } catch (err) {
+      alert('Could not read that image.');
+    }
+  });
+
+  document.getElementById('edit-profile-form').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const name = document.getElementById('ed-name').value.trim();
+    const phone = document.getElementById('ed-phone').value.trim();
+    const district = document.getElementById('ed-district').value;
+    const gender = document.getElementById('ed-gender').value;
+    const pw = document.getElementById('ed-password').value;
+    const pw2 = document.getElementById('ed-password2').value;
+
+    if (pw && pw !== pw2) { alert('Passwords do not match.'); return; }
+
+    const allUsers = loadUsers();
+    const u = allUsers.find(x => x.email === user.email);
+    if (!u) return;
+
+    u.name = name;
+    u.phone = phone;
+    u.district = district;
+    u.gender = gender;
+    u.avatar = editAvatarData;
+    u.profile = u.profile || {};
+
+    if (u.role === 'Young Scientist') {
+      u.profile.university = document.getElementById('ed-university').value;
+      u.profile.course = document.getElementById('ed-course').value.trim();
+      u.profile.yearOfStudy = document.getElementById('ed-year').value;
+      u.profile.studentId = document.getElementById('ed-student-id').value.trim();
+    } else if (u.role === 'University Chapter') {
+      u.profile.chapterUniversity = document.getElementById('ed-chapter-uni').value;
+      u.profile.position = document.getElementById('ed-position').value.trim();
+      u.profile.staffId = document.getElementById('ed-staff-id').value.trim();
+    } else if (u.role === 'Industry / Investor') {
+      u.profile.organisation = document.getElementById('ed-org-name').value.trim();
+      u.profile.orgType = document.getElementById('ed-org-type').value;
+      u.profile.jobTitle = document.getElementById('ed-job-title').value.trim();
+      u.profile.sectorInterest = document.getElementById('ed-interest').value;
+      u.profile.website = document.getElementById('ed-website').value.trim();
+    } else if (u.role === 'Government / Policy') {
+      u.profile.ministry = document.getElementById('ed-ministry').value.trim();
+      u.profile.govPosition = document.getElementById('ed-gov-position').value.trim();
+      u.profile.officialEmail = document.getElementById('ed-official-email').value.trim();
+    }
+
+    if (pw) {
+      const newHash = await sha256(pw);
+      u.pwHash = newHash;
+    }
+
+    saveUsers(allUsers);
+    setSession({
+      id: u.id, name: u.name, email: u.email,
+      role: u.role, avatar: u.avatar,
+      chapterUniversity: (u.profile && u.profile.chapterUniversity) || null
+    });
+    if (u.role === 'University Chapter' && u.profile && u.profile.chapterUniversity) {
+      currentChapter = u.profile.chapterUniversity;
+    }
+
+    closeModal();
+    updateAuthUI();
+    renderChapterDashboard();
+
+    openModal(`
+      <h3 style="color:var(--green);">Profile updated</h3>
+      <div class="alert alert-success">Your changes have been saved.${pw ? ' Your password has been changed.' : ''}</div>
+      <button class="btn" onclick="closeModal(); openProfile();" style="width:100%;" type="button">View my profile</button>
+    `);
+  });
+}
+
+window.openProfileEdit = openProfileEdit;
+
 window.signOut = function() {
   setSession(null);
+  closeUserDropdown();
   updateAuthUI();
   closeModal();
   goTo('home');
