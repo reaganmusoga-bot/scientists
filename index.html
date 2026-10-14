@@ -4542,7 +4542,16 @@ updateSavedBanner();
 updateUnreadBadges();
 startMessageRefresh();
 </script>
-  <script type="module" src="./firebase.js"></script>
-<script type="module" src="./auth.js"></script>
+<script type="module">
+  import { firebaseSignUp, firebaseSignIn, firebaseSignOut, getCurrentUserData } from './auth.js';
+
+  // Make them available to the rest of your code
+  window.firebaseSignUp = firebaseSignUp;
+  window.firebaseSignIn = firebaseSignIn;
+  window.firebaseSignOut = firebaseSignOut;
+  window.getCurrentUserData = getCurrentUserData;
+
+  console.log("Firebase Auth is ready");
+</script>
 </body>
 </html>
