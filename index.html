@@ -79,7 +79,12 @@
   nav .signin-btn { background: var(--flag-red); color: var(--white); font-weight: 700; padding: 9px 16px; margin-left: 10px; flex-shrink: 0; cursor: pointer; }
   nav .signin-btn:hover { background: var(--flag-red-deep); color: var(--white); }
 
-  /* ===== USER BADGE + DROPDOWN ===== */
+  /* Hide protected nav items by default */
+  li[data-view="submit"], li[data-view="chapters"], li[data-view="admin"] { display: none; }
+  body.logged-in li[data-view="submit"] { display: block; }
+  body.role-chapter li[data-view="chapters"] { display: block; }
+  body.role-government li[data-view="admin"] { display: block; }
+
   .user-menu-wrap { position: relative; margin-left: 10px; flex-shrink: 0; display: none; }
   .user-menu-wrap.active { display: block; }
   .user-badge {
@@ -105,7 +110,6 @@
   }
   .user-badge.open .chevron { transform: rotate(180deg); }
 
-  /* Dropdown panel */
   .user-dropdown {
     position: absolute; top: calc(100% + 10px); right: 0;
     min-width: 280px;
@@ -169,7 +173,6 @@
   .user-dropdown-list button.signout-btn { color: var(--flag-red); }
   .user-dropdown-list button.signout-btn:hover { background: #FFF0F2; }
 
-  /* ===== MOBILE MENU USER SECTION ===== */
   .mobile-user-section {
     padding: 16px 20px;
     border-bottom: 1px solid rgba(245,183,0,0.15);
@@ -218,6 +221,14 @@
   .mobile-user-actions button:hover { background: rgba(245,183,0,0.08); }
   .mobile-user-actions button.signout { color: var(--gold); }
   .mobile-user-actions button .m-icon { font-size: 18px; width: 22px; text-align: center; }
+
+  /* Hide protected mobile nav items by default */
+  .mobile-nav-list li[data-view="submit"],
+  .mobile-nav-list li[data-view="chapters"],
+  .mobile-nav-list li[data-view="admin"] { display: none; }
+  body.logged-in .mobile-nav-list li[data-view="submit"] { display: block; }
+  body.role-chapter .mobile-nav-list li[data-view="chapters"] { display: block; }
+  body.role-government .mobile-nav-list li[data-view="admin"] { display: block; }
 
   .hamburger-btn {
     display: none; background: transparent; border: 2px solid rgba(245,183,0,0.4);
@@ -867,14 +878,6 @@
   .modal .close { position: absolute; top: 14px; right: 16px; cursor: pointer; font-size: 26px; color: var(--ink-faint); border: none; background: none; line-height: 1; min-width: 40px; min-height: 40px; }
   .modal .close:hover { color: var(--flag-red); }
 
-  .step-indicator { display: flex; gap: 8px; margin-bottom: 20px; justify-content: center; }
-  .step-dot {
-    width: 30px; height: 6px; border-radius: 3px;
-    background: var(--line); transition: background 0.2s;
-  }
-  .step-dot.active { background: var(--gold); }
-  .step-dot.done { background: var(--green); }
-
   .section-label {
     font-size: 11px; font-weight: 800; text-transform: uppercase;
     letter-spacing: 1.4px; color: var(--earth);
@@ -1233,17 +1236,16 @@
 
     <nav id="desktop-nav">
       <ul>
-        <li><button data-view="home" class="active">Home</button></li>
-        <li><button data-view="browse">Browse Innovations</button></li>
-        <li><button data-view="submit">Submit Research</button></li>
-        <li><button data-view="chapters">Chapter Dashboard</button></li>
-        <li><button data-view="admin">Admin</button></li>
-        <li><button data-view="about">About</button></li>
+        <li data-view="home"><button data-view="home" class="active">Home</button></li>
+        <li data-view="browse"><button data-view="browse">Browse Innovations</button></li>
+        <li data-view="submit"><button data-view="submit">Submit Research</button></li>
+        <li data-view="chapters"><button data-view="chapters">Chapter Dashboard</button></li>
+        <li data-view="admin"><button data-view="admin">Admin</button></li>
+        <li data-view="about"><button data-view="about">About</button></li>
         <li><button class="signin-btn" id="open-auth" type="button">Sign In or Sign Up</button></li>
       </ul>
     </nav>
 
-    <!-- ========== USER MENU WRAP ========== -->
     <div class="user-menu-wrap" id="user-menu-wrap">
       <button class="user-badge" id="user-badge" type="button"></button>
       <div class="user-dropdown" id="user-dropdown">
@@ -1280,12 +1282,12 @@
   </div>
   <div id="mobile-user-section-container"></div>
   <ul class="mobile-nav-list" id="mobile-nav-list">
-    <li><button data-view="home" type="button"><span><span class="m-icon">🏠</span>Home</span></button></li>
-    <li><button data-view="browse" type="button"><span><span class="m-icon">🔬</span>Browse Innovations</span></button></li>
-    <li><button data-view="submit" type="button"><span><span class="m-icon">📤</span>Submit Research</span></button></li>
-    <li><button data-view="chapters" type="button"><span><span class="m-icon">🎓</span>Chapter Dashboard</span></button></li>
-    <li><button data-view="admin" type="button"><span><span class="m-icon">📊</span>Admin</span></button></li>
-    <li><button data-view="about" type="button"><span><span class="m-icon">ℹ️</span>About</span></button></li>
+    <li data-view="home"><button data-view="home" type="button"><span><span class="m-icon">🏠</span>Home</span></button></li>
+    <li data-view="browse"><button data-view="browse" type="button"><span><span class="m-icon">🔬</span>Browse Innovations</span></button></li>
+    <li data-view="submit"><button data-view="submit" type="button"><span><span class="m-icon">📤</span>Submit Research</span></button></li>
+    <li data-view="chapters"><button data-view="chapters" type="button"><span><span class="m-icon">🎓</span>Chapter Dashboard</span></button></li>
+    <li data-view="admin"><button data-view="admin" type="button"><span><span class="m-icon">📊</span>Admin</span></button></li>
+    <li data-view="about"><button data-view="about" type="button"><span><span class="m-icon">ℹ️</span>About</span></button></li>
   </ul>
   <div class="mobile-nav-cta" id="mobile-auth-block">
     <button id="mobile-open-auth" type="button">Sign In or Sign Up</button>
@@ -1771,9 +1773,9 @@ const TRL_LABELS = {
   7: 'System Prototype', 8: 'Qualified System', 9: 'Proven in Market'
 };
 
-const STORAGE_KEY = 'scipool_ug_v8';
-const USERS_KEY = 'scipool_users_v4';
-const SESSION_KEY = 'scipool_session_v4';
+const STORAGE_KEY = 'scipool_ug_v9';
+const USERS_KEY = 'scipool_users_v5';
+const SESSION_KEY = 'scipool_session_v5';
 const SAVED_KEY = 'scipool_saved_v1';
 const STATS_KEY = 'scipool_stats_v1';
 const RESET_KEY = 'scipool_reset_codes_v1';
@@ -1934,6 +1936,36 @@ function generateResetCode() {
   return String(Math.floor(100000 + Math.random() * 900000));
 }
 
+// ================= NAV PERMISSIONS =================
+// Map view IDs to the roles that can access them. Empty array means everyone.
+const VIEW_PERMISSIONS = {
+  'home': [],
+  'browse': [],
+  'about': [],
+  'submit': ['Young Scientist', 'University Chapter', 'Industry / Investor', 'Government / Policy'],
+  'chapters': ['University Chapter'],
+  'admin': ['Government / Policy']
+};
+
+function canAccess(view) {
+  const allowed = VIEW_PERMISSIONS[view];
+  if (!allowed) return false;
+  if (allowed.length === 0) return true;
+  const user = getSession();
+  if (!user) return false;
+  return allowed.includes(user.role);
+}
+
+function applyBodyRoleClasses() {
+  const user = getSession();
+  document.body.classList.toggle('logged-in', !!user);
+  document.body.classList.remove('role-chapter', 'role-government');
+  if (user) {
+    if (user.role === 'University Chapter') document.body.classList.add('role-chapter');
+    if (user.role === 'Government / Policy') document.body.classList.add('role-government');
+  }
+}
+
 // ================= USER DROPDOWN =================
 function openUserDropdown() {
   document.getElementById('user-dropdown').classList.add('open');
@@ -1993,6 +2025,32 @@ document.getElementById('mobile-open-auth').addEventListener('click', () => {
 
 // ================= NAV =================
 function goTo(view) {
+  // Access control
+  if (!canAccess(view)) {
+    if (!getSession()) {
+      openModal(`
+        <h3>Members only</h3>
+        <div class="alert alert-info">
+          The <strong>${escapeHtml(view.charAt(0).toUpperCase() + view.slice(1))}</strong> section is for SciPool UG members. Sign in or create a free account to continue.
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;">
+          <button class="btn" onclick="closeModal(); openAuthModal('signin');" style="flex:1;" type="button">Sign In</button>
+          <button class="btn btn-red" onclick="closeModal(); openAuthModal('signup');" style="flex:1;" type="button">Create Account</button>
+        </div>
+      `);
+    } else {
+      const user = getSession();
+      openModal(`
+        <h3>Not available for your role</h3>
+        <div class="alert alert-info">
+          The <strong>${escapeHtml(view.charAt(0).toUpperCase() + view.slice(1))}</strong> section is only available to specific roles. You are signed in as <strong>${escapeHtml(user.role)}</strong>.
+        </div>
+        <button class="btn" onclick="closeModal()" style="width:100%;" type="button">Close</button>
+      `);
+    }
+    return;
+  }
+
   document.querySelectorAll('nav button[data-view]').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('#mobile-nav-list button').forEach(b => b.classList.remove('active'));
   const desktopBtn = document.querySelector(`nav button[data-view="${view}"]`);
@@ -2025,6 +2083,8 @@ document.getElementById('open-auth').addEventListener('click', (e) => {
 
 // ================= AUTH UI =================
 function updateAuthUI() {
+  applyBodyRoleClasses();
+
   const user = getSession();
   const wrap = document.getElementById('user-menu-wrap');
   const btn = document.getElementById('open-auth');
@@ -2033,7 +2093,6 @@ function updateAuthUI() {
   const mobileUserContainer = document.getElementById('mobile-user-section-container');
 
   if (user) {
-    // Build badge
     const initials = initialsFromName(user.name);
     const avatarHTML = user.avatar
       ? `<img src="${user.avatar}" alt="" />`
@@ -2042,13 +2101,11 @@ function updateAuthUI() {
     wrap.classList.add('active');
     btn.style.display = 'none';
 
-    // Populate dropdown header
     document.getElementById('dd-avatar').innerHTML = avatarHTML;
     document.getElementById('dd-name').textContent = user.name;
     document.getElementById('dd-role').textContent = user.role;
     document.getElementById('dd-email').textContent = user.email;
 
-    // Mobile user section
     mobileAuthBlock.style.display = 'none';
     mobileUserContainer.innerHTML = `
       <div class="mobile-user-section">
@@ -2692,6 +2749,14 @@ window.removePendingMedia = function(i) { pendingMedia.splice(i, 1); renderMedia
 // ================= SUBMIT =================
 document.getElementById('submit-form').addEventListener('submit', async (e) => {
   e.preventDefault();
+  if (!canAccess('submit')) {
+    openModal(`
+      <h3>Members only</h3>
+      <div class="alert alert-info">Please sign in to submit research to SciPool UG.</div>
+      <button class="btn" onclick="closeModal(); openAuthModal('signin');" style="width:100%;" type="button">Sign In</button>
+    `);
+    return;
+  }
   const user = getSession();
   const payload = {
     title: document.getElementById('f-title').value.trim(),
