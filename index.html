@@ -2388,10 +2388,7 @@ let DB = loadData();
 
 function loadUsers() { const raw = localStorage.getItem(USERS_KEY); return raw ? JSON.parse(raw) : []; }
 function saveUsers(u) { localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
-function getSession() {
-  // Temporary: we will improve this soon
-  return window.currentUser || null;
-}
+function getSession() { const raw = localStorage.getItem(SESSION_KEY); return raw ? JSON.parse(raw) : null; }
 function setSession(u) { if (u) localStorage.setItem(SESSION_KEY, JSON.stringify(u)); else localStorage.removeItem(SESSION_KEY); }
 
 function loadResetCodes() { const raw = localStorage.getItem(RESET_KEY); return raw ? JSON.parse(raw) : {}; }
@@ -4065,68 +4062,7 @@ async function handleSignUp(e) {
   const district = document.getElementById('su-district').value;
   const gender = document.getElementById('su-gender').value;
   const pw = document.getElementById('su-password').value;
-  const pw2 = document.getElementById('suasync function handleSignUp(e) {
-  e.preventDefault();
-
-  const name = document.getElementById('su-name').value.trim();
-  const email = document.getElementById('su-email').value.trim().toLowerCase();
-  const phone = document.getElementById('su-phone').value.trim();
-  const district = document.getElementById('su-district').value;
-  const gender = document.getElementById('su-gender').value;
-  const pw = document.getElementById('su-password').value;
   const pw2 = document.getElementById('su-password2').value;
-
-  if (pw !== pw2) {
-    alert('Passwords do not match.');
-    return;
-  }
-
-  // Collect role-specific profile
-  const profile = {};
-  if (selectedRole === 'Young Scientist') {
-    profile.university = document.getElementById('su-university')?.value || '';
-    profile.course = document.getElementById('su-course')?.value.trim() || '';
-    profile.yearOfStudy = document.getElementById('su-year')?.value || '';
-    profile.studentId = document.getElementById('su-student-id')?.value.trim() || '';
-  } else if (selectedRole === 'University Chapter') {
-    profile.chapterUniversity = document.getElementById('su-chapter-uni')?.value || '';
-    profile.position = document.getElementById('su-position')?.value.trim() || '';
-    profile.staffId = document.getElementById('su-staff-id')?.value.trim() || '';
-  } else if (selectedRole === 'Industry / Investor') {
-    profile.organisation = document.getElementById('su-org-name')?.value.trim() || '';
-    profile.orgType = document.getElementById('su-org-type')?.value || '';
-    profile.jobTitle = document.getElementById('su-job-title')?.value.trim() || '';
-    profile.sectorInterest = document.getElementById('su-interest')?.value || '';
-    profile.website = document.getElementById('su-website')?.value.trim() || '';
-  } else if (selectedRole === 'Government / Policy') {
-    profile.ministry = document.getElementById('su-ministry')?.value.trim() || '';
-    profile.govPosition = document.getElementById('su-gov-position')?.value.trim() || '';
-    profile.officialEmail = document.getElementById('su-official-email')?.value.trim() || '';
-  }
-
-  // Call Firebase
-  const result = await window.firebaseSignUp(email, pw, name, selectedRole, {
-    phone,
-    district,
-    gender,
-    ...profile
-  });
-
-  if (!result.success) {
-    alert('Sign up failed: ' + result.error);
-    return;
-  }
-
-  // Success
-  closeModal();
-  updateAuthUI();
-  openModal(`
-    <h3 style="color:var(--green);">Welcome to SciPool UG, ${name.split(' ')[0]}</h3>
-    <div class="alert alert-success">You are registered as <strong>${selectedRole}</strong>.</div>
-    <p style="margin:14px 0; font-size:14px; color:var(--ink-soft);">Your account is now saved in Firebase.</p>
-    <button class="btn" onclick="closeModal()" style="width:100%;" type="button">Continue</button>
-  `);
-}-password2').value;
   if (pw !== pw2) { alert('Passwords do not match.'); return; }
 
   const users = loadUsers();
@@ -4187,24 +4123,23 @@ async function handleSignUp(e) {
 
 async function handleSignIn(e) {
   e.preventDefault();
-
   const email = document.getElementById('si-email').value.trim().toLowerCase();
   const pw = document.getElementById('si-password').value;
-
-  const result = await window.firebaseSignIn(email, pw);
-
-  if (!result.success) {
-    alert('Invalid credentials. Please try again.');
-    return;
+  const users = loadUsers();
+  const pwHash = await sha256(pw);
+  const user = users.find(u => u.email === email && u.pwHash === pwHash);
+  if (!user) { alert('Invalid credentials. Please try again.'); return; }
+  setSession({
+    id: user.id, name: user.name, email: user.email,
+    role: user.role, avatar: user.avatar,
+    chapterUniversity: (user.profile && user.profile.chapterUniversity) || null
+  });
+  if (user.role === 'University Chapter' && user.profile && user.profile.chapterUniversity) {
+    currentChapter = user.profile.chapterUniversity;
   }
-
-  // Success
   closeModal();
   updateAuthUI();
-  openModal(`
-    <h3 style="color:var(--green);">Welcome back to SciPool UG</h3>
-    <button class="btn" onclick="closeModal()" style="width:100%;" type="button">Continue</button>
-  `);
+  openModal(`<h3 style="color:var(--green);">Welcome back to SciPool UG, ${escapeHtml(user.name.split(' ')[0])}</h3><button class="btn" onclick="closeModal()" style="width:100%;" type="button">Continue</button>`);
 }
 
 // ================= FORGOT PASSWORD =================
@@ -4586,14 +4521,15 @@ function openProfileEdit() {
 
 window.openProfileEdit = openProfileEdit;
 
-window.signOut = async function() {
-  await window.firebaseSignOut();
+window.signOut = function() {
+  setSession(null);
   closeUserDropdown();
   updateAuthUI();
   closeModal();
   activeConvId = null;
   goTo('home');
 };
+
 // ================= INIT =================
 renderStats();
 renderPublicLanding();
@@ -4605,28 +4541,6 @@ updateAuthUI();
 updateSavedBanner();
 updateUnreadBadges();
 startMessageRefresh();
-</script>
-<script type="module">
-  import { firebaseSignUp, firebaseSignIn, firebaseSignOut, getCurrentUserData } from './auth.js';
-
-  // Make them available to the rest of your code
-  window.firebaseSignUp = firebaseSignUp;
-  window.firebaseSignIn = firebaseSignIn;
-  window.firebaseSignOut = firebaseSignOut;
-  window.getCurrentUserData = getCurrentUserData;
-
-  console.log("Firebase Auth is ready");
-  // Check login status when page loads
-async function checkFirebaseLogin() {
-  if (window.getCurrentUserData) {
-    const userData = await window.getCurrentUserData();
-    window.currentUser = userData;
-    updateAuthUI();
-  }
-}
-
-// Run it after a short delay so Firebase is ready
-setTimeout(checkFirebaseLogin, 1000);
 </script>
 </body>
 </html>
