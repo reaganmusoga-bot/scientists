@@ -131,6 +131,7 @@
 
   /* ===== FORM ===== */
   .form-wrap { background: var(--white); border-radius: 10px; padding: 28px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); max-width: 760px; margin: 0 auto; }
+  .form-wrap.wide { max-width: 100%; }
   .form-row { margin-bottom: 18px; }
   label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--black); }
   label .req { color: var(--red); }
@@ -233,6 +234,63 @@
     border-bottom: 3px solid transparent; margin-bottom: -2px;
   }
   .tab-switch button.active { color: var(--black); border-bottom-color: var(--yellow); }
+
+  /* ===== CHAPTER DASHBOARD ===== */
+  .chapter-header {
+    background: linear-gradient(135deg, var(--black), var(--dark-grey));
+    color: var(--white); border-radius: 12px; padding: 24px;
+    border-left: 6px solid var(--yellow); margin-bottom: 24px;
+  }
+  .chapter-header h2 { font-size: 22px; margin-bottom: 4px; }
+  .chapter-header h2 span { color: var(--yellow); }
+  .chapter-header p { color: #bbb; font-size: 13px; }
+  .chapter-select {
+    display: flex; gap: 10px; align-items: center; margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .chapter-select label { color: var(--yellow); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .chapter-select select { max-width: 360px; background: var(--dark-grey); color: var(--white); border: 2px solid var(--yellow); }
+
+  .kpi-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px; margin-bottom: 28px;
+  }
+  .kpi {
+    background: var(--white); border-radius: 10px; padding: 18px;
+    border-left: 4px solid var(--yellow); box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+  .kpi .kpi-label { font-size: 11px; color: var(--mid-grey); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 4px; }
+  .kpi .kpi-value { font-size: 26px; font-weight: 800; color: var(--black); line-height: 1; }
+  .kpi.red { border-left-color: var(--red); }
+  .kpi.black { border-left-color: var(--black); }
+
+  /* ===== LEADERBOARD ===== */
+  .leaderboard { background: var(--white); border-radius: 10px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); margin-bottom: 24px; }
+  .leaderboard h4 { margin-bottom: 14px; font-size: 16px; }
+  .lb-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid #eee;
+  }
+  .lb-row:last-child { border-bottom: none; }
+  .lb-rank {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--grey); color: var(--black);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 13px; flex-shrink: 0;
+  }
+  .lb-row:nth-child(1) .lb-rank { background: var(--yellow); }
+  .lb-row:nth-child(2) .lb-rank { background: #c0c0c0; }
+  .lb-row:nth-child(3) .lb-rank { background: #cd7f32; color: white; }
+  .lb-info { flex: 1; }
+  .lb-name { font-weight: 700; font-size: 14px; }
+  .lb-sub { font-size: 11px; color: var(--mid-grey); }
+  .lb-count {
+    background: var(--black); color: var(--yellow);
+    padding: 4px 12px; border-radius: 12px; font-weight: 700; font-size: 12px;
+  }
+
+  .two-panel { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+  @media (max-width: 900px) { .two-panel { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -253,6 +311,7 @@
         <li><button data-view="home" class="active">Home</button></li>
         <li><button data-view="browse">Browse</button></li>
         <li><button data-view="submit">Submit Research</button></li>
+        <li><button data-view="chapters">Chapter Dashboard</button></li>
         <li><button data-view="admin">Admin</button></li>
         <li><button data-view="about">About</button></li>
         <li><button class="signin-btn" id="open-auth">Sign In / Sign Up</button></li>
@@ -418,6 +477,54 @@
     </div>
   </section>
 
+  <!-- ===== CHAPTER DASHBOARD VIEW ===== -->
+  <section class="view" id="view-chapters">
+    <div class="chapter-header">
+      <h2>🎓 University <span>Chapter Dashboard</span></h2>
+      <p>Each accredited Ugandan university has a chapter of the Inter-University Young Scientists Consortium (IUYSC). This dashboard lets chapter coordinators see, manage, and export their university's submissions.</p>
+      <div class="chapter-select">
+        <label>Select University:</label>
+        <select id="chapter-select"></select>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid" id="chapter-kpis"></div>
+
+    <!-- Two-panel: submissions table + leaderboard -->
+    <div class="two-panel">
+      <div>
+        <div class="section-header-row">
+          <h3 class="section-title">Chapter Submissions</h3>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-sm btn-outline" id="chapter-export">📄 Export Report</button>
+            <button class="btn btn-sm btn-black" id="chapter-bulk">📥 Bulk Upload</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th><th>Title</th><th>Author</th><th>Sector</th><th>TRL</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="chapter-table"></tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="leaderboard">
+          <h4>🏆 Top Contributors — <span id="lb-university-name"></span></h4>
+          <div id="chapter-leaderboard"></div>
+        </div>
+        <div class="leaderboard">
+          <h4>🇺🇬 National University Leaderboard</h4>
+          <div id="national-leaderboard"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===== ADMIN VIEW ===== -->
   <section class="view" id="view-admin">
     <h3 class="section-title">Administrator Dashboard</h3>
@@ -437,7 +544,7 @@
   <!-- ===== ABOUT VIEW ===== -->
   <section class="view" id="view-about">
     <h3 class="section-title">About This Initiative</h3>
-    <div class="form-wrap" style="max-width:100%;">
+    <div class="form-wrap wide">
       <p style="margin-bottom:16px;">The <strong>Presidential Initiative for Young Scientists (PIYS)</strong>, operating through the <strong>Inter-University Young Scientists Consortium (IUYSC)</strong>, is building Uganda's first national digital repository dedicated to protecting and advancing the research of young and emerging scientists.</p>
       <p style="margin-bottom:16px;">Every year, Ugandan universities produce hundreds of final-year projects and research papers that never leave the campus shelf. This repository exists to change that — capturing each innovation at the moment of completion, protecting it, and connecting it to industry, investors, and government.</p>
       <h4 style="margin:20px 0 10px; color:var(--red);">Our 5 Strategic Pillars</h4>
@@ -479,8 +586,24 @@
 </footer>
 
 <script>
+// ================= CONSTANTS =================
+const UNIVERSITIES = [
+  'Makerere University',
+  'Kyambogo University',
+  'Makerere University Business School',
+  'Uganda Christian University',
+  'Mbarara University of Science & Technology',
+  'Gulu University',
+  'Busitema University',
+  'Muni University',
+  'Kabale University',
+  'Lira University',
+  'Soroti University',
+  'Other'
+];
+
 // ================= STATE =================
-const STORAGE_KEY = 'piys_repository_v2';
+const STORAGE_KEY = 'piys_repository_v3';
 const USERS_KEY = 'piys_users_v1';
 const SESSION_KEY = 'piys_session_v1';
 
@@ -489,132 +612,84 @@ function loadData() {
   if (raw) return JSON.parse(raw);
   const seed = [
     {
-      id: 'seed-1',
-      title: 'Low-Cost Solar-Powered Malaria Diagnostic Kit',
-      author: 'Musoga Reagan',
-      email: 'reagan.musoga@mak.ac.ug',
-      university: 'Makerere University',
-      course: 'BSc. Biomedical Engineering',
-      sector: 'Medical Devices & Diagnostics',
-      trl: 4,
+      id: 'seed-1', title: 'Low-Cost Solar-Powered Malaria Diagnostic Kit',
+      author: 'Musoga Reagan', email: 'reagan.musoga@mak.ac.ug',
+      university: 'Makerere University', course: 'BSc. Biomedical Engineering',
+      sector: 'Medical Devices & Diagnostics', trl: 4,
       abstract: 'A portable, solar-powered device that uses light microscopy and AI image analysis to detect malaria parasites in under 3 minutes, designed for rural health centres with unreliable electricity.',
-      keywords: 'malaria, diagnostics, solar, AI, rural health',
-      visibility: 'public',
+      keywords: 'malaria, diagnostics, solar, AI, rural health', visibility: 'public',
       date: new Date('2026-08-14').toISOString(),
-      hash: 'a3f5c9e1b7d2408f6a1c3e5b9d7f2a4c8e6b1d3f5a7c9e2b4d6f8a1c3e5b7d9f',
-      status: 'Published'
+      hash: 'a3f5c9e1b7d2408f6a1c3e5b9d7f2a4c8e6b1d3f5a7c9e2b4d6f8a1c3e5b7d9f', status: 'Published'
     },
     {
-      id: 'seed-2',
-      title: 'Cassava Peel Biochar for Soil Restoration in Northern Uganda',
-      author: 'Wamezaya Ebenezer',
-      email: 'ebenezer.wamezaya@mak.ac.ug',
-      university: 'Makerere University',
-      course: 'BSc. Agricultural Engineering',
-      sector: 'Agriculture & Agro-processing',
-      trl: 6,
+      id: 'seed-2', title: 'Cassava Peel Biochar for Soil Restoration in Northern Uganda',
+      author: 'Wamezaya Ebenezer', email: 'ebenezer.wamezaya@mak.ac.ug',
+      university: 'Makerere University', course: 'BSc. Agricultural Engineering',
+      sector: 'Agriculture & Agro-processing', trl: 6,
       abstract: 'Converting cassava peel waste into biochar to restore degraded northern Uganda soils — increasing maize yield by 32% in field trials while reducing agricultural waste and creating rural jobs.',
-      keywords: 'cassava, biochar, soil, waste, yield, circular economy',
-      visibility: 'public',
+      keywords: 'cassava, biochar, soil, waste, yield, circular economy', visibility: 'public',
       date: new Date('2026-09-02').toISOString(),
-      hash: 'b4e6d0f2c8a3519e7b2d4f6a0c8e3b5d9f7a2c4e6b8d0f2a4c6e8b1d3f5a7c9e',
-      status: 'Published'
+      hash: 'b4e6d0f2c8a3519e7b2d4f6a0c8e3b5d9f7a2c4e6b8d0f2a4c6e8b1d3f5a7c9e', status: 'Published'
     },
     {
-      id: 'seed-3',
-      title: 'AI-Powered Luganda Language Tutor for Primary Schools',
-      author: 'Ssemwogerere Jordan',
-      email: 'jordan.ssemwogerere@must.ac.ug',
-      university: 'Mbarara University of Science & Technology',
-      course: 'BSc. Computer Science',
-      sector: 'ICT & Artificial Intelligence',
-      trl: 5,
+      id: 'seed-3', title: 'AI-Powered Luganda Language Tutor for Primary Schools',
+      author: 'Ssemwogerere Jordan', email: 'jordan.ssemwogerere@must.ac.ug',
+      university: 'Mbarara University of Science & Technology', course: 'BSc. Computer Science',
+      sector: 'ICT & Artificial Intelligence', trl: 5,
       abstract: 'A mobile app using speech recognition and NLP to teach Luganda literacy to primary school children, with offline capability for low-connectivity areas. Pilot-tested in 12 schools across Ankole.',
-      keywords: 'Luganda, AI, education, mobile, NLP, literacy',
-      visibility: 'public',
+      keywords: 'Luganda, AI, education, mobile, NLP, literacy', visibility: 'public',
       date: new Date('2026-09-20').toISOString(),
-      hash: 'c5f7e1a3d9b4620f8c3e5a7b1d9f4c6e0a8b2d4f6c8e0a2b4d6f8c1e3a5b7d9f',
-      status: 'Published'
+      hash: 'c5f7e1a3d9b4620f8c3e5a7b1d9f4c6e0a8b2d4f6c8e0a2b4d6f8c1e3a5b7d9f', status: 'Published'
     },
     {
-      id: 'seed-4',
-      title: 'Solar-Powered Cold Chain for Smallholder Dairy Farmers',
-      author: 'Kassaga Andrew',
-      email: 'andrew.kassaga@busitema.ac.ug',
-      university: 'Busitema University',
-      course: 'BSc. Renewable Energy Engineering',
-      sector: 'Renewable Energy',
-      trl: 7,
+      id: 'seed-4', title: 'Solar-Powered Cold Chain for Smallholder Dairy Farmers',
+      author: 'Kassaga Andrew', email: 'andrew.kassaga@busitema.ac.ug',
+      university: 'Busitema University', course: 'BSc. Renewable Energy Engineering',
+      sector: 'Renewable Energy', trl: 7,
       abstract: 'A decentralized solar-powered milk cooling system for smallholder dairy farmers in eastern Uganda — reducing post-harvest milk losses by 68% and increasing farmer incomes. Currently deployed in 3 districts.',
-      keywords: 'solar, cold chain, dairy, milk, off-grid, smallholder',
-      visibility: 'public',
+      keywords: 'solar, cold chain, dairy, milk, off-grid, smallholder', visibility: 'public',
       date: new Date('2026-08-28').toISOString(),
-      hash: 'd6a8f2b4e0c5731a9d4f6b8c2e0a5d7f1b9c3e5a7d9f1b3c5e7a9d2f4b6c8e0a',
-      status: 'Published'
+      hash: 'd6a8f2b4e0c5731a9d4f6b8c2e0a5d7f1b9c3e5a7d9f1b3c5e7a9d2f4b6c8e0a', status: 'Published'
     },
     {
-      id: 'seed-5',
-      title: 'Low-Cost Prosthetic Hand with EMG Signal Control',
-      author: 'Nabukeera Aisha',
-      email: 'aisha.nabukeera@kyambogo.ac.ug',
-      university: 'Kyambogo University',
-      course: 'BSc. Mechatronics Engineering',
-      sector: 'Engineering & Manufacturing',
-      trl: 5,
+      id: 'seed-5', title: 'Low-Cost Prosthetic Hand with EMG Signal Control',
+      author: 'Nabukeera Aisha', email: 'aisha.nabukeera@kyambogo.ac.ug',
+      university: 'Kyambogo University', course: 'BSc. Mechatronics Engineering',
+      sector: 'Engineering & Manufacturing', trl: 5,
       abstract: 'A 3D-printed prosthetic hand controlled by electromyography (EMG) signals from residual limb muscles. Cost: UGX 850,000 vs. UGX 12M for imported alternatives. Tested with 8 amputees in Kampala.',
-      keywords: 'prosthetics, EMG, 3D printing, assistive tech, affordable',
-      visibility: 'public',
+      keywords: 'prosthetics, EMG, 3D printing, assistive tech, affordable', visibility: 'public',
       date: new Date('2026-09-10').toISOString(),
-      hash: 'e7b9a3c5f1d6842b0e5a7c9d3f1b6e8a2c4d6f8b0a2c4e6d8f1b3a5c7e9d2f4b',
-      status: 'Published'
+      hash: 'e7b9a3c5f1d6842b0e5a7c9d3f1b6e8a2c4d6f8b0a2c4e6d8f1b3a5c7e9d2f4b', status: 'Published'
     },
     {
-      id: 'seed-6',
-      title: 'Indigenous Herbal Formulation for Wound Healing',
-      author: 'Ochieng Daniel',
-      email: 'daniel.ochieng@gulu.ac.ug',
-      university: 'Gulu University',
-      course: 'BPharm. Pharmacy',
-      sector: 'Health & Pharmaceuticals',
-      trl: 4,
+      id: 'seed-6', title: 'Indigenous Herbal Formulation for Wound Healing',
+      author: 'Ochieng Daniel', email: 'daniel.ochieng@gulu.ac.ug',
+      university: 'Gulu University', course: 'BPharm. Pharmacy',
+      sector: 'Health & Pharmaceuticals', trl: 4,
       abstract: 'A standardized topical formulation from locally available medicinal plants (Bidens pilosa and Vernonia amygdalina) showing 40% faster wound closure in clinical trials compared to conventional dressings.',
-      keywords: 'herbal medicine, wound healing, indigenous knowledge, pharmaceuticals',
-      visibility: 'protected',
+      keywords: 'herbal medicine, wound healing, indigenous knowledge, pharmaceuticals', visibility: 'protected',
       date: new Date('2026-09-25').toISOString(),
-      hash: 'f8c0b4d6a2e7953c1f6b8d0e4a2c7f9b3d5e7a9c1f3b5d7e9a2c4f6b8d0e2a4c',
-      status: 'Under Review'
+      hash: 'f8c0b4d6a2e7953c1f6b8d0e4a2c7f9b3d5e7a9c1f3b5d7e9a2c4f6b8d0e2a4c', status: 'Under Review'
     },
     {
-      id: 'seed-7',
-      title: 'Smart Water Quality Monitoring for Lake Victoria',
-      author: 'Namatovu Patricia',
-      email: 'patricia.namatovu@mak.ac.ug',
-      university: 'Makerere University',
-      course: 'BSc. Environmental Science',
-      sector: 'Environmental Technologies',
-      trl: 6,
+      id: 'seed-7', title: 'Smart Water Quality Monitoring for Lake Victoria',
+      author: 'Namatovu Patricia', email: 'patricia.namatovu@mak.ac.ug',
+      university: 'Makerere University', course: 'BSc. Environmental Science',
+      sector: 'Environmental Technologies', trl: 6,
       abstract: 'An IoT-based sensor network that monitors pH, turbidity, and heavy metal contamination in Lake Victoria in real time, alerting fishing communities and regulators via SMS when unsafe levels are detected.',
-      keywords: 'IoT, water quality, Lake Victoria, sensors, environment',
-      visibility: 'public',
+      keywords: 'IoT, water quality, Lake Victoria, sensors, environment', visibility: 'public',
       date: new Date('2026-09-15').toISOString(),
-      hash: 'a9d1c5e7b3f8064d2a7c9e1f5b3d8a0c4e6f8a1b3d5c7e9f2a4b6d8c0e2f4a6b',
-      status: 'Published'
+      hash: 'a9d1c5e7b3f8064d2a7c9e1f5b3d8a0c4e6f8a1b3d5c7e9f2a4b6d8c0e2f4a6b', status: 'Published'
     },
     {
-      id: 'seed-8',
-      title: 'Biogas from Market Waste for Urban Households',
-      author: 'Tumusiime Robert',
-      email: 'robert.tumusiime@must.ac.ug',
-      university: 'Mbarara University of Science & Technology',
-      course: 'BSc. Environmental Engineering',
-      sector: 'Renewable Energy',
-      trl: 6,
+      id: 'seed-8', title: 'Biogas from Market Waste for Urban Households',
+      author: 'Tumusiime Robert', email: 'robert.tumusiime@must.ac.ug',
+      university: 'Mbarara University of Science & Technology', course: 'BSc. Environmental Engineering',
+      sector: 'Renewable Energy', trl: 6,
       abstract: 'A modular anaerobic digester that converts market vegetable waste into cooking biogas for urban households. One unit serves 4 families, reducing charcoal use by 70% and indoor air pollution.',
-      keywords: 'biogas, waste-to-energy, urban, clean cooking',
-      visibility: 'public',
+      keywords: 'biogas, waste-to-energy, urban, clean cooking', visibility: 'public',
       date: new Date('2026-09-05').toISOString(),
-      hash: 'b0e2d6f8c4a9175e3b8d0f2a6c4e9b1d5f7a9c2e4b6d8f0a3c5e7b9d1f3a5c7e',
-      status: 'Published'
+      hash: 'b0e2d6f8c4a9175e3b8d0f2a6c4e9b1d5f7a9c2e4b6d8f0a3c5e7b9d1f3a5c7e', status: 'Published'
     }
   ];
   localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
@@ -622,10 +697,8 @@ function loadData() {
 }
 
 function saveData(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
-
 let DB = loadData();
 
-// ================= USERS =================
 function loadUsers() {
   const raw = localStorage.getItem(USERS_KEY);
   return raw ? JSON.parse(raw) : [];
@@ -654,11 +727,14 @@ function updateAuthUI() {
   }
 }
 
-// ================= HASH =================
 async function sha256(text) {
   const buf = new TextEncoder().encode(text);
   const hashBuf = await crypto.subtle.digest('SHA-256', buf);
   return Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 // ================= NAV =================
@@ -673,6 +749,7 @@ document.querySelectorAll('nav button[data-view]').forEach(btn => {
     if (btn.dataset.view === 'browse') renderBrowse();
     if (btn.dataset.view === 'admin') renderAdmin();
     if (btn.dataset.view === 'home') renderHome();
+    if (btn.dataset.view === 'chapters') renderChapterDashboard();
   });
 });
 
@@ -706,9 +783,6 @@ function cardHTML(item) {
       </div>
     </div>
   `;
-}
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 // ================= HOME =================
@@ -777,7 +851,7 @@ document.getElementById('submit-form').addEventListener('submit', async (e) => {
   const item = { ...payload, id: 'item-' + Date.now(), hash, status: 'Submitted' };
   DB.push(item);
   saveData(DB);
-  renderStats(); renderHome(); renderBrowse(); renderAdmin();
+  renderStats(); renderHome(); renderBrowse(); renderAdmin(); renderChapterDashboard();
   openModal(`
     <h3 style="color:var(--green);">✅ Research Submitted &amp; Protected</h3>
     <div class="alert alert-success">
@@ -874,8 +948,220 @@ window.deleteItem = function(id) {
   if (!confirm('Delete this submission? This cannot be undone.')) return;
   DB = DB.filter(d => d.id !== id);
   saveData(DB);
-  renderStats(); renderHome(); renderBrowse(); renderAdmin();
+  renderStats(); renderHome(); renderBrowse(); renderAdmin(); renderChapterDashboard();
 };
+
+// ================= CHAPTER DASHBOARD =================
+let currentChapter = 'Makerere University';
+
+function initChapterSelect() {
+  const sel = document.getElementById('chapter-select');
+  const unisInDB = [...new Set(DB.map(d => d.university))].sort();
+  const allUnis = [...new Set([...UNIVERSITIES, ...unisInDB])].sort();
+  sel.innerHTML = allUnis.map(u => `<option ${u === currentChapter ? 'selected' : ''}>${escapeHtml(u)}</option>`).join('');
+  sel.onchange = () => { currentChapter = sel.value; renderChapterDashboard(); };
+}
+
+function renderChapterDashboard() {
+  initChapterSelect();
+  const items = DB.filter(d => d.university === currentChapter);
+
+  // KPIs
+  const total = items.length;
+  const sectors = new Set(items.map(d => d.sector)).size;
+  const avgTrl = total ? (items.reduce((s, d) => s + d.trl, 0) / total).toFixed(1) : '—';
+  const protectedCount = items.filter(d => d.hash).length;
+  const publicCount = items.filter(d => d.visibility === 'public').length;
+
+  document.getElementById('chapter-kpis').innerHTML = `
+    <div class="kpi">
+      <div class="kpi-label">Total Submissions</div>
+      <div class="kpi-value">${total}</div>
+    </div>
+    <div class="kpi red">
+      <div class="kpi-label">Sectors Covered</div>
+      <div class="kpi-value">${sectors}</div>
+    </div>
+    <div class="kpi black">
+      <div class="kpi-label">Avg. TRL</div>
+      <div class="kpi-value">${avgTrl}</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">IP Protected</div>
+      <div class="kpi-value">${protectedCount}</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Publicly Visible</div>
+      <div class="kpi-value">${publicCount}</div>
+    </div>
+  `;
+
+  // Submissions table
+  const tbody = document.getElementById('chapter-table');
+  if (!items.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:var(--mid-grey);">No submissions from ${escapeHtml(currentChapter)} yet.</td></tr>`;
+  } else {
+    tbody.innerHTML = items.slice().reverse().map(d => `
+      <tr>
+        <td>${new Date(d.date).toLocaleDateString('en-GB')}</td>
+        <td><strong>${escapeHtml(d.title)}</strong></td>
+        <td>${escapeHtml(d.author)}</td>
+        <td>${escapeHtml(d.sector)}</td>
+        <td><span class="badge-trl">${d.trl}</span></td>
+        <td>${d.status}</td>
+        <td>
+          <button class="btn btn-sm" onclick="viewItem('${d.id}')">View</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // Chapter leaderboard (top contributors within the university)
+  const byAuthor = {};
+  items.forEach(d => {
+    if (!byAuthor[d.author]) byAuthor[d.author] = { count: 0, sectors: new Set() };
+    byAuthor[d.author].count += 1;
+    byAuthor[d.author].sectors.add(d.sector);
+  });
+  const leaders = Object.entries(byAuthor)
+    .map(([name, v]) => ({ name, count: v.count, sectors: v.sectors.size }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+  document.getElementById('lb-university-name').textContent = currentChapter;
+  document.getElementById('chapter-leaderboard').innerHTML = leaders.length
+    ? leaders.map((l, i) => `
+      <div class="lb-row">
+        <div class="lb-rank">${i + 1}</div>
+        <div class="lb-info">
+          <div class="lb-name">${escapeHtml(l.name)}</div>
+          <div class="lb-sub">${l.sectors} sector${l.sectors !== 1 ? 's' : ''}</div>
+        </div>
+        <div class="lb-count">${l.count}</div>
+      </div>
+    `).join('')
+    : '<p style="color:var(--mid-grey); font-size:13px;">No contributors yet.</p>';
+
+  // National university leaderboard
+  const byUni = {};
+  DB.forEach(d => {
+    if (!byUni[d.university]) byUni[d.university] = { count: 0, trlSum: 0 };
+    byUni[d.university].count += 1;
+    byUni[d.university].trlSum += d.trl;
+  });
+  const national = Object.entries(byUni)
+    .map(([name, v]) => ({ name, count: v.count, avgTrl: (v.trlSum / v.count).toFixed(1) }))
+    .sort((a, b) => b.count - a.count);
+  document.getElementById('national-leaderboard').innerHTML = national.length
+    ? national.map((u, i) => `
+      <div class="lb-row">
+        <div class="lb-rank">${i + 1}</div>
+        <div class="lb-info">
+          <div class="lb-name">${escapeHtml(u.name)}</div>
+          <div class="lb-sub">Avg TRL ${u.avgTrl}</div>
+        </div>
+        <div class="lb-count">${u.count}</div>
+      </div>
+    `).join('')
+    : '<p style="color:var(--mid-grey); font-size:13px;">No submissions yet.</p>';
+}
+
+// ===== CHAPTER EXPORT =====
+document.getElementById('chapter-export').addEventListener('click', () => {
+  const items = DB.filter(d => d.university === currentChapter);
+  if (!items.length) { alert('No submissions to export for this chapter.'); return; }
+  const lines = [
+    '============================================================',
+    '   PRESIDENTIAL INITIATIVE FOR YOUNG SCIENTISTS (PIYS)',
+    '        Inter-University Young Scientists Consortium',
+    '                 CHAPTER REPORT',
+    '============================================================',
+    '',
+    `University: ${currentChapter}`,
+    `Generated:  ${new Date().toLocaleString('en-GB')}`,
+    `Total Submissions: ${items.length}`,
+    `Sectors Covered:   ${new Set(items.map(d => d.sector)).size}`,
+    `Average TRL:       ${(items.reduce((s, d) => s + d.trl, 0) / items.length).toFixed(1)}`,
+    '',
+    '------------------------------------------------------------',
+    'SUBMISSIONS',
+    '------------------------------------------------------------'
+  ];
+  items.forEach((d, i) => {
+    lines.push('');
+    lines.push(`${i + 1}. ${d.title}`);
+    lines.push(`   Author:     ${d.author}`);
+    lines.push(`   Course:     ${d.course || 'N/A'}`);
+    lines.push(`   Sector:     ${d.sector}`);
+    lines.push(`   TRL:        ${d.trl}`);
+    lines.push(`   Status:     ${d.status}`);
+    lines.push(`   Submitted:  ${new Date(d.date).toLocaleDateString('en-GB')}`);
+    lines.push(`   Hash:       ${d.hash}`);
+  });
+  lines.push('');
+  lines.push('------------------------------------------------------------');
+  lines.push('Generated by the PIYS National Repository');
+  lines.push('Wamezaya Ebenezer · Chief Scientist, IUYSC');
+  lines.push('------------------------------------------------------------');
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `PIYS_Chapter_Report_${currentChapter.replace(/\s+/g, '_')}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+// ===== CHAPTER BULK UPLOAD =====
+document.getElementById('chapter-bulk').addEventListener('click', () => {
+  openModal(`
+    <h3>📥 Bulk Upload — ${escapeHtml(currentChapter)}</h3>
+    <div class="alert alert-info">
+      Paste one project per line in this format:<br/>
+      <code style="display:block; margin-top:8px; background:var(--grey); padding:8px; border-radius:4px; font-size:11px;">
+        Title | Author | Email | Course | Sector | TRL | Abstract
+      </code>
+      Sectors must match one of the standard sectors. TRL must be 1–9.
+    </div>
+    <div class="form-row">
+      <label>Paste bulk entries</label>
+      <textarea id="bulk-input" style="min-height:180px; font-family:monospace; font-size:12px;" placeholder="Solar Water Purifier for Rural Schools | Namuli Grace | grace@mak.ac.ug | BSc. Civil Engineering | Renewable Energy | 5 | A low-cost solar purifier that provides clean drinking water for rural primary schools."></textarea>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn" id="bulk-process">Process &amp; Upload</button>
+      <button class="btn btn-black" onclick="closeModal()">Cancel</button>
+    </div>
+  `);
+  document.getElementById('bulk-process').addEventListener('click', async () => {
+    const raw = document.getElementById('bulk-input').value.trim();
+    if (!raw) { alert('Please paste at least one entry.'); return; }
+    const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+    let added = 0, skipped = 0;
+    for (const line of lines) {
+      const parts = line.split('|').map(p => p.trim());
+      if (parts.length < 7) { skipped++; continue; }
+      const [title, author, email, course, sector, trl, abstract] = parts;
+      const trlNum = parseInt(trl);
+      if (!title || !author || !email || !sector || isNaN(trlNum) || trlNum < 1 || trlNum > 9) { skipped++; continue; }
+      const payload = {
+        title, author, email, university: currentChapter, course,
+        sector, trl: trlNum, abstract, keywords: '', visibility: 'public',
+        date: new Date().toISOString(), submittedBy: 'bulk-upload'
+      };
+      const hash = await sha256(JSON.stringify(payload) + Date.now() + Math.random());
+      DB.push({ ...payload, id: 'item-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7), hash, status: 'Submitted' });
+      added++;
+    }
+    saveData(DB);
+    renderStats(); renderHome(); renderBrowse(); renderAdmin(); renderChapterDashboard();
+    openModal(`
+      <h3 style="color:var(--green);">✅ Bulk Upload Complete</h3>
+      <div class="alert alert-success">
+        <strong>${added}</strong> entries added successfully.${skipped ? ` <br/><strong>${skipped}</strong> lines skipped (malformed).` : ''}
+      </div>
+      <button class="btn" onclick="closeModal()">Close</button>
+    `);
+  });
+});
 
 // ================= MODAL =================
 function openModal(html) {
@@ -911,8 +1197,9 @@ window.viewItem = function(id) {
   `);
 };
 
-// ================= AUTH (SIGN IN / SIGN UP) =================
+// ================= AUTH =================
 let selectedRole = 'Young Scientist';
+let selectedChapterUni = 'Makerere University';
 
 const ROLES = [
   { id: 'Young Scientist', icon: '🔬', desc: 'Student or early-career researcher with an innovation to protect.' },
@@ -925,6 +1212,7 @@ document.getElementById('open-auth').addEventListener('click', () => openAuthMod
 
 function openAuthModal(tab = 'signin') {
   selectedRole = 'Young Scientist';
+  selectedChapterUni = 'Makerere University';
   openModal(`
     <div class="tab-switch">
       <button id="tab-signin" class="${tab === 'signin' ? 'active' : ''}">Sign In</button>
@@ -943,7 +1231,7 @@ function switchAuthTab(tab) {
   const c = document.getElementById('auth-form-container');
   if (tab === 'signin') {
     c.innerHTML = `
-      <div class="alert alert-info">Welcome back. Sign in to manage your submissions, or create a new account below.</div>
+      <div class="alert alert-info">Welcome back. Sign in to manage your submissions.</div>
       <form id="signin-form">
         <div class="form-row">
           <label>Email <span class="req">*</span></label>
@@ -973,6 +1261,14 @@ function switchAuthTab(tab) {
           </div>
         `).join('')}
       </div>
+      <div id="chapter-picker" style="display:none;">
+        <div class="form-row">
+          <label>Which university chapter do you represent? <span class="req">*</span></label>
+          <select id="su-chapter-uni">
+            ${UNIVERSITIES.map(u => `<option ${u === selectedChapterUni ? 'selected' : ''}>${u}</option>`).join('')}
+          </select>
+        </div>
+      </div>
       <form id="signup-form">
         <div class="form-row">
           <label>Full Name <span class="req">*</span></label>
@@ -982,15 +1278,9 @@ function switchAuthTab(tab) {
           <label>Email <span class="req">*</span></label>
           <input type="email" id="su-email" required placeholder="you@university.ac.ug" />
         </div>
-        <div class="two-col">
-          <div class="form-row">
-            <label>University / Organisation</label>
-            <input type="text" id="su-org" placeholder="e.g., Makerere University" />
-          </div>
-          <div class="form-row">
-            <label>Phone (optional)</label>
-            <input type="tel" id="su-phone" placeholder="+256 7XX XXX XXX" />
-          </div>
+        <div class="form-row">
+          <label>Phone (optional)</label>
+          <input type="tel" id="su-phone" placeholder="+256 7XX XXX XXX" />
         </div>
         <div class="form-row">
           <label>Password <span class="req">*</span></label>
@@ -1011,6 +1301,8 @@ function switchAuthTab(tab) {
         document.querySelectorAll('#role-cards .role-card').forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
         selectedRole = card.dataset.role;
+        document.getElementById('chapter-picker').style.display =
+          selectedRole === 'University Chapter' ? 'block' : 'none';
       });
     });
     document.getElementById('signup-form').addEventListener('submit', handleSignUp);
@@ -1021,19 +1313,46 @@ async function handleSignUp(e) {
   e.preventDefault();
   const name = document.getElementById('su-name').value.trim();
   const email = document.getElementById('su-email').value.trim().toLowerCase();
-  const org = document.getElementById('su-org').value.trim();
   const phone = document.getElementById('su-phone').value.trim();
   const pw = document.getElementById('su-password').value;
   const pw2 = document.getElementById('su-password2').value;
+  const chapterUni = selectedRole === 'University Chapter'
+    ? document.getElementById('su-chapter-uni').value
+    : null;
   if (pw !== pw2) { alert('Passwords do not match.'); return; }
   const users = loadUsers();
   if (users.find(u => u.email === email)) { alert('An account with this email already exists. Please sign in.'); return; }
   const pwHash = await sha256(pw);
-  const user = { id: 'user-' + Date.now(), name, email, org, phone, role: selectedRole, pwHash, joined: new Date().toISOString() };
+  const user = {
+    id: 'user-' + Date.now(), name, email, phone,
+    role: selectedRole, chapterUniversity: chapterUni,
+    pwHash, joined: new Date().toISOString()
+  };
   users.push(user);
   saveUsers(users);
-  setSession({ id: user.id, name: user.name, email: user.email, role: user.role });
+  setSession({ id: user.id, name: user.name, email: user.email, role: user.role, chapterUniversity: user.chapterUniversity });
   updateAuthUI();
+
+  // If chapter coordinator, jump them to the chapter dashboard
+  if (selectedRole === 'University Chapter') {
+    currentChapter = chapterUni;
+    openModal(`
+      <h3 style="color:var(--green);">🎉 Welcome, ${escapeHtml(name.split(' ')[0])}!</h3>
+      <div class="alert alert-success">
+        Your chapter account for <strong>${escapeHtml(chapterUni)}</strong> has been created.
+      </div>
+      <p style="margin:12px 0;">You can now:</p>
+      <ul style="padding-left:20px; margin-bottom:16px; line-height:1.9;">
+        <li>See all submissions from your university</li>
+        <li>Bulk-upload final-year projects</li>
+        <li>Export a chapter report for your records</li>
+        <li>Track your university on the national leaderboard</li>
+      </ul>
+      <button class="btn" onclick="closeModal(); document.querySelector('nav button[data-view=chapters]').click();">Go to Chapter Dashboard →</button>
+    `);
+    return;
+  }
+
   openModal(`
     <h3 style="color:var(--green);">🎉 Welcome to PIYS, ${escapeHtml(name.split(' ')[0])}!</h3>
     <div class="alert alert-success">
@@ -1042,7 +1361,6 @@ async function handleSignUp(e) {
     <p style="margin:12px 0;">You can now:</p>
     <ul style="padding-left:20px; margin-bottom:16px; line-height:1.9;">
       ${selectedRole === 'Young Scientist' ? '<li>Submit your research to the national repository</li><li>Get a verifiable certificate of authorship</li><li>Track your submission status</li>' : ''}
-      ${selectedRole === 'University Chapter' ? '<li>Represent your university in the national consortium</li><li>Bulk-upload final-year projects</li><li>See your university dashboard</li>' : ''}
       ${selectedRole === 'Industry / Investor' ? '<li>Browse innovations ready for licensing</li><li>Express interest to innovators directly</li><li>Receive alerts on new submissions in your sector</li>' : ''}
       ${selectedRole === 'Government / Policy' ? '<li>Access national analytics and trends</li><li>Export reports for policy use</li><li>Coordinate with university chapters</li>' : ''}
     </ul>
@@ -1061,11 +1379,14 @@ async function handleSignIn(e) {
     alert('Invalid email or password. If you have not registered yet, please create an account.');
     return;
   }
-  setSession({ id: user.id, name: user.name, email: user.email, role: user.role });
+  setSession({ id: user.id, name: user.name, email: user.email, role: user.role, chapterUniversity: user.chapterUniversity });
   updateAuthUI();
+  if (user.role === 'University Chapter' && user.chapterUniversity) {
+    currentChapter = user.chapterUniversity;
+  }
   openModal(`
     <h3 style="color:var(--green);">✅ Welcome back, ${escapeHtml(user.name.split(' ')[0])}!</h3>
-    <div class="alert alert-success">You are signed in as <strong>${escapeHtml(user.role)}</strong>.</div>
+    <div class="alert alert-success">You are signed in as <strong>${escapeHtml(user.role)}</strong>${user.chapterUniversity ? ` — ${escapeHtml(user.chapterUniversity)}` : ''}.</div>
     <button class="btn" onclick="closeModal()">Continue</button>
   `);
 }
@@ -1078,8 +1399,10 @@ function openProfile() {
     <p style="margin:12px 0;"><strong>Name:</strong> ${escapeHtml(user.name)}</p>
     <p style="margin:12px 0;"><strong>Email:</strong> ${escapeHtml(user.email)}</p>
     <p style="margin:12px 0;"><strong>Role:</strong> ${escapeHtml(user.role)}</p>
+    ${user.chapterUniversity ? `<p style="margin:12px 0;"><strong>Chapter:</strong> ${escapeHtml(user.chapterUniversity)}</p>` : ''}
     <div style="margin-top:20px; display:flex; gap:10px;">
       <button class="btn" onclick="closeModal()">Close</button>
+      ${user.role === 'University Chapter' ? `<button class="btn btn-black" onclick="closeModal(); document.querySelector('nav button[data-view=chapters]').click();">Chapter Dashboard</button>` : ''}
       <button class="btn btn-red" onclick="signOut()">Sign Out</button>
     </div>
   `);
@@ -1096,6 +1419,7 @@ renderStats();
 renderHome();
 renderBrowse();
 renderAdmin();
+renderChapterDashboard();
 updateAuthUI();
 </script>
 </body>
