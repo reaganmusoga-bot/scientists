@@ -7,6 +7,20 @@ import { uploadToCloudinary } from "./cloudinary.js";
 import { computeSHA256FromDataURL } from "./hash.js";
 import { generateCertificate } from "./certificate.js";
 
+/* ============================================================
+   Verification code generator
+   Format: SPUG-XXXX-XXXX
+   Alphabet excludes 0, 1, O, I, L to avoid reading ambiguity.
+   ============================================================ */
+function generateVerificationCode() {
+  const alphabet = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+  let code = "";
+  for (let i = 0; i < 8; i++) {
+    code += alphabet[Math.floor(Math.random() * alphabet.length)];
+  }
+  return `SPUG-${code.slice(0, 4)}-${code.slice(4)}`;
+}
+
 /* ---------- Innovations ---------- */
 
 export async function loadInnovations() {
@@ -25,7 +39,6 @@ export function subscribeInnovations(cb) {
 async function uploadInnovationMedia(itemId, mediaArray) {
   const uploaded = [];
   for (const m of mediaArray) {
-    // m.data is a base64 data URL from the file input
     const blob = await (await fetch(m.data)).blob();
     const file = new File([blob], m.name, { type: m.type || "application/octet-stream" });
     const result = await uploadToCloudinary(file);
@@ -46,33 +59,53 @@ export async function createInnovation(payload, mediaArray, uid) {
   const newDocRef = doc(collRef);
   const id = newDocRef.id;
 
-  // ---------- 1. Compute SHA-256 hash of the primary file (before upload) ----------
-  let computedHash = "no-file";
-  let primaryFileMeta = { name: "—", size: 0 };
+  // ---------- 1. Hash each file individually ----------
+  const filesMeta = [];
+  const individualHashes = [];
 
   if (mediaArray && mediaArray.length > 0) {
-    const primary = mediaArray[0];
-    try {
-      computedHash = await computeSHA256FromDataURL(primary.data);
-      primaryFileMeta = {
-        name: primary.name || "attachment",
-        size: primary.size || 0
-      };
-    } catch (hashErr) {
-      console.warn("SHA-256 computation failed:", hashErr);
-      computedHash = "hash-unavailable";
+    for (const item of mediaArray) {
+      let fileHash = "hash-unavailable";
+      try {
+        fileHash = await computeSHA256FromDataURL(item.data);
+        individualHashes.push(fileHash);
+      } catch (err) {
+        console.warn(`Hash failed for ${item.name}:`, err);
+      }
+      filesMeta.push({
+        name: item.name || "attachment",
+        size: item.size || 0,
+        type: item.type || "",
+        hash: fileHash
+      });
     }
   }
 
-  // ---------- 2. Upload media to Cloudinary ----------
+  // ---------- 2. Compute a master hash (concatenation of all file hashes) ----------
+  let masterHash = "no-file";
+  if (individualHashes.length > 0) {
+    const concat = individualHashes.join("|");
+    const bytes = new TextEncoder().encode(concat);
+    const buffer = await crypto.subtle.digest("SHA-256", bytes);
+    const arr = Array.from(new Uint8Array(buffer));
+    masterHash = arr.map(b => b.toString(16).padStart(2, "0")).join("");
+  }
+
+  // ---------- 3. Generate the public verification code ----------
+  const verificationCode = generateVerificationCode();
+
+  // ---------- 4. Upload media to Cloudinary ----------
   const media = await uploadInnovationMedia(id, mediaArray);
 
-  // ---------- 3. Save to Firestore with hash fields attached ----------
+  // ---------- 5. Save to Firestore ----------
   await setDoc(newDocRef, {
     ...payload,
-    hash: computedHash,
+    hash: masterHash,
     hashAlgorithm: "SHA-256",
     hashComputedAt: new Date().toISOString(),
+    verificationCode,
+    files: filesMeta,
+    fileCount: filesMeta.length,
     media,
     uid: uid || null,
     status: "Submitted",
@@ -80,11 +113,13 @@ export async function createInnovation(payload, mediaArray, uid) {
     createdAt: serverTimestamp()
   });
 
-  // ---------- 4. Generate and download the certificate ----------
+  // ---------- 6. Generate the PDF certificate ----------
   try {
     const now = new Date();
     const issuedDate = now.toISOString().slice(0, 10);
     const shortId = id.slice(-6).toUpperCase();
+
+    const primary = filesMeta[0] || { name: "—", size: 0 };
 
     generateCertificate({
       title: payload.title || "—",
@@ -92,18 +127,18 @@ export async function createInnovation(payload, mediaArray, uid) {
       email: payload.email || "—",
       university: payload.university || "—",
       department: payload.course || "—",
-      fileName: primaryFileMeta.name,
-      fileSize: primaryFileMeta.size,
-      hash: computedHash,
+      fileName: primary.name,
+      fileSize: primary.size,
+      hash: masterHash,
+      verificationCode,
       timestampAnchor: "SciPool UG Server Timestamp",
       anchoredAt: now.toISOString(),
       submissionId: id,
-      verifyUrl: `https://scientists-mocha.vercel.app/verify/${id}`,
+      verifyUrl: `https://scientists-mocha.vercel.app/verify?code=${verificationCode}`,
       issuedAt: now.toISOString(),
       certificateId: `CERT-${issuedDate}-${shortId}`
     });
   } catch (certErr) {
-    // Non-fatal — the submission is already saved
     console.warn("Certificate generation failed:", certErr);
   }
 
@@ -111,8 +146,6 @@ export async function createInnovation(payload, mediaArray, uid) {
 }
 
 export async function deleteInnovation(itemId) {
-  // Cloudinary files are not auto-deleted here (would require a signed API call).
-  // If you want cleanup later, add a Cloudinary destroy call via a Cloud Function.
   await deleteDoc(doc(db, "innovations", itemId));
 }
 
@@ -159,6 +192,7 @@ export async function getUserByEmail(email) {
   const snap = await getDocs(q);
   return snap.empty ? null : snap.docs[0].data();
 }
+
 /* ---------- Admin: innovations ---------- */
 
 export async function setFeatured(itemId, featured) {
@@ -176,7 +210,6 @@ export async function setEditorPick(itemId, editorPick) {
 }
 
 export async function setAdminStatus(itemId, status) {
-  // status: "active" | "pending" | "rejected" | "archived"
   await updateDoc(doc(db, "innovations", itemId), { adminStatus: status });
 }
 
