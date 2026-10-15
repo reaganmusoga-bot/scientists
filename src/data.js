@@ -4,6 +4,8 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase.js";
 import { uploadToCloudinary } from "./cloudinary.js";
+import { computeSHA256FromDataURL } from "./hash.js";
+import { generateCertificate } from "./certificate.js";
 
 /* ---------- Innovations ---------- */
 
@@ -44,16 +46,67 @@ export async function createInnovation(payload, mediaArray, uid) {
   const newDocRef = doc(collRef);
   const id = newDocRef.id;
 
+  // ---------- 1. Compute SHA-256 hash of the primary file (before upload) ----------
+  let computedHash = "no-file";
+  let primaryFileMeta = { name: "—", size: 0 };
+
+  if (mediaArray && mediaArray.length > 0) {
+    const primary = mediaArray[0];
+    try {
+      computedHash = await computeSHA256FromDataURL(primary.data);
+      primaryFileMeta = {
+        name: primary.name || "attachment",
+        size: primary.size || 0
+      };
+    } catch (hashErr) {
+      console.warn("SHA-256 computation failed:", hashErr);
+      computedHash = "hash-unavailable";
+    }
+  }
+
+  // ---------- 2. Upload media to Cloudinary ----------
   const media = await uploadInnovationMedia(id, mediaArray);
 
+  // ---------- 3. Save to Firestore with hash fields attached ----------
   await setDoc(newDocRef, {
     ...payload,
+    hash: computedHash,
+    hashAlgorithm: "SHA-256",
+    hashComputedAt: new Date().toISOString(),
     media,
     uid: uid || null,
     status: "Submitted",
     views: 0, saves: 0, contacted: 0,
     createdAt: serverTimestamp()
   });
+
+  // ---------- 4. Generate and download the certificate ----------
+  try {
+    const now = new Date();
+    const issuedDate = now.toISOString().slice(0, 10);
+    const shortId = id.slice(-6).toUpperCase();
+
+    generateCertificate({
+      title: payload.title || "—",
+      author: payload.author || "—",
+      email: payload.email || "—",
+      university: payload.university || "—",
+      department: payload.course || "—",
+      fileName: primaryFileMeta.name,
+      fileSize: primaryFileMeta.size,
+      hash: computedHash,
+      timestampAnchor: "SciPool UG Server Timestamp",
+      anchoredAt: now.toISOString(),
+      submissionId: id,
+      verifyUrl: `https://scientists-mocha.vercel.app/verify/${id}`,
+      issuedAt: now.toISOString(),
+      certificateId: `CERT-${issuedDate}-${shortId}`
+    });
+  } catch (certErr) {
+    // Non-fatal — the submission is already saved
+    console.warn("Certificate generation failed:", certErr);
+  }
+
   return id;
 }
 
