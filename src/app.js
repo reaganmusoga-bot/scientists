@@ -359,6 +359,7 @@ function updateAuthUI() {
           <button type="button" onclick="closeMobileNav(); setTimeout(() => openProfileEdit(), 200);"><span class="m-icon">✏️</span>Edit Profile</button>
           <button type="button" onclick="closeMobileNav(); setTimeout(() => goTo('messages'), 200);"><span class="m-icon">✉️</span>Messages</button>
           <button type="button" onclick="closeMobileNav(); setTimeout(() => { goTo('browse'); showSavedOnly(); }, 200);"><span class="m-icon">💾</span>My Shortlist</button>
+          <button type="button" class="danger" onclick="closeMobileNav(); setTimeout(() => openDeleteAccount(), 200);"><span class="m-icon">🗑️</span>Delete Account</button>
           <button type="button" class="signout" onclick="closeMobileNav(); setTimeout(() => signOut(), 200);"><span class="m-icon">🚪</span>Sign Out</button>
         </div>
       </div>
