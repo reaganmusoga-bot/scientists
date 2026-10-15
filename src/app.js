@@ -374,6 +374,7 @@ function updateAuthUI() {
 }
 
 function swapHomeView() {
+   if (window.__SCIPOOL_VERIFY_MODE__) return;   // 
   const publicHome = document.getElementById("view-home-public");
   const dashHome = document.getElementById("view-home-dashboard");
   if (!publicHome || !dashHome) return;
