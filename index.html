@@ -1558,6 +1558,150 @@
       transition-duration: 0.001ms !important;
     }
   }
+  /* ============================================================
+   Uganda Map Hero Visual
+   ============================================================ */
+
+.ug-map-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ug-map {
+  width: 100%;
+  height: auto;
+  max-height: 420px;
+  filter: drop-shadow(0 0 24px rgba(245,183,0,0.18));
+  animation: ugMapFloat 6s ease-in-out infinite;
+}
+
+@keyframes ugMapFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Uganda outline */
+.ug-outline {
+  fill: rgba(245,183,0,0.045);
+  stroke: var(--gold);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Internal topographic contours */
+.ug-contour {
+  fill: none;
+  stroke: rgba(245,183,0,0.22);
+  stroke-width: 0.7;
+  stroke-dasharray: 2 4;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Network connecting lines */
+.ug-network line {
+  stroke: rgba(200,16,46,0.35);
+  stroke-width: 0.7;
+  stroke-dasharray: 3 5;
+  animation: ugNetPulse 4s ease-in-out infinite;
+}
+
+@keyframes ugNetPulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.75; }
+}
+
+/* Nodes */
+.ug-node {
+  fill: var(--gold);
+  stroke: var(--charcoal);
+  stroke-width: 1.5;
+}
+
+.ug-node.ug-major {
+  fill: var(--flag-red);
+  stroke: var(--gold);
+}
+
+/* Pulsing halo behind each node */
+.ug-pulse {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1;
+  opacity: 0;
+  transform-origin: center;
+  animation: ugPulse 3s ease-out infinite;
+  pointer-events: none;
+}
+
+.ug-pulse:nth-of-type(odd) { animation-delay: 0.4s; }
+.ug-pulse:nth-of-type(3n) { animation-delay: 1.1s; }
+.ug-pulse:nth-of-type(5n) { animation-delay: 1.8s; }
+
+@keyframes ugPulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(2.8); opacity: 0; }
+}
+
+/* City labels */
+.ug-labels {
+  display: none; /* hidden on small screens */
+}
+.ug-labels text {
+  fill: rgba(255,255,255,0.55);
+  font-size: 9px;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  pointer-events: none;
+}
+
+/* Live caption below the map */
+.ug-caption {
+  text-align: center;
+  margin-top: 8px;
+  position: relative;
+  z-index: 2;
+}
+
+.ug-caption-count {
+  font-size: 34px;
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+  letter-spacing: -1px;
+  text-shadow: 0 2px 20px rgba(245,183,0,0.4);
+}
+
+.ug-caption-label {
+  font-size: 10px;
+  color: #c8bcac;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+/* Show labels on wider screens */
+@media (min-width: 900px) {
+  .ug-labels { display: block; }
+}
+
+/* Reduced motion — stop all animation */
+@media (prefers-reduced-motion: reduce) {
+  .ug-map,
+  .ug-network line,
+  .ug-pulse {
+    animation: none !important;
+  }
+  .ug-pulse { opacity: 0.35; }
+}
 </style>
 </head>
 <body>
@@ -1661,20 +1805,144 @@
             <button class="btn-hero red" onclick="openAuthModal('signup')" type="button">Join SciPool UG</button>
           </div>
         </div>
-        <div class="pool-visual">
-          <div class="pool-orbit">
-            <div class="pool-ring r1"></div>
-            <div class="pool-ring r2"></div>
-            <div class="pool-ring r3"></div>
-            <div class="pool-center">SP</div>
-            <div class="pool-dot d1"></div>
-            <div class="pool-dot d2"></div>
-            <div class="pool-dot d3"></div>
-            <div class="pool-dot d4"></div>
-          </div>
-        </div>
-      </div>
+<div class="pool-visual">
+  <div class="ug-map-wrap">
+    <svg class="ug-map" viewBox="0 0 400 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Map of Uganda showing universities with active innovations">
+      <defs>
+        <radialGradient id="glowGold" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#F5B700" stop-opacity="0.55"/>
+          <stop offset="60%" stop-color="#F5B700" stop-opacity="0.15"/>
+          <stop offset="100%" stop-color="#F5B700" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="glowRed" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#C8102E" stop-opacity="0.55"/>
+          <stop offset="60%" stop-color="#C8102E" stop-opacity="0.15"/>
+          <stop offset="100%" stop-color="#C8102E" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="2.4" result="blur"/>
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+
+      <!-- Uganda outline (stylized, ~simplified) -->
+      <path class="ug-outline"
+        d="M 118 62
+           C 128 48, 148 42, 168 44
+           C 186 46, 200 52, 214 60
+           C 228 68, 240 76, 248 90
+           C 256 104, 262 118, 272 130
+           C 282 142, 298 148, 312 158
+           C 326 168, 340 184, 348 202
+           C 354 218, 352 238, 348 256
+           C 344 274, 340 292, 332 308
+           C 324 324, 312 338, 296 348
+           C 280 358, 262 362, 244 362
+           C 228 362, 212 358, 198 350
+           C 186 342, 176 330, 168 316
+           C 160 302, 152 288, 142 274
+           C 132 260, 120 246, 112 230
+           C 104 214, 100 196, 98 178
+           C 96 158, 96 138, 100 118
+           C 104 98, 110 78, 118 62 Z" />
+
+      <!-- Internal contour lines (topographic hint) -->
+      <path class="ug-contour"
+        d="M 140 100 C 160 92, 190 96, 210 112
+           C 230 128, 244 152, 250 180
+           C 256 208, 254 240, 244 268
+           C 234 296, 214 320, 190 330
+           C 168 338, 146 332, 132 316
+           C 118 300, 112 274, 116 248
+           C 120 222, 126 196, 130 170
+           C 132 144, 134 120, 140 100 Z" />
+      <path class="ug-contour"
+        d="M 168 148 C 184 142, 204 148, 216 162
+           C 228 176, 234 196, 230 216
+           C 226 236, 214 252, 198 258
+           C 182 262, 166 256, 158 244
+           C 150 230, 148 212, 152 194
+           C 154 176, 160 160, 168 148 Z" />
+
+      <!-- Network connecting lines (faint) -->
+      <g class="ug-network">
+        <line x1="160" y1="248" x2="118" y2="180" />
+        <line x1="160" y1="248" x2="196" y2="308" />
+        <line x1="160" y1="248" x2="248" y2="200" />
+        <line x1="160" y1="248" x2="172" y2="118" />
+        <line x1="160" y1="248" x2="252" y2="298" />
+        <line x1="160" y1="248" x2="290" y2="238" />
+        <line x1="196" y1="308" x2="252" y2="298" />
+        <line x1="172" y1="118" x2="248" y2="200" />
+        <line x1="118" y1="180" x2="172" y2="118" />
+      </g>
+
+      <!-- Nodes (universities). size = r attribute. larger = more submissions -->
+      <g class="ug-nodes" filter="url(#softGlow)">
+        <!-- Kampala cluster (biggest) -->
+        <circle class="ug-node ug-major" cx="160" cy="248" r="9" />
+        <circle class="ug-pulse" cx="160" cy="248" r="9" />
+
+        <!-- Mbarara -->
+        <circle class="ug-node" cx="118" cy="304" r="6.5" />
+        <circle class="ug-pulse" cx="118" cy="304" r="6.5" />
+
+        <!-- Gulu -->
+        <circle class="ug-node ug-major" cx="172" cy="118" r="7.5" />
+        <circle class="ug-pulse" cx="172" cy="118" r="7.5" />
+
+        <!-- Soroti -->
+        <circle class="ug-node" cx="248" cy="200" r="6" />
+        <circle class="ug-pulse" cx="248" cy="200" r="6" />
+
+        <!-- Busitema -->
+        <circle class="ug-node" cx="290" cy="238" r="5.5" />
+        <circle class="ug-pulse" cx="290" cy="238" r="5.5" />
+
+        <!-- Mbarara MUST south -->
+        <circle class="ug-node" cx="196" cy="308" r="5" />
+        <circle class="ug-pulse" cx="196" cy="308" r="5" />
+
+        <!-- Lira -->
+        <circle class="ug-node" cx="196" cy="150" r="5" />
+        <circle class="ug-pulse" cx="196" cy="150" r="5" />
+
+        <!-- Mbale -->
+        <circle class="ug-node" cx="272" cy="184" r="5" />
+        <circle class="ug-pulse" cx="272" cy="184" r="5" />
+
+        <!-- Arua -->
+        <circle class="ug-node" cx="130" cy="90" r="4.5" />
+        <circle class="ug-pulse" cx="130" cy="90" r="4.5" />
+
+        <!-- Fort Portal -->
+        <circle class="ug-node" cx="128" cy="204" r="4.5" />
+        <circle class="ug-pulse" cx="128" cy="204" r="4.5" />
+
+        <!-- Kabale -->
+        <circle class="ug-node" cx="146" cy="342" r="4" />
+        <circle class="ug-pulse" cx="146" cy="342" r="4" />
+      </g>
+
+      <!-- City labels (only on wide screens) -->
+      <g class="ug-labels">
+        <text x="174" y="252">Kampala</text>
+        <text x="176" y="122">Gulu</text>
+        <text x="130" y="308">Mbarara</text>
+        <text x="258" y="204">Soroti</text>
+        <text x="298" y="242">Busitema</text>
+      </g>
+    </svg>
+
+    <div class="ug-caption">
+      <div class="ug-caption-count" id="ug-live-count">0</div>
+      <div class="ug-caption-label">innovations across Uganda</div>
     </div>
+  </div>
+</div>
 
     <div class="snapshot-strip">
       <div class="snapshot-heading">
