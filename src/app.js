@@ -1,6 +1,7 @@
 /* ============================================================
    SciPool UG — Full Application Logic
    Migrated from inline <script> to Firebase-aware modules.
+   Includes: admin dashboard wiring, featured system.
    ============================================================ */
 
 import {
@@ -16,6 +17,9 @@ import {
   sendMessage, subscribeConversations, subscribeThread,
   markThreadRead, deleteConversation, subscribeUnreadCount
 } from "./messages.js";
+import {
+  isAdmin, renderAdminDashboard, setAdminInnovations
+} from "./admin.js";
 
 /* ============================================================
    CONSTANTS
@@ -96,7 +100,7 @@ let editAvatarData = null;
 let pendingMedia = [];
 
 const MAX_MEDIA_FILES = 5;
-const MAX_FILE_SIZE = 20 * 1024 * 1024;
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 /* ============================================================
    HELPERS
@@ -180,15 +184,18 @@ function canAccess(view) {
   if (!allowed) return false;
   if (allowed.length === 0) return true;
   if (!CURRENT_USER) return false;
+  // Admin bypasses role restriction
+  if (view === "admin" && isAdmin(CURRENT_USER)) return true;
   return allowed.includes(CURRENT_USER.role);
 }
 
 function applyBodyRoleClasses() {
   document.body.classList.toggle("logged-in", !!CURRENT_USER);
-  document.body.classList.remove("role-chapter", "role-government");
+  document.body.classList.remove("role-chapter", "role-government", "role-admin");
   if (CURRENT_USER) {
     if (CURRENT_USER.role === "University Chapter") document.body.classList.add("role-chapter");
     if (CURRENT_USER.role === "Government / Policy") document.body.classList.add("role-government");
+    if (isAdmin(CURRENT_USER)) document.body.classList.add("role-admin");
   }
 }
 
@@ -241,7 +248,7 @@ window.addEventListener("firebase-ready", () => {
     renderPublicLanding();
     renderHome();
     renderBrowse();
-    renderAdmin();
+    if (currentView === "admin") renderAdmin();
     renderChapterDashboard();
   });
 });
@@ -324,7 +331,7 @@ function updateAuthUI() {
     const ddEmail = document.getElementById("dd-email");
     if (ddAv) ddAv.innerHTML = avatarHTML;
     if (ddName) ddName.textContent = CURRENT_USER.name;
-    if (ddRole) ddRole.textContent = CURRENT_USER.role;
+    if (ddRole) ddRole.textContent = isAdmin(CURRENT_USER) ? CURRENT_USER.role + " · Admin" : CURRENT_USER.role;
     if (ddEmail) ddEmail.textContent = CURRENT_USER.email;
     if (mobileAuthBlock) mobileAuthBlock.style.display = "none";
     if (mobileUserContainer) mobileUserContainer.innerHTML = `
@@ -333,7 +340,7 @@ function updateAuthUI() {
           <div class="m-avatar">${avatarHTML}</div>
           <div class="m-info">
             <div class="m-name">${escapeHtml(CURRENT_USER.name)}</div>
-            <div class="m-role">${escapeHtml(CURRENT_USER.role)}</div>
+            <div class="m-role">${escapeHtml(CURRENT_USER.role)}${isAdmin(CURRENT_USER) ? " · Admin" : ""}</div>
             <div class="m-email">${escapeHtml(CURRENT_USER.email)}</div>
           </div>
         </div>
@@ -471,6 +478,7 @@ function renderPublicLanding() {
   renderSectorsLanding();
   renderLandingPreview();
   renderStats();
+  renderFeaturedInnovators();
 }
 
 function renderDashboard() {
@@ -480,7 +488,7 @@ function renderDashboard() {
   const dashRole = document.getElementById("dash-role");
   const dashGreet = document.getElementById("dash-greeting");
   if (dashName) dashName.textContent = firstName;
-  if (dashRole) dashRole.textContent = CURRENT_USER.role;
+  if (dashRole) dashRole.textContent = isAdmin(CURRENT_USER) ? CURRENT_USER.role + " · Admin" : CURRENT_USER.role;
 
   const greetings = {
     "Young Scientist": "Your research matters. Submit it to SciPool UG, protect it, and get discovered by investors and industry.",
@@ -538,21 +546,20 @@ function renderDashboard() {
 
   const actions = [];
   actions.push({ icon: "✉️", title: "Messages", desc: "Chat with other members", action: "goTo('messages')" });
+  if (isAdmin(CURRENT_USER)) {
+    actions.push({ icon: "🛡️", title: "Admin dashboard", desc: "Manage submissions, researchers, featured items", action: "goTo('admin')" });
+  }
   if (CURRENT_USER.role === "Young Scientist") {
     actions.push({ icon: "🔬", title: "Submit new research", desc: "Protect and publish your work", action: "goTo('submit')" });
     actions.push({ icon: "🌐", title: "Browse the pool", desc: "See what peers are building", action: "goTo('browse')" });
-    actions.push({ icon: "💾", title: "My shortlist", desc: `${SAVED_CACHE.length} saved`, action: "goTo('browse'); setTimeout(showSavedOnly, 300)" });
   } else if (CURRENT_USER.role === "University Chapter") {
     actions.push({ icon: "🎓", title: "Chapter dashboard", desc: `${myUniItems} submission(s)`, action: "goTo('chapters')" });
     actions.push({ icon: "🌐", title: "Browse the pool", desc: "See national innovations", action: "goTo('browse')" });
-    actions.push({ icon: "💾", title: "My shortlist", desc: `${SAVED_CACHE.length} saved`, action: "goTo('browse'); setTimeout(showSavedOnly, 300)" });
   } else if (CURRENT_USER.role === "Industry / Investor") {
     actions.push({ icon: "💰", title: "Investment ready", desc: `${investmentReady} at TRL 6+`, action: "browseState.trl='6'; goTo('browse')" });
-    actions.push({ icon: "💾", title: "My shortlist", desc: `${SAVED_CACHE.length} saved`, action: "goTo('browse'); setTimeout(showSavedOnly, 300)" });
     actions.push({ icon: "🌐", title: "Browse all sectors", desc: "Explore the SciPool pipeline", action: "goTo('browse')" });
   } else {
     actions.push({ icon: "📊", title: "National analytics", desc: "View trends and reports", action: "goTo('admin')" });
-    actions.push({ icon: "🎓", title: "Chapter overview", desc: "University level data", action: "goTo('chapters')" });
     actions.push({ icon: "🌐", title: "Browse the pool", desc: "All public research", action: "goTo('browse')" });
   }
   const qaEl = document.getElementById("dash-quick-actions");
@@ -577,10 +584,12 @@ function cardHTML(item) {
   const abstract = isProtected ? '<em style="color:var(--ink-faint);">Details protected.</em>' : escapeHtml(item.abstract || "");
   const ico = SECTOR_ICONS[item.sector] || "📌";
   const mediaCount = (item.media || []).length;
+  const featureBadge = item.featured ? '<span class="pill" style="background:var(--gold);color:var(--charcoal);font-size:9px;margin-left:6px;">⭐ Featured</span>' : "";
+  const editorBadge = item.editorPick ? '<span class="pill published" style="font-size:9px;margin-left:6px;">🏆 Editor pick</span>' : "";
   return `
     <div class="card">
       <span class="tag ${item.visibility === "public" ? "" : "yellow"}">${ico} ${escapeHtml(item.sector)}</span>
-      <h4>${escapeHtml(item.title)}</h4>
+      <h4>${escapeHtml(item.title)}${featureBadge}${editorBadge}</h4>
       <div class="meta"><strong>${escapeHtml(item.author)}</strong> from ${escapeHtml(item.university)}</div>
       <div class="abstract">${abstract}</div>
       <div class="footer">
@@ -595,12 +604,62 @@ function cardHTML(item) {
 }
 
 function renderHome() {
-  const featured = DB.filter(d => d.visibility === "public").slice(0, 8);
+  const featured = DB.filter(d => d.featured && d.visibility === "public");
+  const editorPicks = DB.filter(d => d.editorPick && !d.featured && d.visibility === "public");
+  const rest = DB.filter(d => !d.featured && !d.editorPick && d.visibility === "public");
+  const ordered = [...featured, ...editorPicks, ...rest].slice(0, 8);
+
   const el = document.getElementById("home-featured");
   if (!el) return;
-  el.innerHTML = featured.length
-    ? featured.map(cardHTML).join("")
+  el.innerHTML = ordered.length
+    ? ordered.map(cardHTML).join("")
     : '<div class="empty"><span class="icon">🔬</span><p>No innovations yet.</p></div>';
+
+  renderFeaturedInnovators();
+}
+
+function renderFeaturedInnovators() {
+  const publicHome = document.getElementById("view-home-public");
+  const dashHome = document.getElementById("view-home-dashboard");
+  const target = dashHome?.classList.contains("active") ? dashHome : publicHome;
+  if (!target) return;
+
+  let strip = document.getElementById("featured-innovators-strip");
+  if (!strip) {
+    strip = document.createElement("div");
+    strip.id = "featured-innovators-strip";
+    strip.style.cssText = "margin: 32px 0;";
+    target.appendChild(strip);
+  }
+
+  const featuredPeople = USERS_CACHE.filter(u => u.featured && !u.suspended);
+  if (!featuredPeople.length) {
+    strip.innerHTML = "";
+    return;
+  }
+
+  strip.innerHTML = `
+    <div class="section-header-row" style="margin-bottom:14px;">
+      <h3 class="section-title">⭐ Featured Innovators</h3>
+    </div>
+    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:14px;">
+      ${featuredPeople.slice(0, 8).map(u => {
+        const initials = (u.name || "").split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
+        const avatarHTML = u.avatarUrl ? `<img src="${u.avatarUrl}" alt="" style="width:100%; height:100%; object-fit:cover;" />` : escapeHtml(initials);
+        const org = u.profile?.university || u.profile?.chapterUniversity || u.profile?.organisation || "SciPool Member";
+        return `
+          <div class="card" style="text-align:center; padding:20px 16px; align-items:center;">
+            <div style="width:64px; height:64px; border-radius:50%; background:var(--charcoal); color:var(--gold); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:20px; overflow:hidden; border:3px solid var(--gold); margin-bottom:10px;">
+              ${avatarHTML}
+            </div>
+            <h4 style="margin-bottom:4px; font-size:14px;">${escapeHtml(u.name)}</h4>
+            <div style="font-size:11px; color:var(--ink-faint); line-height:1.4;">${escapeHtml(org)}</div>
+            <div style="font-size:10px; color:var(--flag-red); font-weight:800; text-transform:uppercase; letter-spacing:0.8px; margin-top:6px;">${escapeHtml(u.role)}</div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
 }
 
 /* ============================================================
@@ -758,6 +817,8 @@ function innCardHTML(item) {
   const abstract = isProtected ? "Details protected. Register as an investor and message the innovator through SciPool UG." : (item.abstract || "");
   const kwList = item.keywords ? item.keywords.split(",").map(k => k.trim()).filter(Boolean).slice(0, 5) : [];
   const trlHigh = item.trl >= 6;
+  const featureBadge = item.featured ? '<span class="pill" style="background:var(--gold);color:var(--charcoal);">⭐ Featured</span>' : "";
+  const editorBadge = item.editorPick ? '<span class="pill published">🏆 Editor pick</span>' : "";
   const authorUser = USERS_CACHE.find(u => u.email === item.email);
   const avatarHTML = (authorUser && authorUser.avatarUrl)
     ? `<img src="${authorUser.avatarUrl}" alt="" />`
@@ -770,6 +831,8 @@ function innCardHTML(item) {
         <div class="inn-card-top">
           <span class="inn-sector-chip"><span class="ico">${ico}</span>${escapeHtml(item.sector)}</span>
           <div class="inn-badges">
+            ${featureBadge}
+            ${editorBadge}
             <span class="pill trl">TRL ${item.trl}</span>
             ${trlHigh ? '<span class="pill investment">Investment ready</span>' : ""}
             ${hasMedia ? '<span class="pill media">📎 Media</span>' : ""}
@@ -887,11 +950,16 @@ function openDrawer(id) {
     <button class="btn btn-sm btn-red" onclick="openCompose('${escapeHtml(d.email)}')" type="button">✉️ Message innovator</button>
   ` : "";
 
+  const featureBadge = d.featured ? '<span class="pill" style="background:var(--gold);color:var(--charcoal);">⭐ Featured</span>' : "";
+  const editorBadge = d.editorPick ? '<span class="pill published">🏆 Editor pick</span>' : "";
+
   const bodyEl = document.getElementById("drawer-body");
   if (!bodyEl) return;
   bodyEl.innerHTML = `
     <div class="drawer-section">
       <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
+        ${featureBadge}
+        ${editorBadge}
         <span class="pill trl">TRL ${d.trl}, ${TRL_LABELS[d.trl] || ""}</span>
         ${d.trl >= 6 ? '<span class="pill investment">Investment ready</span>' : ""}
         ${isProtected ? '<span class="pill protected">Protected</span>' : '<span class="pill published">Public</span>'}
@@ -988,7 +1056,7 @@ async function handleFiles(files) {
       break;
     }
     if (f.size > MAX_FILE_SIZE) {
-      alert(`File "${f.name}" is larger than 5MB.`);
+      alert(`File "${f.name}" is larger than 10MB.`);
       continue;
     }
     try {
@@ -1398,13 +1466,15 @@ function openProfile() {
     roleDetails.push(["Ministry", p.ministry]);
     roleDetails.push(["Position", p.govPosition]);
   }
+  const verifiedBadge = CURRENT_USER.verified ? '<span class="pill" style="background:#E8F3E3;color:#1e3a0f;margin-left:8px;">✓ Verified</span>' : "";
+  const featuredBadge = CURRENT_USER.featured ? '<span class="pill" style="background:var(--gold);color:var(--charcoal);margin-left:6px;">⭐ Featured</span>' : "";
   openWideModal(`
     <h3>My SciPool account</h3>
     <div class="profile-header">
       <div class="profile-avatar-display">${avatarHTML}</div>
       <div>
-        <div style="font-weight: 900; font-size: 18px; color: var(--ink);">${escapeHtml(CURRENT_USER.name)}</div>
-        <div style="font-size: 13px; color: var(--flag-red); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">${escapeHtml(CURRENT_USER.role)}</div>
+        <div style="font-weight: 900; font-size: 18px; color: var(--ink);">${escapeHtml(CURRENT_USER.name)}${verifiedBadge}${featuredBadge}</div>
+        <div style="font-size: 13px; color: var(--flag-red); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">${escapeHtml(CURRENT_USER.role)}${isAdmin(CURRENT_USER) ? " · Admin" : ""}</div>
       </div>
     </div>
     <div class="profile-section">
@@ -1637,27 +1707,17 @@ function applyUnreadBadge(total) {
    ============================================================ */
 
 function renderAdmin() {
-  const tbody = document.getElementById("admin-table");
-  if (!tbody) return;
-  if (!DB.length) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:24px; color:var(--ink-faint);">No submissions yet.</td></tr>';
+  if (!CURRENT_USER || !isAdmin(CURRENT_USER)) {
+    const el = document.getElementById("view-admin");
+    if (el) el.innerHTML = `
+      <div class="alert alert-warn" style="margin:20px;">
+        <strong>Admin only.</strong> This dashboard is for platform administrators. You are signed in as ${escapeHtml(CURRENT_USER ? CURRENT_USER.email : "not signed in")}.
+      </div>
+    `;
     return;
   }
-  tbody.innerHTML = DB.slice().reverse().map(d => `
-    <tr>
-      <td>${d.createdAt?.toDate ? new Date(d.createdAt.toDate()).toLocaleDateString("en-GB") : ""}</td>
-      <td><strong style="color:var(--ink);">${escapeHtml(d.title)}</strong></td>
-      <td>${escapeHtml(d.author)}</td>
-      <td>${escapeHtml(d.university)}</td>
-      <td>${escapeHtml(d.sector)}</td>
-      <td><span class="badge-trl">${d.trl}</span></td>
-      <td>${escapeHtml(d.status || "")}</td>
-      <td>
-        <button class="btn btn-sm" onclick="openDrawer('${d.id}')" type="button">View</button>
-        <button class="btn btn-sm btn-red" onclick="deleteItem('${d.id}')" type="button">Delete</button>
-      </td>
-    </tr>
-  `).join("");
+  setAdminInnovations(DB);
+  renderAdminDashboard();
 }
 
 async function deleteItem(id) {
@@ -1740,11 +1800,9 @@ function renderChapterDashboard() {
    ============================================================ */
 
 function wireEvents() {
-  // Desktop nav
   document.querySelectorAll("nav button[data-view]").forEach(btn => {
     btn.addEventListener("click", () => goTo(btn.dataset.view));
   });
-  // Mobile nav
   document.querySelectorAll("#mobile-nav-list button").forEach(btn => {
     btn.addEventListener("click", () => {
       closeMobileNav();
@@ -1757,7 +1815,6 @@ function wireEvents() {
     setTimeout(() => openAuthModal("signin"), 200);
   });
 
-  // Hamburger
   document.getElementById("hamburger-btn")?.addEventListener("click", () => {
     const isOpen = document.getElementById("mobile-nav-drawer")?.classList.contains("active");
     isOpen ? closeMobileNav() : openMobileNav();
@@ -1765,7 +1822,6 @@ function wireEvents() {
   document.getElementById("mobile-nav-close")?.addEventListener("click", closeMobileNav);
   document.getElementById("mobile-nav-overlay")?.addEventListener("click", closeMobileNav);
 
-  // User dropdown
   document.getElementById("user-badge")?.addEventListener("click", (e) => {
     e.stopPropagation();
     const dd = document.getElementById("user-dropdown");
@@ -1777,7 +1833,6 @@ function wireEvents() {
     if (wrap && !wrap.contains(e.target)) closeUserDropdown();
   });
 
-  // Modal + drawer
   document.getElementById("modal-close")?.addEventListener("click", closeModal);
   document.getElementById("modal-bg")?.addEventListener("click", (e) => {
     if (e.target.id === "modal-bg") closeModal();
@@ -1785,12 +1840,10 @@ function wireEvents() {
   document.getElementById("drawer-close")?.addEventListener("click", closeDrawer);
   document.getElementById("drawer-bg")?.addEventListener("click", closeDrawer);
 
-  // Escape key
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") { closeDrawer(); closeModal(); closeMobileNav(); closeUserDropdown(); }
   });
 
-  // Browse toolbar
   document.getElementById("search-input")?.addEventListener("input", e => {
     browseState.query = e.target.value;
     renderBrowse();
@@ -1808,7 +1861,6 @@ function wireEvents() {
     renderBrowse();
   });
 
-  // Mobile chips
   document.querySelectorAll(".mobile-chip").forEach(chip => {
     chip.addEventListener("click", () => {
       document.querySelectorAll(".mobile-chip").forEach(c => c.classList.remove("active"));
@@ -1826,10 +1878,8 @@ function wireEvents() {
     });
   });
 
-  // Submit form
   document.getElementById("submit-form")?.addEventListener("submit", handleSubmitForm);
 
-  // Media drop
   const mediaDrop = document.getElementById("media-drop");
   const mediaInput = document.getElementById("media-input");
   mediaDrop?.addEventListener("click", () => mediaInput.click());
@@ -1845,7 +1895,6 @@ function wireEvents() {
     mediaInput.value = "";
   });
 
-  // Messages
   document.getElementById("compose-new-btn")?.addEventListener("click", () => openCompose());
   document.getElementById("compose-new-btn-2")?.addEventListener("click", () => openCompose());
   document.getElementById("msg-search")?.addEventListener("input", renderMessages);
@@ -1877,7 +1926,6 @@ function wireEvents() {
     document.getElementById("messages-empty").style.display = "flex";
   });
 
-  // Chapter export
   document.getElementById("chapter-export")?.addEventListener("click", () => {
     const items = DB.filter(d => d.university === currentChapter);
     if (!items.length) { alert("Nothing to export."); return; }
@@ -1917,7 +1965,7 @@ window.closeMobileNav = closeMobileNav;
 window.openUserDropdown = openUserDropdown;
 
 /* ============================================================
-   INIT (runs once DOM + firebase-ready event fire)
+   INIT
    ============================================================ */
 
 function init() {
@@ -1926,7 +1974,6 @@ function init() {
   renderStats();
   renderPublicLanding();
   renderBrowse();
-  renderAdmin();
   renderChapterDashboard();
   updateSavedBanner();
   applyUnreadBadge(0);
@@ -1938,4 +1985,4 @@ if (document.readyState === "loading") {
   init();
 }
 
-console.log("SciPool: app.js loaded (full version)");
+console.log("SciPool: app.js loaded (full version with admin)");
