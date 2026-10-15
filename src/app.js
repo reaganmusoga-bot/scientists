@@ -252,6 +252,16 @@ window.addEventListener("firebase-ready", () => {
     renderChapterDashboard();
   });
 });
+subscribeInnovations(items => {
+  DB = items;
+  renderStats();
+  renderPublicLanding();
+  renderHome();
+  renderBrowse();
+  if (currentView === "admin") renderAdmin();
+  renderChapterDashboard();
+  updateUgCounter();   // ← ADD THIS LINE
+});
 
 /* ============================================================
    NAVIGATION
