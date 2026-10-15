@@ -2627,6 +2627,53 @@
   .verify-kv dt { margin-top: 8px; font-size: 11px; }
   .verify-title { font-size: 20px; }
 }
+    /* Verify hero banners */
+.verify-hero-ok,
+.verify-hero-fail {
+  text-align: center;
+  padding: 24px 20px 20px;
+  border-radius: 14px;
+  margin-bottom: 24px;
+}
+.verify-hero-ok {
+  background: linear-gradient(135deg, #E8F3E3 0%, #D5E8C8 100%);
+  border: 2px solid var(--green);
+}
+.verify-hero-fail {
+  background: linear-gradient(135deg, #FFF0F2 0%, #FFD9DF 100%);
+  border: 2px solid var(--flag-red);
+}
+
+.verify-hero-icon {
+  font-size: 56px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.verify-hero-title {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  margin: 0 0 6px;
+  line-height: 1.1;
+}
+.verify-hero-ok .verify-hero-title { color: #1e3a0f; }
+.verify-hero-fail .verify-hero-title { color: #6b000f; }
+
+.verify-hero-sub {
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin: 0;
+  line-height: 1.5;
+}
+.verify-hero-sub code {
+  font-family: monospace;
+  font-size: 12px;
+  background: var(--white);
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
   </style>
 </head>
 <body>
