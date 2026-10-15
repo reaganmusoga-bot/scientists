@@ -1,6 +1,6 @@
 /* ============================================================
    SciPool UG — Admin Dashboard Module
-   Only usable by the admin account.
+   Full admin panel: submissions, researchers, featured items.
    ============================================================ */
 
 import {
@@ -15,27 +15,23 @@ import {
    ============================================================ */
 
 let adminState = {
-  tab: "submissions",       // submissions | researchers | featured
+  tab: "submissions",
   submissionsQuery: "",
-  submissionsFilter: "all", // all | featured | pending | active | archived | rejected
+  submissionsFilter: "all",
   researchersQuery: "",
-  researchersFilter: "all", // all | verified | featured | suspended | unverified
-  cachedUsers: null,        // populated on demand
-  currentInnovations: [],   // set by app.js before render
+  researchersFilter: "all",
+  cachedUsers: null,
+  currentInnovations: [],
   adminEmail: "reaganmusoga@gmail.com"
 };
 
 /* ============================================================
-   EXPORT: check if current user is admin
+   EXPORTS
    ============================================================ */
 
 export function isAdmin(user) {
   return !!(user && user.email === adminState.adminEmail);
 }
-
-/* ============================================================
-   SETTER for app.js to hand in the innovations array
-   ============================================================ */
 
 export function setAdminInnovations(items) {
   adminState.currentInnovations = items;
@@ -86,7 +82,7 @@ function renderSubmissionsTab(el) {
   const stats = {
     total: all.length,
     featured: all.filter(i => i.featured).length,
-    pending: all.filter(i => !i.adminStatus || i.adminStatus === "pending").length,
+    pending: all.filter(i => !i.adminStatus || i.adminStatus === "pending" || i.adminStatus === "submitted").length,
     archived: all.filter(i => i.adminStatus === "archived").length,
     rejected: all.filter(i => i.adminStatus === "rejected").length
   };
@@ -169,7 +165,7 @@ function paintSubmissionRows() {
   }
   const f = adminState.submissionsFilter;
   if (f === "featured") list = list.filter(i => i.featured);
-  else if (f === "pending") list = list.filter(i => !i.adminStatus || i.adminStatus === "pending");
+  else if (f === "pending") list = list.filter(i => !i.adminStatus || i.adminStatus === "pending" || i.adminStatus === "submitted");
   else if (f === "active") list = list.filter(i => i.adminStatus === "active");
   else if (f === "archived") list = list.filter(i => i.adminStatus === "archived");
   else if (f === "rejected") list = list.filter(i => i.adminStatus === "rejected");
@@ -208,8 +204,29 @@ function paintSubmissionRows() {
       const act = btn.dataset.act;
       if (act === "toggle-feature") {
         const item = adminState.currentInnovations.find(x => x.id === id);
-        await setFeatured(id, !item?.featured);
-        flash("Updated");
+        if (!item) return;
+
+        // Optimistic update — flip immediately, revert on failure
+        const newVal = !item.featured;
+        item.featured = newVal;
+        btn.classList.toggle("yellow", newVal);
+        btn.classList.toggle("outline", !newVal);
+        btn.textContent = newVal ? "⭐ On" : "☆ Off";
+        btn.title = newVal ? "Unfeature" : "Feature";
+
+        try {
+          await setFeatured(id, newVal);
+          flash(newVal ? "Featured" : "Unfeatured");
+        } catch (err) {
+          // Revert on failure
+          console.error("setFeatured failed:", err);
+          item.featured = !newVal;
+          btn.classList.toggle("yellow", !newVal);
+          btn.classList.toggle("outline", newVal);
+          btn.textContent = !newVal ? "⭐ On" : "☆ Off";
+          btn.title = !newVal ? "Unfeature" : "Feature";
+          flash("Update failed — check permissions");
+        }
       } else if (act === "view") {
         window.openDrawer?.(id);
       } else if (act === "edit") {
@@ -220,19 +237,25 @@ function paintSubmissionRows() {
 }
 
 function statusPill(status) {
-  const s = status || "pending";
+  const s = (status || "submitted").toLowerCase();
   const map = {
+    submitted: "background:#FFF4E5;color:#6b3d00;",
     pending: "background:#FFF4E5;color:#6b3d00;",
     active: "background:#E8F3E3;color:#1e3a0f;",
+    published: "background:#E8F3E3;color:#1e3a0f;",
     archived: "background:#EEE;color:#555;",
     rejected: "background:#FFE5E9;color:#9B0A22;"
   };
-  return `<span class="pill" style="${map[s] || map.pending}">${s}</span>`;
+  const label = s.charAt(0).toUpperCase() + s.slice(1);
+  return `<span class="pill" style="${map[s] || map.submitted}">${label}</span>`;
 }
 
 async function openManageSubmissionModal(id) {
   const item = adminState.currentInnovations.find(x => x.id === id);
   if (!item) return;
+
+  const currentStatus = item.adminStatus || "submitted";
+  const allowedStatuses = ["active", "pending", "submitted", "archived", "rejected"];
 
   const html = `
     <h3>Manage submission</h3>
@@ -240,8 +263,8 @@ async function openManageSubmissionModal(id) {
 
     <div class="section-label">Status</div>
     <div class="role-cards" style="grid-template-columns: repeat(2,1fr);">
-      ${["active","pending","archived","rejected"].map(s => `
-        <div class="role-card ${(item.adminStatus || "pending") === s ? "selected" : ""}" data-status="${s}" style="text-align:center;">
+      ${allowedStatuses.map(s => `
+        <div class="role-card ${currentStatus === s ? "selected" : ""}" data-status="${s}" style="text-align:center;">
           <div class="role-name">${s.charAt(0).toUpperCase() + s.slice(1)}</div>
         </div>
       `).join("")}
@@ -269,7 +292,7 @@ async function openManageSubmissionModal(id) {
 
   window.openModal?.(html);
 
-  let chosenStatus = item.adminStatus || "pending";
+  let chosenStatus = currentStatus;
   document.querySelectorAll("#modal-content [data-status]").forEach(card => {
     card.addEventListener("click", () => {
       document.querySelectorAll("#modal-content [data-status]").forEach(c => c.classList.remove("selected"));
@@ -280,38 +303,60 @@ async function openManageSubmissionModal(id) {
 
   document.getElementById("m-toggle-featured").addEventListener("click", async () => {
     const newVal = !item.featured;
-    await setFeatured(id, newVal);
-    item.featured = newVal;
-    const btn = document.getElementById("m-toggle-featured");
-    btn.className = `btn btn-sm ${newVal ? "btn-black" : "btn-outline"}`;
-    btn.textContent = newVal ? "⭐ Featured" : "☆ Feature";
+    try {
+      await setFeatured(id, newVal);
+      item.featured = newVal;
+      const btn = document.getElementById("m-toggle-featured");
+      btn.className = `btn btn-sm ${newVal ? "btn-black" : "btn-outline"}`;
+      btn.textContent = newVal ? "⭐ Featured" : "☆ Feature";
+      flash(newVal ? "Featured" : "Unfeatured");
+    } catch (err) {
+      console.error(err);
+      flash("Update failed");
+    }
   });
 
   document.getElementById("m-toggle-editor").addEventListener("click", async () => {
     const newVal = !item.editorPick;
-    await setEditorPick(id, newVal);
-    item.editorPick = newVal;
-    const btn = document.getElementById("m-toggle-editor");
-    btn.className = `btn btn-sm ${newVal ? "btn-black" : "btn-outline"}`;
-    btn.textContent = newVal ? "🏆 Editor's pick" : "🏆 Mark Editor's pick";
+    try {
+      await setEditorPick(id, newVal);
+      item.editorPick = newVal;
+      const btn = document.getElementById("m-toggle-editor");
+      btn.className = `btn btn-sm ${newVal ? "btn-black" : "btn-outline"}`;
+      btn.textContent = newVal ? "🏆 Editor's pick" : "🏆 Mark Editor's pick";
+      flash(newVal ? "Marked as Editor's pick" : "Removed");
+    } catch (err) {
+      console.error(err);
+      flash("Update failed");
+    }
   });
 
   document.getElementById("m-cancel").addEventListener("click", () => window.closeModal?.());
 
   document.getElementById("m-delete").addEventListener("click", async () => {
     if (!confirm("Delete this submission permanently?")) return;
-    await deleteInnovation(id);
-    window.closeModal?.();
-    flash("Deleted");
+    try {
+      await deleteInnovation(id);
+      window.closeModal?.();
+      flash("Deleted");
+    } catch (err) {
+      console.error(err);
+      flash("Delete failed");
+    }
   });
 
   document.getElementById("m-save").addEventListener("click", async () => {
-    await setAdminStatus(id, chosenStatus);
-    await setAdminNotes(id, document.getElementById("m-notes").value);
-    item.adminStatus = chosenStatus;
-    item.adminNotes = document.getElementById("m-notes").value;
-    window.closeModal?.();
-    flash("Saved");
+    try {
+      await setAdminStatus(id, chosenStatus);
+      await setAdminNotes(id, document.getElementById("m-notes").value);
+      item.adminStatus = chosenStatus;
+      item.adminNotes = document.getElementById("m-notes").value;
+      window.closeModal?.();
+      flash("Saved");
+    } catch (err) {
+      console.error(err);
+      flash("Save failed — check permissions");
+    }
   });
 }
 
@@ -319,7 +364,7 @@ function exportSubmissionsCSV() {
   const list = adminState.currentInnovations;
   if (!list.length) { alert("Nothing to export."); return; }
   const rows = [
-    ["ID","Title","Author","Email","University","Sector","TRL","Status","Featured","EditorPick","Submitted"]
+    ["ID","Title","Author","Email","University","Sector","TRL","Status","Featured","EditorPick","VerificationCode","Submitted"]
   ];
   list.forEach(i => {
     rows.push([
@@ -330,9 +375,10 @@ function exportSubmissionsCSV() {
       csvSafe(i.university),
       csvSafe(i.sector),
       i.trl || "",
-      i.adminStatus || "pending",
+      i.adminStatus || "submitted",
       i.featured ? "yes" : "no",
       i.editorPick ? "yes" : "no",
+      i.verificationCode || "",
       i.createdAt?.toDate ? i.createdAt.toDate().toISOString() : ""
     ]);
   });
@@ -488,14 +534,28 @@ function paintResearcherRows() {
       const uid = btn.dataset.uid;
       const act = btn.dataset.act;
       const user = adminState.cachedUsers.find(x => x.uid === uid);
+      if (!user) return;
+
       if (act === "verify") {
-        await verifyUser(uid, !user.verified);
-        user.verified = !user.verified;
-        flash("Updated");
+        try {
+          await verifyUser(uid, !user.verified);
+          user.verified = !user.verified;
+          paintResearcherRows();
+          flash("Updated");
+        } catch (err) {
+          console.error(err);
+          flash("Update failed");
+        }
       } else if (act === "feature") {
-        await featureUser(uid, !user.featured);
-        user.featured = !user.featured;
-        flash("Updated");
+        try {
+          await featureUser(uid, !user.featured);
+          user.featured = !user.featured;
+          paintResearcherRows();
+          flash("Updated");
+        } catch (err) {
+          console.error(err);
+          flash("Update failed");
+        }
       } else if (act === "manage") {
         openManageUserModal(uid);
       }
@@ -558,36 +618,56 @@ async function openManageUserModal(uid) {
   window.openModal?.(html);
 
   document.getElementById("u-toggle-verified").addEventListener("click", async () => {
-    await verifyUser(uid, !user.verified);
-    user.verified = !user.verified;
-    document.getElementById("u-toggle-verified").classList.toggle("selected", user.verified);
-    document.getElementById("u-toggle-verified").querySelector(".role-name").textContent = user.verified ? "✓ Verified" : "Verify account";
-    paintResearcherRows();
+    try {
+      await verifyUser(uid, !user.verified);
+      user.verified = !user.verified;
+      document.getElementById("u-toggle-verified").classList.toggle("selected", user.verified);
+      document.getElementById("u-toggle-verified").querySelector(".role-name").textContent = user.verified ? "✓ Verified" : "Verify account";
+      paintResearcherRows();
+    } catch (err) {
+      console.error(err);
+      flash("Update failed");
+    }
   });
 
   document.getElementById("u-toggle-featured").addEventListener("click", async () => {
-    await featureUser(uid, !user.featured);
-    user.featured = !user.featured;
-    document.getElementById("u-toggle-featured").classList.toggle("selected", user.featured);
-    document.getElementById("u-toggle-featured").querySelector(".role-name").textContent = user.featured ? "⭐ Featured" : "Feature researcher";
-    paintResearcherRows();
+    try {
+      await featureUser(uid, !user.featured);
+      user.featured = !user.featured;
+      document.getElementById("u-toggle-featured").classList.toggle("selected", user.featured);
+      document.getElementById("u-toggle-featured").querySelector(".role-name").textContent = user.featured ? "⭐ Featured" : "Feature researcher";
+      paintResearcherRows();
+    } catch (err) {
+      console.error(err);
+      flash("Update failed");
+    }
   });
 
   document.getElementById("u-suspend").addEventListener("click", async () => {
     if (!user.suspended && !confirm("Suspend this researcher? They will not be able to sign in.")) return;
-    await suspendUser(uid, !user.suspended);
-    user.suspended = !user.suspended;
-    document.getElementById("u-suspend").className = `btn ${user.suspended ? "" : "btn-red"}`;
-    document.getElementById("u-suspend").textContent = user.suspended ? "Unsuspend" : "Suspend";
-    paintResearcherRows();
-    flash("Updated");
+    try {
+      await suspendUser(uid, !user.suspended);
+      user.suspended = !user.suspended;
+      document.getElementById("u-suspend").className = `btn ${user.suspended ? "" : "btn-red"}`;
+      document.getElementById("u-suspend").textContent = user.suspended ? "Unsuspend" : "Suspend";
+      paintResearcherRows();
+      flash("Updated");
+    } catch (err) {
+      console.error(err);
+      flash("Update failed");
+    }
   });
 
   document.getElementById("u-cancel").addEventListener("click", () => window.closeModal?.());
   document.getElementById("u-save").addEventListener("click", async () => {
-    await setUserAdminNotes(uid, document.getElementById("u-notes").value);
-    window.closeModal?.();
-    flash("Notes saved");
+    try {
+      await setUserAdminNotes(uid, document.getElementById("u-notes").value);
+      window.closeModal?.();
+      flash("Notes saved");
+    } catch (err) {
+      console.error(err);
+      flash("Save failed");
+    }
   });
 
   document.querySelectorAll("#modal-content [data-view]").forEach(btn => {
@@ -648,31 +728,46 @@ function renderFeaturedTab(el) {
   el.querySelectorAll("[data-unfeature]").forEach(btn => {
     btn.addEventListener("click", async () => {
       const id = btn.dataset.unfeature;
-      await setFeatured(id, false);
-      const item = adminState.currentInnovations.find(x => x.id === id);
-      if (item) item.featured = false;
-      renderAdminDashboard();
-      flash("Unfeatured");
+      try {
+        await setFeatured(id, false);
+        const item = adminState.currentInnovations.find(x => x.id === id);
+        if (item) item.featured = false;
+        renderAdminDashboard();
+        flash("Unfeatured");
+      } catch (err) {
+        console.error(err);
+        flash("Update failed");
+      }
     });
   });
   el.querySelectorAll("[data-uneditor]").forEach(btn => {
     btn.addEventListener("click", async () => {
       const id = btn.dataset.uneditor;
-      await setEditorPick(id, false);
-      const item = adminState.currentInnovations.find(x => x.id === id);
-      if (item) item.editorPick = false;
-      renderAdminDashboard();
-      flash("Removed from Editor's picks");
+      try {
+        await setEditorPick(id, false);
+        const item = adminState.currentInnovations.find(x => x.id === id);
+        if (item) item.editorPick = false;
+        renderAdminDashboard();
+        flash("Removed from Editor's picks");
+      } catch (err) {
+        console.error(err);
+        flash("Update failed");
+      }
     });
   });
   el.querySelectorAll("[data-unfeature-user]").forEach(btn => {
     btn.addEventListener("click", async () => {
       const uid = btn.dataset.unfeatureUser;
-      await featureUser(uid, false);
-      const u = adminState.cachedUsers?.find(x => x.uid === uid);
-      if (u) u.featured = false;
-      renderAdminDashboard();
-      flash("Unfeatured researcher");
+      try {
+        await featureUser(uid, false);
+        const u = adminState.cachedUsers?.find(x => x.uid === uid);
+        if (u) u.featured = false;
+        renderAdminDashboard();
+        flash("Unfeatured researcher");
+      } catch (err) {
+        console.error(err);
+        flash("Update failed");
+      }
     });
   });
 }
