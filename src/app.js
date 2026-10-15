@@ -1984,5 +1984,32 @@ if (document.readyState === "loading") {
 } else {
   init();
 }
+/* ============================================================
+   Uganda Map Hero Counter
+   Updates the live innovation count shown under the map.
+   ============================================================ */
 
+function updateUgCounter() {
+  const el = document.getElementById("ug-live-count");
+  if (!el) return;
+  const total = DB.length;
+  animateNumber(el, total);
+}
+
+function animateNumber(el, target) {
+  const start = parseInt(el.textContent) || 0;
+  if (start === target) return;
+  const duration = 800;
+  const startTime = performance.now();
+  function step(now) {
+    const progress = Math.min((now - startTime) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(start + (target - start) * eased);
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = target;
+  }
+  requestAnimationFrame(step);
+}
+
+// Call it whenever the DB updates. Add to the subscribeInnovations callback.
 console.log("SciPool: app.js loaded (full version with admin)");
