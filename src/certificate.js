@@ -49,26 +49,51 @@ export function generateCertificate(data) {
   doc.setTextColor(245, 183, 0);
   doc.text("CERTIFICATE OF TIMESTAMPED EXISTENCE", MARGIN, 29);
 
+  // ---------- VERIFICATION CODE — prominent ----------
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.setTextColor(...inkFaint);
+  doc.text("VERIFICATION CODE", MARGIN, 46);
+
+  doc.setFont("courier", "bold");
+  doc.setFontSize(22);
+  doc.setTextColor(...charcoal);
+  doc.text(data.verificationCode || "SPUG-XXXX-XXXX", MARGIN, 56);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8.5);
+  doc.setTextColor(...inkFaint);
+  doc.text(
+    "Anyone can verify this certificate at scipool.ug/verify using this code.",
+    MARGIN,
+    62
+  );
+
+  // Divider under the code
+  doc.setDrawColor(...gold);
+  doc.setLineWidth(1);
+  doc.line(MARGIN, 66, PAGE_W - MARGIN, 66);
+
   // ---------- TITLE ----------
-  let y = 52;
+  let y = 78;
 
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(14);
+  doc.setFontSize(13);
   doc.setTextColor(...ink);
   doc.text("This certifies that the following work", MARGIN, y);
-  y += 7;
+  y += 6.5;
   doc.text("was submitted and cryptographically timestamped:", MARGIN, y);
-  y += 12;
+  y += 11;
 
-  doc.setDrawColor(...gold);
-  doc.setLineWidth(0.8);
+  doc.setDrawColor(...line);
+  doc.setLineWidth(0.3);
   doc.line(MARGIN, y, PAGE_W - MARGIN, y);
-  y += 10;
+  y += 8;
 
   // ---------- SUBMISSION DETAILS ----------
   const labelX = MARGIN;
   const valueX = MARGIN + 42;
-  const lineHeight = 8;
+  const lineHeight = 7.5;
 
   function addField(label, value, options = {}) {
     doc.setFont("helvetica", "bold");
@@ -82,7 +107,7 @@ export function generateCertificate(data) {
 
     const lines = doc.splitTextToSize(String(value), CONTENT_W - 42);
     doc.text(lines, valueX, y);
-    y += lineHeight * lines.length + 2;
+    y += lineHeight * lines.length + 1.5;
   }
 
   addField("Title:", data.title);
@@ -95,17 +120,17 @@ export function generateCertificate(data) {
 
   y += 4;
   doc.setDrawColor(...line);
-  doc.setLineWidth(0.3);
   doc.line(MARGIN, y, PAGE_W - MARGIN, y);
-  y += 10;
+  y += 9;
 
+  // ---------- CRYPTOGRAPHIC PROOF ----------
   doc.setFont("helvetica", "bold");
   doc.setFontSize(9);
   doc.setTextColor(...flagRed);
   doc.text("CRYPTOGRAPHIC PROOF", MARGIN, y);
   y += 8;
 
-  addField("File Name:", data.fileName, { size: 10 });
+  addField("File Name:", data.fileName || "—", { size: 10 });
   addField("File Size:", `${Number(data.fileSize || 0).toLocaleString()} bytes`, { size: 10 });
 
   doc.setFont("helvetica", "bold");
@@ -116,24 +141,24 @@ export function generateCertificate(data) {
   doc.setFont("courier", "normal");
   doc.setFontSize(8.5);
   doc.setTextColor(...ink);
-  const hashLines = doc.splitTextToSize(data.hash, CONTENT_W - 42);
+  const hashLines = doc.splitTextToSize(data.hash || "—", CONTENT_W - 42);
   doc.text(hashLines, valueX, y);
   y += lineHeight * hashLines.length + 2;
 
-  addField("Timestamp Anchor:", data.timestampAnchor, { size: 10 });
-  addField("Anchored At:", data.anchoredAt, { size: 10, mono: true });
-  addField("Submission ID:", data.submissionId, { size: 10, mono: true });
+  addField("Timestamp Anchor:", data.timestampAnchor || "SciPool UG Server Timestamp", { size: 10 });
+  addField("Anchored At:", data.anchoredAt || "—", { size: 10, mono: true });
+  addField("Submission ID:", data.submissionId || "—", { size: 10, mono: true });
 
   y += 4;
   doc.setDrawColor(...line);
   doc.line(MARGIN, y, PAGE_W - MARGIN, y);
-  y += 10;
+  y += 9;
 
   // ---------- VERIFICATION INSTRUCTIONS ----------
   doc.setFont("helvetica", "bold");
   doc.setFontSize(9);
   doc.setTextColor(...flagRed);
-  doc.text("VERIFICATION INSTRUCTIONS", MARGIN, y);
+  doc.text("HOW TO VERIFY THIS CERTIFICATE", MARGIN, y);
   y += 8;
 
   doc.setFont("helvetica", "normal");
@@ -141,20 +166,27 @@ export function generateCertificate(data) {
   doc.setTextColor(...inkSoft);
 
   [
-    "1.  Obtain the original file named above.",
-    "2.  Compute its SHA-256 hash using any trusted tool.",
-    "3.  Confirm it matches the hash printed on this certificate.",
-    "4.  Verify the timestamp proof online at:",
+    "1.  Go to scipool.ug/verify",
+    "2.  Enter the Verification Code shown at the top of this page.",
+    "3.  The verify page will confirm this certificate is authentic.",
   ].forEach((lineText) => {
     doc.text(lineText, MARGIN, y);
-    y += 6;
+    y += 5.5;
   });
 
+  y += 3;
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.setTextColor(...inkFaint);
+  doc.text("Direct verification link:", MARGIN, y);
+  y += 6;
+
   doc.setFont("courier", "bold");
-  doc.setFontSize(9.5);
+  doc.setFontSize(9);
   doc.setTextColor(...flagRed);
-  doc.text(data.verifyUrl, MARGIN + 8, y);
-  y += 10;
+  doc.text(data.verifyUrl || "https://scientists-mocha.vercel.app/verify", MARGIN, y);
+  y += 11;
 
   // ---------- LEGAL NOTICE ----------
   doc.setDrawColor(...gold);
@@ -177,7 +209,7 @@ export function generateCertificate(data) {
 
   const legalLines = doc.splitTextToSize(legalText, CONTENT_W);
   doc.text(legalLines, MARGIN, y);
-  y += legalLines.length * 4.8 + 8;
+  y += legalLines.length * 4.7 + 7;
 
   // ---------- ISSUANCE FOOTER ----------
   doc.setDrawColor(...line);
@@ -195,7 +227,7 @@ export function generateCertificate(data) {
   doc.setTextColor(...ink);
   doc.text("SciPool UG", MARGIN, y);
   doc.setFont("courier", "normal");
-  doc.text(data.issuedAt, MARGIN + 90, y);
+  doc.text(data.issuedAt || "—", MARGIN + 90, y);
   y += 6;
 
   doc.setFont("helvetica", "bold");
@@ -203,7 +235,7 @@ export function generateCertificate(data) {
   doc.text("Certificate ID:", MARGIN, y);
   doc.setFont("courier", "normal");
   doc.setTextColor(...ink);
-  doc.text(data.certificateId, MARGIN + 42, y);
+  doc.text(data.certificateId || "—", MARGIN + 42, y);
 
   // ---------- BOTTOM BAR ----------
   doc.setFillColor(...charcoal);
@@ -222,6 +254,6 @@ export function generateCertificate(data) {
   doc.text("scipool.ug", PAGE_W - MARGIN, PAGE_H - 5, { align: "right" });
 
   // ---------- SAVE ----------
-  const filename = `SciPool_Certificate_${data.submissionId}.pdf`;
+  const filename = `SciPool_Certificate_${data.verificationCode || data.submissionId || "cert"}.pdf`;
   doc.save(filename);
 }
