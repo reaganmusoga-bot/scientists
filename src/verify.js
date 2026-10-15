@@ -21,7 +21,6 @@ function esc(s) {
 function normalizeCode(input) {
   if (!input) return "";
   const cleaned = String(input).toUpperCase().replace(/[^A-Z0-9]/g, "");
-  // Accept "SPUG7K4M2X9P" → "SPUG-7K4M-2X9P"
   if (cleaned.startsWith("SPUG") && cleaned.length === 12) {
     return `SPUG-${cleaned.slice(4, 8)}-${cleaned.slice(8)}`;
   }
@@ -77,7 +76,7 @@ function renderSearchForm(prefill = "") {
   `;
 }
 
-function renderFound(record) {
+function renderVerified(record) {
   const anchoredAt =
     record.anchoredAt ||
     record.hashComputedAt ||
@@ -88,17 +87,29 @@ function renderFound(record) {
     <div class="verify-card">
       <div class="verify-header">
         <div class="verify-badge">SciPool UG</div>
-        <div class="verify-status verify-status-ok">✅ Valid certificate</div>
+        <div class="verify-status verify-status-ok">✅ Verified</div>
       </div>
 
-      <h1 class="verify-title">${esc(record.title || "Untitled")}</h1>
-      <div class="verify-author">
-        ${esc(record.author || "—")} · ${esc(record.university || "—")}
+      <div class="verify-hero-ok">
+        <div class="verify-hero-icon">✅</div>
+        <h1 class="verify-hero-title">VERIFIED</h1>
+        <p class="verify-hero-sub">
+          This is a genuine SciPool UG certificate.
+        </p>
       </div>
 
       <dl class="verify-kv">
         <dt>Verification Code</dt>
         <dd><code>${esc(record.verificationCode)}</code></dd>
+
+        <dt>Title</dt>
+        <dd>${esc(record.title || "Untitled")}</dd>
+
+        <dt>Author</dt>
+        <dd>${esc(record.author || "—")}</dd>
+
+        <dt>University</dt>
+        <dd>${esc(record.university || "—")}</dd>
 
         <dt>Submission ID</dt>
         <dd><code>${esc(record.id)}</code></dd>
@@ -118,12 +129,6 @@ function renderFound(record) {
         The SHA-256 hash is the cryptographic fingerprint of the original file
         recorded at the moment of submission.
       </div>
-
-      <div style="text-align:center; margin-top:20px;">
-        <button class="btn verify-back" id="verify-another" type="button">
-          Verify another certificate
-        </button>
-      </div>
     </div>
   `;
 }
@@ -136,12 +141,13 @@ function renderNotFound(code) {
         <div class="verify-status verify-status-fail">❌ Not found</div>
       </div>
 
-      <h1 class="verify-title">No certificate found</h1>
-      <p class="verify-author">
-        The code <code>${esc(code)}</code> does not match any certificate in the
-        SciPool UG registry. Check for typos, or contact the researcher who
-        issued it.
-      </p>
+      <div class="verify-hero-fail">
+        <div class="verify-hero-icon">❌</div>
+        <h1 class="verify-hero-title">NOT VERIFIED</h1>
+        <p class="verify-hero-sub">
+          No certificate matches the code <code>${esc(code)}</code>.
+        </p>
+      </div>
 
       <div style="text-align:center; margin-top:20px;">
         <button class="btn verify-back" id="verify-another" type="button">
@@ -194,17 +200,17 @@ function initVerifyPage() {
       const record = await findByCode(code);
 
       if (record) {
-        container.innerHTML = renderFound(record);
+        container.innerHTML = renderVerified(record);
       } else {
         container.innerHTML = renderNotFound(code);
-      }
-
-      const again = document.getElementById("verify-another");
-      if (again) {
-        again.addEventListener("click", () => {
-          history.replaceState({}, "", "/verify");
-          initVerifyPage();
-        });
+        // Only the not-found view gets a "try another" button
+        const again = document.getElementById("verify-another");
+        if (again) {
+          again.addEventListener("click", () => {
+            history.replaceState({}, "", "/verify");
+            initVerifyPage();
+          });
+        }
       }
     } catch (err) {
       console.error("Lookup failed:", err);
