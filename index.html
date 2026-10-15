@@ -2674,6 +2674,9 @@
   border-radius: 6px;
   border: 1px solid var(--line);
 }
+    .user-dropdown-list button.danger-btn { color: var(--flag-red); }
+.user-dropdown-list button.danger-btn:hover { background: #FFF0F2; }
+.mobile-user-actions button.danger { color: #FF8A9F; }
   </style>
 </head>
 <body>
@@ -2718,6 +2721,7 @@
           <li><button type="button" onclick="closeUserDropdown(); openProfileEdit();"><span class="dd-icon">✏️</span>Edit Profile</button></li>
           <li><button type="button" onclick="closeUserDropdown(); goTo('messages');"><span class="dd-icon">✉️</span>Messages</button></li>
           <li><button type="button" onclick="closeUserDropdown(); goTo('browse'); setTimeout(showSavedOnly, 300);"><span class="dd-icon">💾</span>My Shortlist</button></li>
+          <li><button type="button" class="danger-btn" onclick="closeUserDropdown(); openDeleteAccount();"><span class="dd-icon">🗑️</span>Delete Account</button></li>
           <li><button type="button" class="signout-btn" onclick="closeUserDropdown(); signOut();"><span class="dd-icon">🚪</span>Sign Out</button></li>
         </ul>
       </div>
