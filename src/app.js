@@ -20,6 +20,7 @@ import {
 import {
   isAdmin, renderAdminDashboard, setAdminInnovations
 } from "./admin.js";
+import { deleteAccount, countUserData } from "./account.js";
 
 /* ============================================================
    CONSTANTS
@@ -1511,6 +1512,120 @@ function openProfile() {
 function openProfileEdit() {
   openModal(`<h3>Edit Profile</h3><p>Edit profile coming soon.</p><button class="btn" onclick="closeModal()" style="width:100%;">Close</button>`);
 }
+/* ============================================================
+   DELETE ACCOUNT
+   ============================================================ */
+
+async function openDeleteAccount() {
+  if (!CURRENT_USER) return;
+
+  let info = { submissionCount: 0, submissions: [] };
+  try {
+    info = await countUserData(CURRENT_USER.uid, CURRENT_USER.email);
+  } catch (e) {
+    console.warn("Could not count submissions:", e);
+  }
+
+  const html = `
+    <h3>Delete your account</h3>
+    <div class="alert alert-warn" style="margin-bottom:16px;">
+      <strong>This action cannot be undone.</strong>
+      You will be signed out and your account will be permanently removed.
+    </div>
+
+    <p style="font-size:13px; color:var(--ink-soft); line-height:1.7; margin-bottom:16px;">
+      You have <strong>${info.submissionCount}</strong> submission${info.submissionCount === 1 ? "" : "s"} on SciPool UG.
+      Choose what should happen to ${info.submissionCount === 1 ? "it" : "them"}:
+    </p>
+
+    <div class="role-cards" style="grid-template-columns: 1fr; gap:10px;">
+      <div class="role-card selected" data-del-choice="keep">
+        <div class="role-icon">🛡️</div>
+        <div class="role-name">Keep my research (recommended)</div>
+        <div class="role-desc">
+          Your submissions stay in the national repository but become anonymous.
+          Any certificate you already issued will still verify.
+          Your name is replaced with "Anonymous Researcher".
+        </div>
+      </div>
+      <div class="role-card" data-del-choice="delete">
+        <div class="role-icon">🗑️</div>
+        <div class="role-name">Delete everything</div>
+        <div class="role-desc">
+          Your submissions are permanently removed from SciPool UG.
+          Any certificate you already issued will no longer verify.
+          This is irreversible.
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:20px;">Confirm your password</div>
+    <input type="password" id="del-password" placeholder="Your current password" autocomplete="current-password" />
+
+    <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn btn-black" id="del-cancel" style="flex:1;" type="button">Cancel</button>
+      <button class="btn btn-red" id="del-confirm" style="flex:2;" type="button">Delete my account</button>
+    </div>
+  `;
+
+  openModal(html);
+
+  let choice = "keep";
+  document.querySelectorAll("#modal-content [data-del-choice]").forEach(card => {
+    card.addEventListener("click", () => {
+      document.querySelectorAll("#modal-content [data-del-choice]").forEach(c => c.classList.remove("selected"));
+      card.classList.add("selected");
+      choice = card.dataset.delChoice;
+    });
+  });
+
+  document.getElementById("del-cancel").addEventListener("click", closeModal);
+
+  document.getElementById("del-confirm").addEventListener("click", async () => {
+    const password = document.getElementById("del-password").value;
+    if (!password) {
+      alert("Please enter your password to confirm.");
+      return;
+    }
+
+    const btn = document.getElementById("del-confirm");
+    btn.disabled = true;
+    btn.textContent = "Deleting…";
+
+    try {
+      const result = await deleteAccount({
+        password,
+        keepSubmissions: choice === "keep"
+      });
+
+      closeModal();
+
+      openModal(`
+        <h3>Account deleted</h3>
+        <p style="font-size:14px; line-height:1.7; color:var(--ink-soft);">
+          Your account has been permanently removed.
+          ${result.kept
+            ? `${result.affected} submission${result.affected === 1 ? "" : "s"} remain in the repository as anonymous research.`
+            : `${result.affected} submission${result.affected === 1 ? "" : "s"} were deleted.`}
+        </p>
+        <button class="btn" onclick="closeModal(); location.reload();" style="width:100%; margin-top:16px;" type="button">Close</button>
+      `);
+    } catch (err) {
+      console.error("Delete failed:", err);
+      btn.disabled = false;
+      btn.textContent = "Delete my account";
+
+      let msg = err.message || "Something went wrong.";
+      if (err.code === "auth/wrong-password" || err.code === "auth/invalid-credential") {
+        msg = "Incorrect password. Please try again.";
+      } else if (err.code === "auth/requires-recent-login") {
+        msg = "For security, please sign out and sign back in before deleting your account.";
+      }
+
+      alert(msg);
+    }
+  });
+}
 
 /* ============================================================
    MESSAGES
@@ -1959,6 +2074,7 @@ window.goTo = goTo;
 window.openAuthModal = openAuthModal;
 window.closeModal = closeModal;
 window.openProfile = openProfile;
+window.openDeleteAccount = openDeleteAccount;
 window.openProfileEdit = openProfileEdit;
 window.signOut = signOut;
 window.openDrawer = openDrawer;
