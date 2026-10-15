@@ -80,7 +80,8 @@ const VIEW_PERMISSIONS = {
    STATE
    ============================================================ */
 
-let DB = [];
+let DB = [];        // Public — only adminStatus === "active"
+let DB_ALL = [];    // Everything — for admin dashboard
 let SAVED_CACHE = [];
 let CURRENT_USER = null;
 let USERS_CACHE = [];
@@ -243,27 +244,26 @@ window.addEventListener("firebase-ready", () => {
     swapHomeView();
   });
 
-  subscribeInnovations(items => {
-    DB = items;
-    renderStats();
-    renderPublicLanding();
-    renderHome();
-    renderBrowse();
-    if (currentView === "admin") renderAdmin();
-    renderChapterDashboard();
-  });
-});
 subscribeInnovations(items => {
-  DB = items;
+  DB_ALL = items;
+
+  // Public feed: only APPROVED submissions
+  DB = items.filter(i => i.adminStatus === "active");
+
+  // Public surfaces use DB (approved only)
   renderStats();
   renderPublicLanding();
   renderHome();
   renderBrowse();
-  if (currentView === "admin") renderAdmin();
-  renderChapterDashboard();
-  updateUgCounter();   // ← ADD THIS LINE
-});
 
+  // Admin uses DB_ALL (everything)
+  if (currentView === "admin") {
+    setAdminInnovations(DB_ALL);
+    renderAdmin();
+  }
+  renderChapterDashboard();
+  updateUgCounter();
+});
 /* ============================================================
    NAVIGATION
    ============================================================ */
@@ -308,7 +308,10 @@ function goTo(view) {
     if (el) el.classList.add("active");
   }
   if (view === "browse") renderBrowse();
-  if (view === "admin") renderAdmin();
+  if (view === "admin") {
+  setAdminInnovations(DB_ALL);
+  renderAdmin();
+}
   if (view === "chapters") renderChapterDashboard();
   if (view === "messages") renderMessages();
   const sticky = document.getElementById("mobile-sticky-cta");
@@ -511,7 +514,7 @@ function renderDashboard() {
   };
   if (dashGreet) dashGreet.textContent = greetings[CURRENT_USER.role] || "Welcome to your SciPool UG dashboard.";
 
-  const mySubs = DB.filter(d => d.email === CURRENT_USER.email).length;
+  const mySubs = DB_ALL.filter(d => d.email === CURRENT_USER.email).length;
   const investmentReady = DB.filter(d => d.trl >= 6).length;
   const myUniItems = CURRENT_USER.profile?.chapterUniversity
     ? DB.filter(d => d.university === CURRENT_USER.profile.chapterUniversity).length
@@ -1845,7 +1848,7 @@ function renderAdmin() {
     `;
     return;
   }
-  setAdminInnovations(DB);
+  setAdminInnovations(DB_ALL);
   renderAdminDashboard();
 }
 
