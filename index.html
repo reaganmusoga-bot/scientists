@@ -1718,6 +1718,67 @@
   max-height: 340px;
   width: auto;
 }
+  /* ============================================================
+   HERO LAYOUT HOTFIX — restore desktop proportions
+   ============================================================ */
+
+/* Ensure the hero grid doesn't grow with the map */
+.landing-hero-inner {
+  grid-template-columns: 1.4fr 1fr;
+  align-items: center;
+  gap: 48px;
+  min-height: 0;
+}
+
+/* Lock the right column size */
+.landing-hero-inner > div:last-child {
+  max-width: 400px;
+  justify-self: center;
+}
+
+/* Fix the pool-visual container height */
+.landing-hero .pool-visual {
+  height: auto;
+  min-height: 380px;
+  max-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure the hero has a sane max height */
+.landing-hero {
+  padding: 56px 18px 60px;
+  overflow: hidden;
+}
+
+/* Make sure the section below the hero doesn't overlap */
+.landing-hero + .snapshot-strip {
+  position: relative;
+  clear: both;
+}
+
+/* Restore the story-block grid inside "A national pool" section */
+.landing-section .story-block {
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+/* Mobile: keep the original stacking behavior */
+@media (max-width: 900px) {
+  .landing-hero-inner {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .landing-hero-inner > div:last-child {
+    max-width: 100%;
+  }
+  .landing-section .story-block {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
 </style>
 </head>
 <body>
