@@ -357,7 +357,7 @@
   }
   .landing-hero-inner {
     max-width: 1280px; margin: 0 auto; position: relative; z-index: 2;
-    display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: center;
+    display: grid; grid-template-columns: 1.35fr 1fr; gap: 40px; align-items: center;
   }
   .identity-banner {
     display: block;
@@ -402,7 +402,7 @@
   .btn-hero.red { background: var(--flag-red); color: var(--white); }
   .btn-hero.red:hover { background: var(--flag-red-deep); transform: translateY(-2px); }
 
-  .pool-visual { display: flex; justify-content: center; align-items: center; height: 340px; position: relative; }
+  .pool-visual { display: flex; justify-content: center; align-items: center; height: auto; min-height: 320px; position: relative; }
   .pool-orbit { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
   .pool-ring { position: absolute; border-radius: 50%; border: 2px dashed rgba(245,183,0,0.35); animation: spinRing 22s linear infinite; }
   .pool-ring.r1 { width: 300px; height: 300px; }
@@ -1576,15 +1576,9 @@
 .ug-map {
   width: 100%;
   height: auto;
-  max-height: 420px;
+  max-height: 400px;
   filter: drop-shadow(0 0 24px rgba(245,183,0,0.18));
   animation: ugMapFloat 6s ease-in-out infinite;
-}
-  .landing-hero-inner .ug-map-wrap {
-  max-width: 340px;
-  margin: 0 auto;
-  justify-self: center;
-  align-self: center;
 }
 
 @keyframes ugMapFloat {
@@ -1708,64 +1702,61 @@
   }
   .ug-pulse { opacity: 0.35; }
 }
-  /* Constrain the map so it doesn't take over the hero */
-.landing-hero-inner .ug-map-wrap {
-  max-width: 340px;
-  margin: 0 auto;
-}
-
-.landing-hero-inner .ug-map {
-  max-height: 340px;
-  width: auto;
-}
+  
   /* ============================================================
-   HERO LAYOUT HOTFIX — restore desktop proportions
+   HERO + MAP — clean desktop proportions
    ============================================================ */
 
-/* Ensure the hero grid doesn't grow with the map */
 .landing-hero-inner {
-  grid-template-columns: 1.4fr 1fr;
+  grid-template-columns: 1.35fr 1fr;
   align-items: center;
-  gap: 48px;
+  gap: 40px;
   min-height: 0;
 }
 
-/* Lock the right column size */
 .landing-hero-inner > div:last-child {
-  max-width: 400px;
+  max-width: 380px;
   justify-self: center;
+  width: 100%;
 }
 
-/* Fix the pool-visual container height */
 .landing-hero .pool-visual {
   height: auto;
-  min-height: 380px;
+  min-height: 360px;
   max-height: 420px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Ensure the hero has a sane max height */
 .landing-hero {
-  padding: 56px 18px 60px;
+  padding: 52px 18px 56px;
   overflow: hidden;
 }
 
-/* Make sure the section below the hero doesn't overlap */
 .landing-hero + .snapshot-strip {
   position: relative;
   clear: both;
 }
 
-/* Restore the story-block grid inside "A national pool" section */
 .landing-section .story-block {
   grid-template-columns: 1fr 1fr;
   gap: 48px;
   align-items: center;
 }
 
-/* Mobile: keep the original stacking behavior */
+.landing-hero-inner .ug-map-wrap {
+  max-width: 340px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.landing-hero-inner .ug-map {
+  max-height: 360px;
+  width: 100%;
+  height: auto;
+}
+
 @media (max-width: 900px) {
   .landing-hero-inner {
     grid-template-columns: 1fr;
@@ -1777,6 +1768,10 @@
   .landing-section .story-block {
     grid-template-columns: 1fr;
     gap: 24px;
+  }
+  .landing-hero .pool-visual {
+    min-height: 0;
+    max-height: none;
   }
 }
 </style>
@@ -1905,112 +1900,112 @@
         </filter>
       </defs>
 
-      <!-- Uganda outline (stylized, ~simplified) -->
+      <!-- Uganda outline — recognisable national silhouette -->
       <path class="ug-outline"
-        d="M 118 62
-           C 128 48, 148 42, 168 44
-           C 186 46, 200 52, 214 60
-           C 228 68, 240 76, 248 90
-           C 256 104, 262 118, 272 130
-           C 282 142, 298 148, 312 158
-           C 326 168, 340 184, 348 202
-           C 354 218, 352 238, 348 256
-           C 344 274, 340 292, 332 308
-           C 324 324, 312 338, 296 348
-           C 280 358, 262 362, 244 362
-           C 228 362, 212 358, 198 350
-           C 186 342, 176 330, 168 316
-           C 160 302, 152 288, 142 274
-           C 132 260, 120 246, 112 230
-           C 104 214, 100 196, 98 178
-           C 96 158, 96 138, 100 118
-           C 104 98, 110 78, 118 62 Z" />
+        d="M 140 52
+           L 175 45
+           C 200 42, 225 48, 245 62
+           C 262 75, 275 95, 285 120
+           C 294 145, 302 175, 308 205
+           C 314 235, 316 265, 310 290
+           C 304 315, 290 335, 270 348
+           C 252 360, 230 365, 210 358
+           C 195 353, 185 340, 180 325
+           C 176 312, 172 298, 165 285
+           C 158 272, 148 262, 135 255
+           C 122 248, 108 245, 96 238
+           C 86 232, 80 220, 78 205
+           C 76 188, 80 170, 88 152
+           C 96 134, 108 115, 122 98
+           C 132 85, 136 68, 140 52 Z" />
 
       <!-- Internal contour lines (topographic hint) -->
       <path class="ug-contour"
-        d="M 140 100 C 160 92, 190 96, 210 112
-           C 230 128, 244 152, 250 180
-           C 256 208, 254 240, 244 268
-           C 234 296, 214 320, 190 330
-           C 168 338, 146 332, 132 316
-           C 118 300, 112 274, 116 248
-           C 120 222, 126 196, 130 170
-           C 132 144, 134 120, 140 100 Z" />
+        d="M 155 95
+           C 175 88, 200 92, 220 108
+           C 240 125, 255 150, 260 180
+           C 265 210, 262 245, 250 275
+           C 238 305, 215 325, 190 335
+           C 170 342, 150 335, 138 318
+           C 125 300, 118 275, 120 250
+           C 122 225, 130 200, 138 175
+           C 145 150, 150 120, 155 95 Z" />
       <path class="ug-contour"
-        d="M 168 148 C 184 142, 204 148, 216 162
-           C 228 176, 234 196, 230 216
-           C 226 236, 214 252, 198 258
-           C 182 262, 166 256, 158 244
-           C 150 230, 148 212, 152 194
-           C 154 176, 160 160, 168 148 Z" />
+        d="M 175 145
+           C 190 140, 210 145, 222 160
+           C 234 175, 240 195, 236 215
+           C 232 235, 220 250, 205 255
+           C 190 260, 175 254, 168 242
+           C 160 228, 158 210, 162 192
+           C 165 175, 170 158, 175 145 Z" />
 
       <!-- Network connecting lines (faint) -->
       <g class="ug-network">
-        <line x1="160" y1="248" x2="118" y2="180" />
-        <line x1="160" y1="248" x2="196" y2="308" />
-        <line x1="160" y1="248" x2="248" y2="200" />
-        <line x1="160" y1="248" x2="172" y2="118" />
-        <line x1="160" y1="248" x2="252" y2="298" />
-        <line x1="160" y1="248" x2="290" y2="238" />
-        <line x1="196" y1="308" x2="252" y2="298" />
-        <line x1="172" y1="118" x2="248" y2="200" />
-        <line x1="118" y1="180" x2="172" y2="118" />
+        <line x1="175" y1="245" x2="130" y2="175" />
+        <line x1="175" y1="245" x2="195" y2="310" />
+        <line x1="175" y1="245" x2="250" y2="195" />
+        <line x1="175" y1="245" x2="185" y2="115" />
+        <line x1="175" y1="245" x2="255" y2="290" />
+        <line x1="175" y1="245" x2="285" y2="230" />
+        <line x1="195" y1="310" x2="255" y2="290" />
+        <line x1="185" y1="115" x2="250" y2="195" />
+        <line x1="130" y1="175" x2="185" y2="115" />
       </g>
 
       <!-- Nodes (universities). size = r attribute. larger = more submissions -->
       <g class="ug-nodes" filter="url(#softGlow)">
-        <!-- Kampala cluster (biggest) -->
-        <circle class="ug-node ug-major" cx="160" cy="248" r="9" />
-        <circle class="ug-pulse" cx="160" cy="248" r="9" />
+        <!-- Kampala (central) -->
+        <circle class="ug-node ug-major" cx="175" cy="245" r="9" />
+        <circle class="ug-pulse" cx="175" cy="245" r="9" />
 
-        <!-- Mbarara -->
-        <circle class="ug-node" cx="118" cy="304" r="6.5" />
-        <circle class="ug-pulse" cx="118" cy="304" r="6.5" />
+        <!-- Mbarara (SW) -->
+        <circle class="ug-node" cx="130" cy="310" r="6.5" />
+        <circle class="ug-pulse" cx="130" cy="310" r="6.5" />
 
-        <!-- Gulu -->
-        <circle class="ug-node ug-major" cx="172" cy="118" r="7.5" />
-        <circle class="ug-pulse" cx="172" cy="118" r="7.5" />
+        <!-- Gulu (N) -->
+        <circle class="ug-node ug-major" cx="185" cy="115" r="7.5" />
+        <circle class="ug-pulse" cx="185" cy="115" r="7.5" />
 
-        <!-- Soroti -->
-        <circle class="ug-node" cx="248" cy="200" r="6" />
-        <circle class="ug-pulse" cx="248" cy="200" r="6" />
+        <!-- Soroti (E) -->
+        <circle class="ug-node" cx="250" cy="195" r="6" />
+        <circle class="ug-pulse" cx="250" cy="195" r="6" />
 
-        <!-- Busitema -->
-        <circle class="ug-node" cx="290" cy="238" r="5.5" />
-        <circle class="ug-pulse" cx="290" cy="238" r="5.5" />
+        <!-- Busitema / East -->
+        <circle class="ug-node" cx="285" cy="230" r="5.5" />
+        <circle class="ug-pulse" cx="285" cy="230" r="5.5" />
 
-        <!-- Mbarara MUST south -->
-        <circle class="ug-node" cx="196" cy="308" r="5" />
-        <circle class="ug-pulse" cx="196" cy="308" r="5" />
+        <!-- MUST / South -->
+        <circle class="ug-node" cx="195" cy="310" r="5" />
+        <circle class="ug-pulse" cx="195" cy="310" r="5" />
 
         <!-- Lira -->
-        <circle class="ug-node" cx="196" cy="150" r="5" />
-        <circle class="ug-pulse" cx="196" cy="150" r="5" />
+        <circle class="ug-node" cx="200" cy="150" r="5" />
+        <circle class="ug-pulse" cx="200" cy="150" r="5" />
 
         <!-- Mbale -->
-        <circle class="ug-node" cx="272" cy="184" r="5" />
-        <circle class="ug-pulse" cx="272" cy="184" r="5" />
+        <circle class="ug-node" cx="270" cy="180" r="5" />
+        <circle class="ug-pulse" cx="270" cy="180" r="5" />
 
-        <!-- Arua -->
-        <circle class="ug-node" cx="130" cy="90" r="4.5" />
-        <circle class="ug-pulse" cx="130" cy="90" r="4.5" />
+        <!-- Arua (NW) -->
+        <circle class="ug-node" cx="135" cy="95" r="4.5" />
+        <circle class="ug-pulse" cx="135" cy="95" r="4.5" />
 
-        <!-- Fort Portal -->
-        <circle class="ug-node" cx="128" cy="204" r="4.5" />
-        <circle class="ug-pulse" cx="128" cy="204" r="4.5" />
+        <!-- Fort Portal (W) -->
+        <circle class="ug-node" cx="125" cy="205" r="4.5" />
+        <circle class="ug-pulse" cx="125" cy="205" r="4.5" />
 
-        <!-- Kabale -->
-        <circle class="ug-node" cx="146" cy="342" r="4" />
-        <circle class="ug-pulse" cx="146" cy="342" r="4" />
+        <!-- Kabale (SW tip) -->
+        <circle class="ug-node" cx="145" cy="345" r="4" />
+        <circle class="ug-pulse" cx="145" cy="345" r="4" />
       </g>
 
       <!-- City labels (only on wide screens) -->
       <g class="ug-labels">
-        <text x="174" y="252">Kampala</text>
-        <text x="176" y="122">Gulu</text>
-        <text x="130" y="308">Mbarara</text>
-        <text x="258" y="204">Soroti</text>
-        <text x="298" y="242">Busitema</text>
+        <text x="188" y="250">Kampala</text>
+        <text x="190" y="120">Gulu</text>
+        <text x="142" y="315">Mbarara</text>
+        <text x="260" y="198">Soroti</text>
+        <text x="292" y="235">Busitema</text>
       </g>
     </svg>
 
