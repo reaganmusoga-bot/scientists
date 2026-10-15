@@ -27,7 +27,7 @@
   }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; -webkit-tap-highlight-color: transparent; }
   html { scroll-behavior: smooth; }
-  body { background: var(--cream); color: var(--ink); line-height: 1.65; overflow-x: hidden; }
+  body { background: var(--cream); color: var(--ink); line-height: 1.65; overflow-x: hidden; margin: 0; padding: 0; }
 
   header { background: var(--charcoal); color: var(--white); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(26,20,16,0.25); }
   .flag-stripe {
@@ -310,7 +310,90 @@
     letter-spacing: 0.6px; cursor: pointer; font-family: inherit;
   }
 
-  main { max-width: 1400px; margin: 0 auto; padding: 24px 18px 80px; }
+  /* Main: full width always — no side gaps. Inner sections constrain themselves. */
+  main {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: 0 0 80px;
+  }
+
+  /* Content views (browse, submit, etc.) get the centered max-width treatment */
+  #view-browse,
+  #view-submit,
+  #view-messages,
+  #view-chapters,
+  #view-admin,
+  #view-about,
+  #view-home-dashboard {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 24px 18px;
+  }
+
+  /* Public home: zero side padding, full-bleed dark sections */
+  #view-home-public {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .landing-hero,
+  .snapshot-strip,
+  .big-cta {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  /* Keep text/content readable on wide screens */
+  .landing-hero-inner,
+  .snapshot-inner,
+  .snapshot-heading,
+  .big-cta > h2,
+  .big-cta > p,
+  .big-cta > .landing-ctas {
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .landing-section {
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .landing-section.alt {
+    max-width: none;
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .landing-section.alt > .inner {
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .partners-strip {
+    width: 100%;
+  }
+  .partners-inner {
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
   .view { display: none; }
   .view.active { display: block; }
 
@@ -356,8 +439,12 @@
     background: radial-gradient(circle, rgba(200,16,46,0.1) 0%, transparent 70%); pointer-events: none;
   }
   .landing-hero-inner {
-    max-width: 1280px; margin: 0 auto; position: relative; z-index: 2;
-    display: grid; grid-template-columns: 1.35fr 1fr; gap: 40px; align-items: center;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+    display: block;
+    padding: 0 18px;
   }
   .identity-banner {
     display: block;
@@ -402,31 +489,9 @@
   .btn-hero.red { background: var(--flag-red); color: var(--white); }
   .btn-hero.red:hover { background: var(--flag-red-deep); transform: translateY(-2px); }
 
-  .pool-visual { display: flex; justify-content: center; align-items: center; height: auto; min-height: 320px; position: relative; }
-  .pool-orbit { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
-  .pool-ring { position: absolute; border-radius: 50%; border: 2px dashed rgba(245,183,0,0.35); animation: spinRing 22s linear infinite; }
-  .pool-ring.r1 { width: 300px; height: 300px; }
-  .pool-ring.r2 { width: 230px; height: 230px; border-color: rgba(200,16,46,0.28); animation-duration: 16s; animation-direction: reverse; }
-  .pool-ring.r3 { width: 160px; height: 160px; border-color: rgba(255,255,255,0.22); animation-duration: 12s; }
-  @keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-  .pool-center {
-    width: 100px; height: 100px; border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, var(--gold) 0%, var(--gold-deep) 60%, var(--flag-red) 100%);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 40px; font-weight: 900; color: var(--charcoal);
-    box-shadow: 0 0 60px rgba(245,183,0,0.5), inset 0 0 30px rgba(255,255,255,0.3);
-    animation: pulsePool 3.5s ease-in-out infinite; z-index: 2;
+  to { transform: rotate(360deg); } }
+  50% { transform: scale(1.06); box-shadow: 0 0 80px rgba(245,183,0,0.7), inset 0 0 40px rgba(255,255,255,0.4); }
   }
-  @keyframes pulsePool {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 60px rgba(245,183,0,0.5), inset 0 0 30px rgba(255,255,255,0.3); }
-    50% { transform: scale(1.06); box-shadow: 0 0 80px rgba(245,183,0,0.7), inset 0 0 40px rgba(255,255,255,0.4); }
-  }
-  .pool-dot { position: absolute; width: 16px; height: 16px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 16px rgba(245,183,0,0.7); }
-  .pool-dot.d1 { top: 20px; left: 50%; transform: translateX(-50%); }
-  .pool-dot.d2 { bottom: 20px; right: 40px; background: var(--flag-red); box-shadow: 0 0 16px rgba(200,16,46,0.7); }
-  .pool-dot.d3 { bottom: 40px; left: 20px; background: var(--white); box-shadow: 0 0 16px rgba(255,255,255,0.6); }
-  .pool-dot.d4 { top: 60px; right: 30px; background: var(--earth); box-shadow: 0 0 16px rgba(139,94,52,0.7); }
-
   .snapshot-strip { background: var(--earth-deep); padding: 36px 18px; border-top: 4px solid var(--gold); border-bottom: 4px solid var(--flag-red); }
   .snapshot-heading { max-width: 1280px; margin: 0 auto 26px; text-align: center; padding-bottom: 20px; border-bottom: 1px dashed rgba(245,183,0,0.3); }
   .snapshot-heading .snap-title { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); font-weight: 800; margin-bottom: 10px; }
@@ -1393,7 +1458,7 @@
   @media (max-width: 1023px) {
     .landing-h1 { font-size: 42px; }
     .landing-h1 .scipool-brand { font-size: 52px; }
-    .landing-hero-inner { gap: 32px; }
+    
     .section-heading { font-size: 28px; }
     .messages-shell { grid-template-columns: 260px 1fr; }
   }
@@ -1408,9 +1473,7 @@
     main { padding: 18px 14px 100px; }
 
     .landing-hero { padding: 40px 18px 48px; }
-    .landing-hero-inner { grid-template-columns: 1fr; gap: 24px; }
-    .pool-visual { display: none; }
-
+    .landing-hero-inner { display: block; }
     .landing-h1 { font-size: 36px; }
     .landing-h1 .scipool-brand { font-size: 44px; letter-spacing: -2px; }
     .landing-h1 .scipool-tagline { font-size: 17px; }
@@ -1558,222 +1621,21 @@
       transition-duration: 0.001ms !important;
     }
   }
-  /* ============================================================
-   Uganda Map Hero Visual
-   ============================================================ */
-
-.ug-map-wrap {
-  position: relative;
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.ug-map {
-  width: 100%;
-  height: auto;
-  max-height: 400px;
-  filter: drop-shadow(0 0 24px rgba(245,183,0,0.18));
-  animation: ugMapFloat 6s ease-in-out infinite;
-}
-
-@keyframes ugMapFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-/* Uganda outline */
-.ug-outline {
-  fill: rgba(245,183,0,0.045);
-  stroke: var(--gold);
-  stroke-width: 1.6;
-  stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
-}
-
-/* Internal topographic contours */
-.ug-contour {
-  fill: none;
-  stroke: rgba(245,183,0,0.22);
-  stroke-width: 0.7;
-  stroke-dasharray: 2 4;
-  vector-effect: non-scaling-stroke;
-}
-
-/* Network connecting lines */
-.ug-network line {
-  stroke: rgba(200,16,46,0.35);
-  stroke-width: 0.7;
-  stroke-dasharray: 3 5;
-  animation: ugNetPulse 4s ease-in-out infinite;
-}
-
-@keyframes ugNetPulse {
-  0%, 100% { opacity: 0.35; }
-  50% { opacity: 0.75; }
-}
-
-/* Nodes */
-.ug-node {
-  fill: var(--gold);
-  stroke: var(--charcoal);
-  stroke-width: 1.5;
-}
-
-.ug-node.ug-major {
-  fill: var(--flag-red);
-  stroke: var(--gold);
-}
-
-/* Pulsing halo behind each node */
-.ug-pulse {
-  fill: none;
-  stroke: var(--gold);
-  stroke-width: 1;
-  opacity: 0;
-  transform-origin: center;
-  animation: ugPulse 3s ease-out infinite;
-  pointer-events: none;
-}
-
-.ug-pulse:nth-of-type(odd) { animation-delay: 0.4s; }
-.ug-pulse:nth-of-type(3n) { animation-delay: 1.1s; }
-.ug-pulse:nth-of-type(5n) { animation-delay: 1.8s; }
-
-@keyframes ugPulse {
-  0% { transform: scale(1); opacity: 0.7; }
-  100% { transform: scale(2.8); opacity: 0; }
-}
-
-/* City labels */
-.ug-labels {
-  display: none; /* hidden on small screens */
-}
-.ug-labels text {
-  fill: rgba(255,255,255,0.55);
-  font-size: 9px;
-  font-family: 'Segoe UI', Tahoma, sans-serif;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  pointer-events: none;
-}
-
-/* Live caption below the map */
-.ug-caption {
-  text-align: center;
-  margin-top: 8px;
-  position: relative;
-  z-index: 2;
-}
-
-.ug-caption-count {
-  font-size: 34px;
-  font-weight: 900;
-  color: var(--gold);
-  line-height: 1;
-  letter-spacing: -1px;
-  text-shadow: 0 2px 20px rgba(245,183,0,0.4);
-}
-
-.ug-caption-label {
-  font-size: 10px;
-  color: #c8bcac;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-weight: 700;
-  margin-top: 6px;
-}
-
-/* Show labels on wider screens */
-@media (min-width: 900px) {
-  .ug-labels { display: block; }
-}
-
-/* Reduced motion — stop all animation */
-@media (prefers-reduced-motion: reduce) {
-  .ug-map,
-  .ug-network line,
-  .ug-pulse {
-    animation: none !important;
-  }
-  .ug-pulse { opacity: 0.35; }
-}
   
-  /* ============================================================
-   HERO + MAP — clean desktop proportions
-   ============================================================ */
-
+  
+  /* Hero proportions on desktop */
 .landing-hero-inner {
-  grid-template-columns: 1.35fr 1fr;
+  grid-template-columns: 1fr;
   align-items: center;
-  gap: 40px;
-  min-height: 0;
+  gap: 0;
+  max-width: 900px;
 }
-
-.landing-hero-inner > div:last-child {
-  max-width: 380px;
-  justify-self: center;
-  width: 100%;
-}
-
-.landing-hero .pool-visual {
-  height: auto;
-  min-height: 360px;
-  max-height: 420px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.landing-hero {
-  padding: 52px 18px 56px;
-  overflow: hidden;
-}
-
-.landing-hero + .snapshot-strip {
-  position: relative;
-  clear: both;
-}
-
-.landing-section .story-block {
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  align-items: center;
-}
-
-.landing-hero-inner .ug-map-wrap {
-  max-width: 340px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.landing-hero-inner .ug-map {
-  max-height: 360px;
-  width: 100%;
-  height: auto;
-}
-
 @media (max-width: 900px) {
   .landing-hero-inner {
     grid-template-columns: 1fr;
     gap: 24px;
   }
-  .landing-hero-inner > div:last-child {
-    max-width: 100%;
   }
-  .landing-section .story-block {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-  .landing-hero .pool-visual {
-    min-height: 0;
-    max-height: none;
-  }
-}
 </style>
 </head>
 <body>
@@ -1877,144 +1739,9 @@
             <button class="btn-hero red" onclick="openAuthModal('signup')" type="button">Join SciPool UG</button>
           </div>
         </div>
-<div class="pool-visual">
-  <div class="ug-map-wrap">
-    <svg class="ug-map" viewBox="0 0 400 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Map of Uganda showing universities with active innovations">
-      <defs>
-        <radialGradient id="glowGold" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#F5B700" stop-opacity="0.55"/>
-          <stop offset="60%" stop-color="#F5B700" stop-opacity="0.15"/>
-          <stop offset="100%" stop-color="#F5B700" stop-opacity="0"/>
-        </radialGradient>
-        <radialGradient id="glowRed" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#C8102E" stop-opacity="0.55"/>
-          <stop offset="60%" stop-color="#C8102E" stop-opacity="0.15"/>
-          <stop offset="100%" stop-color="#C8102E" stop-opacity="0"/>
-        </radialGradient>
-        <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="2.4" result="blur"/>
-          <feMerge>
-            <feMergeNode in="blur"/>
-            <feMergeNode in="SourceGraphic"/>
-          </feMerge>
-        </filter>
-      </defs>
-
-      <!-- Uganda outline — recognisable national silhouette -->
-      <path class="ug-outline"
-        d="M 140 52
-           L 175 45
-           C 200 42, 225 48, 245 62
-           C 262 75, 275 95, 285 120
-           C 294 145, 302 175, 308 205
-           C 314 235, 316 265, 310 290
-           C 304 315, 290 335, 270 348
-           C 252 360, 230 365, 210 358
-           C 195 353, 185 340, 180 325
-           C 176 312, 172 298, 165 285
-           C 158 272, 148 262, 135 255
-           C 122 248, 108 245, 96 238
-           C 86 232, 80 220, 78 205
-           C 76 188, 80 170, 88 152
-           C 96 134, 108 115, 122 98
-           C 132 85, 136 68, 140 52 Z" />
-
-      <!-- Internal contour lines (topographic hint) -->
-      <path class="ug-contour"
-        d="M 155 95
-           C 175 88, 200 92, 220 108
-           C 240 125, 255 150, 260 180
-           C 265 210, 262 245, 250 275
-           C 238 305, 215 325, 190 335
-           C 170 342, 150 335, 138 318
-           C 125 300, 118 275, 120 250
-           C 122 225, 130 200, 138 175
-           C 145 150, 150 120, 155 95 Z" />
-      <path class="ug-contour"
-        d="M 175 145
-           C 190 140, 210 145, 222 160
-           C 234 175, 240 195, 236 215
-           C 232 235, 220 250, 205 255
-           C 190 260, 175 254, 168 242
-           C 160 228, 158 210, 162 192
-           C 165 175, 170 158, 175 145 Z" />
-
-      <!-- Network connecting lines (faint) -->
-      <g class="ug-network">
-        <line x1="175" y1="245" x2="130" y2="175" />
-        <line x1="175" y1="245" x2="195" y2="310" />
-        <line x1="175" y1="245" x2="250" y2="195" />
-        <line x1="175" y1="245" x2="185" y2="115" />
-        <line x1="175" y1="245" x2="255" y2="290" />
-        <line x1="175" y1="245" x2="285" y2="230" />
-        <line x1="195" y1="310" x2="255" y2="290" />
-        <line x1="185" y1="115" x2="250" y2="195" />
-        <line x1="130" y1="175" x2="185" y2="115" />
-      </g>
-
-      <!-- Nodes (universities). size = r attribute. larger = more submissions -->
-      <g class="ug-nodes" filter="url(#softGlow)">
-        <!-- Kampala (central) -->
-        <circle class="ug-node ug-major" cx="175" cy="245" r="9" />
-        <circle class="ug-pulse" cx="175" cy="245" r="9" />
-
-        <!-- Mbarara (SW) -->
-        <circle class="ug-node" cx="130" cy="310" r="6.5" />
-        <circle class="ug-pulse" cx="130" cy="310" r="6.5" />
-
-        <!-- Gulu (N) -->
-        <circle class="ug-node ug-major" cx="185" cy="115" r="7.5" />
-        <circle class="ug-pulse" cx="185" cy="115" r="7.5" />
-
-        <!-- Soroti (E) -->
-        <circle class="ug-node" cx="250" cy="195" r="6" />
-        <circle class="ug-pulse" cx="250" cy="195" r="6" />
-
-        <!-- Busitema / East -->
-        <circle class="ug-node" cx="285" cy="230" r="5.5" />
-        <circle class="ug-pulse" cx="285" cy="230" r="5.5" />
-
-        <!-- MUST / South -->
-        <circle class="ug-node" cx="195" cy="310" r="5" />
-        <circle class="ug-pulse" cx="195" cy="310" r="5" />
-
-        <!-- Lira -->
-        <circle class="ug-node" cx="200" cy="150" r="5" />
-        <circle class="ug-pulse" cx="200" cy="150" r="5" />
-
-        <!-- Mbale -->
-        <circle class="ug-node" cx="270" cy="180" r="5" />
-        <circle class="ug-pulse" cx="270" cy="180" r="5" />
-
-        <!-- Arua (NW) -->
-        <circle class="ug-node" cx="135" cy="95" r="4.5" />
-        <circle class="ug-pulse" cx="135" cy="95" r="4.5" />
-
-        <!-- Fort Portal (W) -->
-        <circle class="ug-node" cx="125" cy="205" r="4.5" />
-        <circle class="ug-pulse" cx="125" cy="205" r="4.5" />
-
-        <!-- Kabale (SW tip) -->
-        <circle class="ug-node" cx="145" cy="345" r="4" />
-        <circle class="ug-pulse" cx="145" cy="345" r="4" />
-      </g>
-
-      <!-- City labels (only on wide screens) -->
-      <g class="ug-labels">
-        <text x="188" y="250">Kampala</text>
-        <text x="190" y="120">Gulu</text>
-        <text x="142" y="315">Mbarara</text>
-        <text x="260" y="198">Soroti</text>
-        <text x="292" y="235">Busitema</text>
-      </g>
-    </svg>
-
-    <div class="ug-caption">
-      <div class="ug-caption-count" id="ug-live-count">0</div>
-      <div class="ug-caption-label">innovations across Uganda</div>
-    </div>
-  </div>
 </div>
+      </div>
+    </div>
 
     <div class="snapshot-strip">
       <div class="snapshot-heading">
