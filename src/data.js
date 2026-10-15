@@ -106,3 +106,72 @@ export async function getUserByEmail(email) {
   const snap = await getDocs(q);
   return snap.empty ? null : snap.docs[0].data();
 }
+/* ---------- Admin: innovations ---------- */
+
+export async function setFeatured(itemId, featured) {
+  await updateDoc(doc(db, "innovations", itemId), {
+    featured: !!featured,
+    featuredAt: featured ? serverTimestamp() : null
+  });
+}
+
+export async function setEditorPick(itemId, editorPick) {
+  await updateDoc(doc(db, "innovations", itemId), {
+    editorPick: !!editorPick,
+    editorPickAt: editorPick ? serverTimestamp() : null
+  });
+}
+
+export async function setAdminStatus(itemId, status) {
+  // status: "active" | "pending" | "rejected" | "archived"
+  await updateDoc(doc(db, "innovations", itemId), { adminStatus: status });
+}
+
+export async function setAdminNotes(itemId, notes) {
+  await updateDoc(doc(db, "innovations", itemId), { adminNotes: String(notes || "") });
+}
+
+export async function getInnovationsByAuthor(email) {
+  const q = query(collection(db, "innovations"), where("email", "==", email));
+  const snap = await getDocs(q);
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+/* ---------- Admin: users ---------- */
+
+export async function verifyUser(uid, verified) {
+  await updateDoc(doc(db, "users", uid), { verified: !!verified });
+}
+
+export async function featureUser(uid, featured) {
+  await updateDoc(doc(db, "users", uid), {
+    featured: !!featured,
+    featuredAt: featured ? serverTimestamp() : null
+  });
+}
+
+export async function suspendUser(uid, suspended) {
+  await updateDoc(doc(db, "users", uid), { suspended: !!suspended });
+}
+
+export async function setUserAdminNotes(uid, notes) {
+  await updateDoc(doc(db, "users", uid), { adminNotes: String(notes || "") });
+}
+
+export async function listAllUsersWithStats() {
+  const usersSnap = await getDocs(collection(db, "users"));
+  const users = usersSnap.docs.map(d => ({ uid: d.id, ...d.data() }));
+  const innovSnap = await getDocs(collection(db, "innovations"));
+  const innovs = innovSnap.docs.map(d => d.data());
+  return users.map(u => {
+    const mine = innovs.filter(i => i.email === u.email);
+    return {
+      ...u,
+      submissionCount: mine.length,
+      avgTrl: mine.length ? (mine.reduce((s, i) => s + (i.trl || 0), 0) / mine.length).toFixed(1) : "–",
+      lastSubmission: mine.length
+        ? mine.map(i => i.createdAt?.toDate?.() || new Date(0)).sort((a, b) => b - a)[0]
+        : null
+    };
+  }).sort((a, b) => b.submissionCount - a.submissionCount);
+}
