@@ -96,7 +96,7 @@ let editAvatarData = null;
 let pendingMedia = [];
 
 const MAX_MEDIA_FILES = 5;
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
 /* ============================================================
    HELPERS
