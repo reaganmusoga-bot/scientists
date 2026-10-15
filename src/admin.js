@@ -1,14 +1,17 @@
 /* ============================================================
-   SciPool UG — Admin Dashboard Module
-   Full admin panel: submissions, researchers, featured items.
+   SciPool UG — Admin Dashboard
+   Submissions moderation, researcher management, featuring.
    ============================================================ */
 
 import {
   setFeatured, setEditorPick, setAdminStatus, setAdminNotes,
   verifyUser, featureUser, suspendUser, setUserAdminNotes,
-  listAllUsersWithStats, getInnovationsByAuthor,
-  deleteInnovation, listUsers
+  listAllUsersWithStats, deleteInnovation, listUsers
 } from "./data.js";
+import {
+  collection, query, where, getDocs, writeBatch, doc, updateDoc, serverTimestamp
+} from "firebase/firestore";
+import { db } from "./firebase.js";
 
 /* ============================================================
    STATE
@@ -35,6 +38,44 @@ export function isAdmin(user) {
 
 export function setAdminInnovations(items) {
   adminState.currentInnovations = items;
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function flash(msg) {
+  const el = document.createElement("div");
+  el.textContent = msg;
+  el.style.cssText = `
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+    background:var(--charcoal); color:var(--gold); padding:10px 22px;
+    border-radius:24px; font-weight:800; font-size:13px; z-index:9999;
+    box-shadow:0 8px 24px rgba(0,0,0,0.3); letter-spacing:0.5px;
+  `;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2200);
+}
+
+function openModalSafe(html) {
+  if (typeof window.openModal === "function") {
+    window.openModal(html);
+  } else {
+    console.error("window.openModal is not defined. Expose it in app.js.");
+    alert("Modal system not available. Check console.");
+  }
+}
+
+function closeModalSafe() {
+  if (typeof window.closeModal === "function") {
+    window.closeModal();
+  }
 }
 
 /* ============================================================
@@ -83,8 +124,8 @@ function renderSubmissionsTab(el) {
     total: all.length,
     featured: all.filter(i => i.featured).length,
     pending: all.filter(i => !i.adminStatus || i.adminStatus === "pending" || i.adminStatus === "submitted").length,
-    archived: all.filter(i => i.adminStatus === "archived").length,
-    rejected: all.filter(i => i.adminStatus === "rejected").length
+    disputed: all.filter(i => i.adminStatus === "disputed").length,
+    archived: all.filter(i => i.adminStatus === "archived").length
   };
 
   el.innerHTML = `
@@ -92,15 +133,15 @@ function renderSubmissionsTab(el) {
       <div class="dash-kpi"><div class="k-lbl">Total</div><div class="k-val">${stats.total}</div></div>
       <div class="dash-kpi black"><div class="k-lbl">Featured</div><div class="k-val">${stats.featured}</div></div>
       <div class="dash-kpi red"><div class="k-lbl">Pending</div><div class="k-val">${stats.pending}</div></div>
-      <div class="dash-kpi"><div class="k-lbl">Archived</div><div class="k-val">${stats.archived}</div></div>
+      <div class="dash-kpi red"><div class="k-lbl">Disputed</div><div class="k-val">${stats.disputed}</div></div>
     </div>
 
     <div class="browse-toolbar" style="margin-bottom:16px;">
       <div class="search-big">
-        <input type="text" id="admin-sub-search" placeholder="Search by title, author, university, sector" value="${escapeAttr(adminState.submissionsQuery)}" />
+        <input type="text" id="admin-sub-search" placeholder="Search by title, author, university, sector" value="${esc(adminState.submissionsQuery)}" />
       </div>
       <select id="admin-sub-filter">
-        ${["all","featured","pending","active","archived","rejected"].map(f =>
+        ${["all","featured","pending","active","disputed","archived","rejected"].map(f =>
           `<option value="${f}" ${adminState.submissionsFilter === f ? "selected" : ""}>${labelForFilter(f)}</option>`
         ).join("")}
       </select>
@@ -145,6 +186,7 @@ function labelForFilter(f) {
     featured: "Featured only",
     pending: "Pending review",
     active: "Active",
+    disputed: "Disputed ownership",
     archived: "Archived",
     rejected: "Rejected"
   }[f] || f;
@@ -167,6 +209,7 @@ function paintSubmissionRows() {
   if (f === "featured") list = list.filter(i => i.featured);
   else if (f === "pending") list = list.filter(i => !i.adminStatus || i.adminStatus === "pending" || i.adminStatus === "submitted");
   else if (f === "active") list = list.filter(i => i.adminStatus === "active");
+  else if (f === "disputed") list = list.filter(i => i.adminStatus === "disputed");
   else if (f === "archived") list = list.filter(i => i.adminStatus === "archived");
   else if (f === "rejected") list = list.filter(i => i.adminStatus === "rejected");
 
@@ -178,17 +221,17 @@ function paintSubmissionRows() {
   tbody.innerHTML = list.map(i => `
     <tr data-id="${i.id}">
       <td>
-        <button class="btn-tiny ${i.featured ? "yellow" : "outline"}" data-act="toggle-feature" data-id="${i.id}" type="button" title="${i.featured ? "Unfeature" : "Feature"}">
+        <button class="btn-tiny ${i.featured ? "yellow" : "outline"}" data-act="toggle-feature" data-id="${i.id}" type="button">
           ${i.featured ? "⭐ On" : "☆ Off"}
         </button>
       </td>
       <td>
-        <strong style="color:var(--ink);">${escapeHtml(i.title || "")}</strong>
+        <strong style="color:var(--ink);">${esc(i.title || "")}</strong>
         ${i.editorPick ? '<span class="pill published" style="margin-left:6px; font-size:9px;">Editor pick</span>' : ""}
       </td>
-      <td>${escapeHtml(i.author || "")}</td>
-      <td>${escapeHtml(i.university || "")}</td>
-      <td>${escapeHtml(i.sector || "")}</td>
+      <td>${esc(i.author || "")}</td>
+      <td>${esc(i.university || "")}</td>
+      <td>${esc(i.sector || "")}</td>
       <td><span class="badge-trl">${i.trl || "?"}</span></td>
       <td>${statusPill(i.adminStatus)}</td>
       <td style="white-space:nowrap;">
@@ -205,30 +248,24 @@ function paintSubmissionRows() {
       if (act === "toggle-feature") {
         const item = adminState.currentInnovations.find(x => x.id === id);
         if (!item) return;
-
-        // Optimistic update — flip immediately, revert on failure
         const newVal = !item.featured;
         item.featured = newVal;
         btn.classList.toggle("yellow", newVal);
         btn.classList.toggle("outline", !newVal);
         btn.textContent = newVal ? "⭐ On" : "☆ Off";
-        btn.title = newVal ? "Unfeature" : "Feature";
-
         try {
           await setFeatured(id, newVal);
           flash(newVal ? "Featured" : "Unfeatured");
         } catch (err) {
-          // Revert on failure
-          console.error("setFeatured failed:", err);
+          console.error(err);
           item.featured = !newVal;
           btn.classList.toggle("yellow", !newVal);
           btn.classList.toggle("outline", newVal);
           btn.textContent = !newVal ? "⭐ On" : "☆ Off";
-          btn.title = !newVal ? "Unfeature" : "Feature";
-          flash("Update failed — check permissions");
+          flash("Update failed");
         }
       } else if (act === "view") {
-        window.openDrawer?.(id);
+        if (typeof window.openDrawer === "function") window.openDrawer(id);
       } else if (act === "edit") {
         openManageSubmissionModal(id);
       }
@@ -243,6 +280,7 @@ function statusPill(status) {
     pending: "background:#FFF4E5;color:#6b3d00;",
     active: "background:#E8F3E3;color:#1e3a0f;",
     published: "background:#E8F3E3;color:#1e3a0f;",
+    disputed: "background:#FFD9DF;color:#9B0A22;",
     archived: "background:#EEE;color:#555;",
     rejected: "background:#FFE5E9;color:#9B0A22;"
   };
@@ -252,20 +290,25 @@ function statusPill(status) {
 
 async function openManageSubmissionModal(id) {
   const item = adminState.currentInnovations.find(x => x.id === id);
-  if (!item) return;
+  if (!item) {
+    console.warn("Manage: item not found", id);
+    return;
+  }
 
   const currentStatus = item.adminStatus || "submitted";
-  const allowedStatuses = ["active", "pending", "submitted", "archived", "rejected"];
+  const allowedStatuses = ["active", "pending", "submitted", "disputed", "archived", "rejected"];
 
   const html = `
     <h3>Manage submission</h3>
-    <p style="color:var(--ink-soft); font-size:13px; margin-bottom:16px;">${escapeHtml(item.title)}</p>
+    <p style="color:var(--ink-soft); font-size:13px; margin-bottom:16px;">
+      ${esc(item.title)} — <strong>${esc(item.author)}</strong> (${esc(item.university)})
+    </p>
 
     <div class="section-label">Status</div>
-    <div class="role-cards" style="grid-template-columns: repeat(2,1fr);">
+    <div class="role-cards" style="grid-template-columns: repeat(3,1fr);">
       ${allowedStatuses.map(s => `
         <div class="role-card ${currentStatus === s ? "selected" : ""}" data-status="${s}" style="text-align:center;">
-          <div class="role-name">${s.charAt(0).toUpperCase() + s.slice(1)}</div>
+          <div class="role-name" style="font-size:12px;">${s.charAt(0).toUpperCase() + s.slice(1)}</div>
         </div>
       `).join("")}
     </div>
@@ -281,7 +324,7 @@ async function openManageSubmissionModal(id) {
     </div>
 
     <div class="section-label">Private admin notes (only you see this)</div>
-    <textarea id="m-notes" style="min-height:100px;" placeholder="Internal notes about this submission...">${escapeHtml(item.adminNotes || "")}</textarea>
+    <textarea id="m-notes" style="min-height:100px;" placeholder="Internal notes...">${esc(item.adminNotes || "")}</textarea>
 
     <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
       <button class="btn btn-black" id="m-cancel" style="flex:1;" type="button">Cancel</button>
@@ -290,7 +333,7 @@ async function openManageSubmissionModal(id) {
     </div>
   `;
 
-  window.openModal?.(html);
+  openModalSafe(html);
 
   let chosenStatus = currentStatus;
   document.querySelectorAll("#modal-content [data-status]").forEach(card => {
@@ -301,7 +344,7 @@ async function openManageSubmissionModal(id) {
     });
   });
 
-  document.getElementById("m-toggle-featured").addEventListener("click", async () => {
+  document.getElementById("m-toggle-featured")?.addEventListener("click", async () => {
     const newVal = !item.featured;
     try {
       await setFeatured(id, newVal);
@@ -316,7 +359,7 @@ async function openManageSubmissionModal(id) {
     }
   });
 
-  document.getElementById("m-toggle-editor").addEventListener("click", async () => {
+  document.getElementById("m-toggle-editor")?.addEventListener("click", async () => {
     const newVal = !item.editorPick;
     try {
       await setEditorPick(id, newVal);
@@ -331,13 +374,13 @@ async function openManageSubmissionModal(id) {
     }
   });
 
-  document.getElementById("m-cancel").addEventListener("click", () => window.closeModal?.());
+  document.getElementById("m-cancel")?.addEventListener("click", closeModalSafe);
 
-  document.getElementById("m-delete").addEventListener("click", async () => {
+  document.getElementById("m-delete")?.addEventListener("click", async () => {
     if (!confirm("Delete this submission permanently?")) return;
     try {
       await deleteInnovation(id);
-      window.closeModal?.();
+      closeModalSafe();
       flash("Deleted");
     } catch (err) {
       console.error(err);
@@ -345,17 +388,17 @@ async function openManageSubmissionModal(id) {
     }
   });
 
-  document.getElementById("m-save").addEventListener("click", async () => {
+  document.getElementById("m-save")?.addEventListener("click", async () => {
     try {
       await setAdminStatus(id, chosenStatus);
       await setAdminNotes(id, document.getElementById("m-notes").value);
       item.adminStatus = chosenStatus;
       item.adminNotes = document.getElementById("m-notes").value;
-      window.closeModal?.();
+      closeModalSafe();
       flash("Saved");
     } catch (err) {
       console.error(err);
-      flash("Save failed — check permissions");
+      flash("Save failed");
     }
   });
 }
@@ -363,23 +406,17 @@ async function openManageSubmissionModal(id) {
 function exportSubmissionsCSV() {
   const list = adminState.currentInnovations;
   if (!list.length) { alert("Nothing to export."); return; }
-  const rows = [
-    ["ID","Title","Author","Email","University","Sector","TRL","Status","Featured","EditorPick","VerificationCode","Submitted"]
-  ];
+  const rows = [["ID","Title","Author","Email","University","Sector","TRL","Status","Featured","EditorPick","VerificationCode"]];
   list.forEach(i => {
     rows.push([
       i.id,
-      csvSafe(i.title),
-      csvSafe(i.author),
-      csvSafe(i.email),
-      csvSafe(i.university),
-      csvSafe(i.sector),
+      csvSafe(i.title), csvSafe(i.author), csvSafe(i.email),
+      csvSafe(i.university), csvSafe(i.sector),
       i.trl || "",
       i.adminStatus || "submitted",
       i.featured ? "yes" : "no",
       i.editorPick ? "yes" : "no",
-      i.verificationCode || "",
-      i.createdAt?.toDate ? i.createdAt.toDate().toISOString() : ""
+      i.verificationCode || ""
     ]);
   });
   downloadCSV(rows, "scipool-submissions.csv");
@@ -388,7 +425,6 @@ function exportSubmissionsCSV() {
 function csvSafe(v) {
   return '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
 }
-
 function downloadCSV(rows, filename) {
   const csv = rows.map(r => r.join(",")).join("\n");
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -407,7 +443,7 @@ async function renderResearchersTab(el) {
   try {
     adminState.cachedUsers = await listAllUsersWithStats();
   } catch (e) {
-    el.innerHTML = `<div class="alert alert-warn">Could not load users: ${escapeHtml(e.message)}</div>`;
+    el.innerHTML = `<div class="alert alert-warn">Could not load users: ${esc(e.message)}</div>`;
     return;
   }
 
@@ -429,7 +465,7 @@ async function renderResearchersTab(el) {
 
     <div class="browse-toolbar" style="margin-bottom:16px;">
       <div class="search-big">
-        <input type="text" id="admin-user-search" placeholder="Search by name, email, university, role" value="${escapeAttr(adminState.researchersQuery)}" />
+        <input type="text" id="admin-user-search" placeholder="Search by name, email, university, role" value="${esc(adminState.researchersQuery)}" />
       </div>
       <select id="admin-user-filter">
         ${["all","verified","featured","unverified","suspended"].map(f =>
@@ -448,7 +484,6 @@ async function renderResearchersTab(el) {
             <th>Role</th>
             <th>University / Org</th>
             <th>Submissions</th>
-            <th>Avg TRL</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
@@ -502,7 +537,7 @@ function paintResearcherRows() {
   else if (f === "suspended") list = list.filter(u => u.suspended);
 
   if (!list.length) {
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:24px; color:var(--ink-faint);">No researchers match.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:24px; color:var(--ink-faint);">No researchers match.</td></tr>`;
     return;
   }
 
@@ -511,18 +546,15 @@ function paintResearcherRows() {
     return `
       <tr data-uid="${u.uid}">
         <td>
-          <strong style="color:var(--ink);">${escapeHtml(u.name || "")}</strong>
-          ${u.featured ? '<span class="pill published" style="margin-left:6px; font-size:9px;">⭐ Featured</span>' : ""}
+          <strong style="color:var(--ink);">${esc(u.name || "")}</strong>
+          ${u.featured ? '<span class="pill published" style="margin-left:6px; font-size:9px;">⭐</span>' : ""}
         </td>
-        <td style="font-size:12px;">${escapeHtml(u.email || "")}</td>
-        <td>${escapeHtml(u.role || "")}</td>
-        <td style="font-size:12px;">${escapeHtml(org)}</td>
+        <td style="font-size:12px;">${esc(u.email || "")}</td>
+        <td>${esc(u.role || "")}</td>
+        <td style="font-size:12px;">${esc(org)}</td>
         <td>${u.submissionCount || 0}</td>
-        <td>${u.avgTrl || "–"}</td>
         <td>${userStatusPill(u)}</td>
         <td style="white-space:nowrap;">
-          <button class="btn-tiny ${u.verified ? "saved" : "outline"}" data-act="verify" data-uid="${u.uid}" type="button" title="Verify">${u.verified ? "✓ Verified" : "Verify"}</button>
-          <button class="btn-tiny ${u.featured ? "yellow" : "outline"}" data-act="feature" data-uid="${u.uid}" type="button" title="Feature">${u.featured ? "⭐" : "☆"}</button>
           <button class="btn-tiny black" data-act="manage" data-uid="${u.uid}" type="button">Manage</button>
         </td>
       </tr>
@@ -530,35 +562,8 @@ function paintResearcherRows() {
   }).join("");
 
   tbody.querySelectorAll("[data-act]").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const uid = btn.dataset.uid;
-      const act = btn.dataset.act;
-      const user = adminState.cachedUsers.find(x => x.uid === uid);
-      if (!user) return;
-
-      if (act === "verify") {
-        try {
-          await verifyUser(uid, !user.verified);
-          user.verified = !user.verified;
-          paintResearcherRows();
-          flash("Updated");
-        } catch (err) {
-          console.error(err);
-          flash("Update failed");
-        }
-      } else if (act === "feature") {
-        try {
-          await featureUser(uid, !user.featured);
-          user.featured = !user.featured;
-          paintResearcherRows();
-          flash("Updated");
-        } catch (err) {
-          console.error(err);
-          flash("Update failed");
-        }
-      } else if (act === "manage") {
-        openManageUserModal(uid);
-      }
+    btn.addEventListener("click", () => {
+      if (btn.dataset.act === "manage") openManageUserModal(btn.dataset.uid);
     });
   });
 }
@@ -571,32 +576,38 @@ function userStatusPill(u) {
 
 async function openManageUserModal(uid) {
   const user = adminState.cachedUsers.find(x => x.uid === uid);
-  if (!user) return;
+  if (!user) {
+    console.warn("Manage: user not found", uid);
+    return;
+  }
 
   const theirInnovations = adminState.currentInnovations.filter(i => i.email === user.email);
 
   const html = `
     <h3>Manage researcher</h3>
     <p style="color:var(--ink-soft); font-size:13px; margin-bottom:16px;">
-      <strong>${escapeHtml(user.name || "")}</strong> · ${escapeHtml(user.email || "")} · ${escapeHtml(user.role || "")}
+      <strong>${esc(user.name || "")}</strong> · ${esc(user.email || "")} · ${esc(user.role || "")}
     </p>
 
     <div class="section-label">Account status</div>
     <div class="role-cards" style="grid-template-columns: repeat(2,1fr);">
-      <div class="role-card ${user.verified ? "selected" : ""}" id="u-toggle-verified" style="text-align:center;">
+      <div class="role-card ${user.verified ? "selected" : ""}" id="u-toggle-verified" style="text-align:center; cursor:pointer;">
         <div class="role-name">${user.verified ? "✓ Verified" : "Verify account"}</div>
       </div>
-      <div class="role-card ${user.featured ? "selected" : ""}" id="u-toggle-featured" style="text-align:center;">
+      <div class="role-card ${user.featured ? "selected" : ""}" id="u-toggle-featured" style="text-align:center; cursor:pointer;">
         <div class="role-name">${user.featured ? "⭐ Featured" : "Feature researcher"}</div>
       </div>
     </div>
 
     <div class="section-label" style="margin-top:20px;">Submissions by this researcher (${theirInnovations.length})</div>
-    <div style="max-height:200px; overflow-y:auto; border:1px solid var(--line); border-radius:8px; padding:8px; background:var(--cream);">
+    <div style="max-height:220px; overflow-y:auto; border:1px solid var(--line); border-radius:8px; padding:8px; background:var(--cream);">
       ${theirInnovations.length
         ? theirInnovations.map(i => `
-            <div style="padding:8px 6px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; gap:8px; align-items:center;">
-              <span style="font-size:13px;">${escapeHtml(i.title)}</span>
+            <div style="padding:10px 8px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; gap:8px; align-items:center;">
+              <div style="flex:1; min-width:0;">
+                <div style="font-size:13px; font-weight:700;">${esc(i.title)}</div>
+                <div style="font-size:11px; color:var(--ink-faint);">TRL ${i.trl || "?"} · ${esc(i.sector || "")}</div>
+              </div>
               <button class="btn-tiny outline" data-view="${i.id}" type="button" style="flex-shrink:0;">View</button>
             </div>`).join("")
         : '<p style="padding:10px; font-size:12px; color:var(--ink-faint);">No submissions yet.</p>'
@@ -604,52 +615,33 @@ async function openManageUserModal(uid) {
     </div>
 
     <div class="section-label" style="margin-top:20px;">Private admin notes</div>
-    <textarea id="u-notes" style="min-height:80px;" placeholder="Internal notes...">${escapeHtml(user.adminNotes || "")}</textarea>
+    <textarea id="u-notes" style="min-height:80px;" placeholder="Internal notes...">${esc(user.adminNotes || "")}</textarea>
+
+    <div class="section-label" style="margin-top:20px; color:var(--flag-red);">Danger zone</div>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <button class="btn btn-red" id="u-delete-research" type="button" ${theirInnovations.length === 0 ? "disabled style='opacity:0.5;'" : ""}>
+        🗑️ Delete all research by this researcher (${theirInnovations.length})
+      </button>
+      <button class="btn ${user.suspended ? "btn-black" : "btn-red"}" id="u-suspend" type="button">
+        ${user.suspended ? "✓ Unsuspend account" : "🚫 Suspend account"}
+      </button>
+    </div>
 
     <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
       <button class="btn btn-black" id="u-cancel" style="flex:1;" type="button">Close</button>
-      <button class="btn ${user.suspended ? "" : "btn-red"}" id="u-suspend" style="flex:1;" type="button">
-        ${user.suspended ? "Unsuspend" : "Suspend"}
-      </button>
       <button class="btn" id="u-save" style="flex:2;" type="button">Save notes</button>
     </div>
   `;
 
-  window.openModal?.(html);
+  openModalSafe(html);
 
-  document.getElementById("u-toggle-verified").addEventListener("click", async () => {
+  document.getElementById("u-toggle-verified")?.addEventListener("click", async () => {
     try {
       await verifyUser(uid, !user.verified);
       user.verified = !user.verified;
-      document.getElementById("u-toggle-verified").classList.toggle("selected", user.verified);
-      document.getElementById("u-toggle-verified").querySelector(".role-name").textContent = user.verified ? "✓ Verified" : "Verify account";
-      paintResearcherRows();
-    } catch (err) {
-      console.error(err);
-      flash("Update failed");
-    }
-  });
-
-  document.getElementById("u-toggle-featured").addEventListener("click", async () => {
-    try {
-      await featureUser(uid, !user.featured);
-      user.featured = !user.featured;
-      document.getElementById("u-toggle-featured").classList.toggle("selected", user.featured);
-      document.getElementById("u-toggle-featured").querySelector(".role-name").textContent = user.featured ? "⭐ Featured" : "Feature researcher";
-      paintResearcherRows();
-    } catch (err) {
-      console.error(err);
-      flash("Update failed");
-    }
-  });
-
-  document.getElementById("u-suspend").addEventListener("click", async () => {
-    if (!user.suspended && !confirm("Suspend this researcher? They will not be able to sign in.")) return;
-    try {
-      await suspendUser(uid, !user.suspended);
-      user.suspended = !user.suspended;
-      document.getElementById("u-suspend").className = `btn ${user.suspended ? "" : "btn-red"}`;
-      document.getElementById("u-suspend").textContent = user.suspended ? "Unsuspend" : "Suspend";
+      const el = document.getElementById("u-toggle-verified");
+      el.classList.toggle("selected", user.verified);
+      el.querySelector(".role-name").textContent = user.verified ? "✓ Verified" : "Verify account";
       paintResearcherRows();
       flash("Updated");
     } catch (err) {
@@ -658,11 +650,73 @@ async function openManageUserModal(uid) {
     }
   });
 
-  document.getElementById("u-cancel").addEventListener("click", () => window.closeModal?.());
-  document.getElementById("u-save").addEventListener("click", async () => {
+  document.getElementById("u-toggle-featured")?.addEventListener("click", async () => {
+    try {
+      await featureUser(uid, !user.featured);
+      user.featured = !user.featured;
+      const el = document.getElementById("u-toggle-featured");
+      el.classList.toggle("selected", user.featured);
+      el.querySelector(".role-name").textContent = user.featured ? "⭐ Featured" : "Feature researcher";
+      paintResearcherRows();
+      flash("Updated");
+    } catch (err) {
+      console.error(err);
+      flash("Update failed");
+    }
+  });
+
+  document.getElementById("u-suspend")?.addEventListener("click", async () => {
+    const isSuspending = !user.suspended;
+    const msg = isSuspending
+      ? "Suspend this researcher? They will not be able to sign in."
+      : "Unsuspend this researcher? They will be able to sign in again.";
+    if (!confirm(msg)) return;
+
+    try {
+      await suspendUser(uid, isSuspending);
+      user.suspended = isSuspending;
+      const btn = document.getElementById("u-suspend");
+      btn.className = `btn ${isSuspending ? "btn-black" : "btn-red"}`;
+      btn.textContent = isSuspending ? "✓ Unsuspend account" : "🚫 Suspend account";
+      paintResearcherRows();
+      flash(isSuspending ? "Account suspended" : "Account reactivated");
+    } catch (err) {
+      console.error(err);
+      flash("Update failed");
+    }
+  });
+
+  document.getElementById("u-delete-research")?.addEventListener("click", async () => {
+    if (!theirInnovations.length) return;
+    const confirmMsg = `Permanently delete ALL ${theirInnovations.length} submission(s) by ${user.name}?\n\nThis cannot be undone. Any certificates issued for these submissions will no longer verify.`;
+    if (!confirm(confirmMsg)) return;
+    if (!confirm("Are you absolutely sure? This is irreversible.")) return;
+
+    try {
+      const batch = writeBatch(db);
+      theirInnovations.forEach(i => {
+        batch.delete(doc(db, "innovations", i.id));
+      });
+      await batch.commit();
+
+      // Update local cache
+      adminState.currentInnovations = adminState.currentInnovations.filter(
+        i => i.email !== user.email
+      );
+      flash(`Deleted ${theirInnovations.length} submission(s)`);
+      closeModalSafe();
+      renderAdminDashboard();
+    } catch (err) {
+      console.error(err);
+      flash("Delete failed: " + err.message);
+    }
+  });
+
+  document.getElementById("u-cancel")?.addEventListener("click", closeModalSafe);
+  document.getElementById("u-save")?.addEventListener("click", async () => {
     try {
       await setUserAdminNotes(uid, document.getElementById("u-notes").value);
-      window.closeModal?.();
+      closeModalSafe();
       flash("Notes saved");
     } catch (err) {
       console.error(err);
@@ -672,8 +726,10 @@ async function openManageUserModal(uid) {
 
   document.querySelectorAll("#modal-content [data-view]").forEach(btn => {
     btn.addEventListener("click", () => {
-      window.closeModal?.();
-      setTimeout(() => window.openDrawer?.(btn.dataset.view), 150);
+      closeModalSafe();
+      setTimeout(() => {
+        if (typeof window.openDrawer === "function") window.openDrawer(btn.dataset.view);
+      }, 150);
     });
   });
 }
@@ -681,14 +737,13 @@ async function openManageUserModal(uid) {
 function exportResearchersCSV() {
   const list = adminState.cachedUsers || [];
   if (!list.length) { alert("Nothing to export."); return; }
-  const rows = [["Name","Email","Role","Org","Submissions","AvgTRL","Verified","Featured","Suspended","Joined"]];
+  const rows = [["Name","Email","Role","Org","Submissions","AvgTRL","Verified","Featured","Suspended"]];
   list.forEach(u => {
     const org = u.profile?.university || u.profile?.chapterUniversity || u.profile?.organisation || u.profile?.ministry || "";
     rows.push([
       csvSafe(u.name), csvSafe(u.email), csvSafe(u.role), csvSafe(org),
       u.submissionCount || 0, u.avgTrl || "",
-      u.verified ? "yes" : "no", u.featured ? "yes" : "no", u.suspended ? "yes" : "no",
-      u.joinedAt?.toDate ? u.joinedAt.toDate().toISOString() : ""
+      u.verified ? "yes" : "no", u.featured ? "yes" : "no", u.suspended ? "yes" : "no"
     ]);
   });
   downloadCSV(rows, "scipool-researchers.csv");
@@ -748,7 +803,7 @@ function renderFeaturedTab(el) {
         const item = adminState.currentInnovations.find(x => x.id === id);
         if (item) item.editorPick = false;
         renderAdminDashboard();
-        flash("Removed from Editor's picks");
+        flash("Removed");
       } catch (err) {
         console.error(err);
         flash("Update failed");
@@ -763,7 +818,7 @@ function renderFeaturedTab(el) {
         const u = adminState.cachedUsers?.find(x => x.uid === uid);
         if (u) u.featured = false;
         renderAdminDashboard();
-        flash("Unfeatured researcher");
+        flash("Unfeatured");
       } catch (err) {
         console.error(err);
         flash("Update failed");
@@ -783,12 +838,10 @@ function renderFeaturedItemsList(items, kind) {
           <div class="inn-card-body">
             <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-start;">
               <div style="flex:1; min-width:0;">
-                <h4 style="margin-bottom:6px; font-size:15px;">${escapeHtml(i.title)}</h4>
-                <div style="font-size:12px; color:var(--ink-soft);">${escapeHtml(i.author)} · ${escapeHtml(i.university)}</div>
+                <h4 style="margin-bottom:6px; font-size:15px;">${esc(i.title)}</h4>
+                <div style="font-size:12px; color:var(--ink-soft);">${esc(i.author)} · ${esc(i.university)}</div>
               </div>
-              <button class="btn-tiny btn-red" ${kind === "editor" ? `data-uneditor="${i.id}"` : `data-unfeature="${i.id}"`} type="button">
-                Remove
-              </button>
+              <button class="btn-tiny btn-red" ${kind === "editor" ? `data-uneditor="${i.id}"` : `data-unfeature="${i.id}"`} type="button">Remove</button>
             </div>
           </div>
         </div>
@@ -808,8 +861,8 @@ function renderFeaturedUsersList(users) {
           <div class="inn-card-body">
             <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-start;">
               <div style="flex:1; min-width:0;">
-                <h4 style="margin-bottom:6px; font-size:15px;">${escapeHtml(u.name)}</h4>
-                <div style="font-size:12px; color:var(--ink-soft);">${escapeHtml(u.email)} · ${escapeHtml(u.role)}</div>
+                <h4 style="margin-bottom:6px; font-size:15px;">${esc(u.name)}</h4>
+                <div style="font-size:12px; color:var(--ink-soft);">${esc(u.email)} · ${esc(u.role)}</div>
               </div>
               <button class="btn-tiny btn-red" data-unfeature-user="${u.uid}" type="button">Remove</button>
             </div>
@@ -818,29 +871,4 @@ function renderFeaturedUsersList(users) {
       `).join("")}
     </div>
   `;
-}
-
-/* ============================================================
-   UTILITIES
-   ============================================================ */
-
-function escapeHtml(s) {
-  return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
-}
-function escapeAttr(s) {
-  return escapeHtml(s).replace(/"/g, "&quot;");
-}
-function flash(msg) {
-  const el = document.createElement("div");
-  el.textContent = msg;
-  el.style.cssText = `
-    position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
-    background:var(--charcoal); color:var(--gold); padding:10px 22px;
-    border-radius:24px; font-weight:800; font-size:13px; z-index:9999;
-    box-shadow:0 8px 24px rgba(0,0,0,0.3); letter-spacing:0.5px;
-  `;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 1800);
 }
