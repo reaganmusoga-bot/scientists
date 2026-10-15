@@ -1056,6 +1056,8 @@ function closeModal() {
   document.getElementById("modal-bg")?.classList.remove("active");
   document.body.style.overflow = "";
 }
+window.openModal = openModal;
+window.closeModal = closeModal;
 
 /* ============================================================
    MEDIA UPLOAD
