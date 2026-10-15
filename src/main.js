@@ -3,3 +3,5 @@ import "./app.js";
 
 // Tell app.js that Firebase has been initialized
 window.dispatchEvent(new Event("firebase-ready"));
+import { generateCertificate } from "./certificate.js";
+window.generateCertificate = generateCertificate;
