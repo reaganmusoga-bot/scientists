@@ -109,6 +109,7 @@ export async function createInnovation(payload, mediaArray, uid) {
     media,
     uid: uid || null,
     status: "Submitted",
+    adminStatus: "submitted",
     views: 0, saves: 0, contacted: 0,
     createdAt: serverTimestamp()
   });
@@ -210,6 +211,7 @@ export async function setEditorPick(itemId, editorPick) {
 }
 
 export async function setAdminStatus(itemId, status) {
+  // status: "active" | "pending" | "submitted" | "rejected" | "archived"
   await updateDoc(doc(db, "innovations", itemId), { adminStatus: status });
 }
 
