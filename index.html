@@ -418,6 +418,7 @@
     .card .footer { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 10px; }
     .hash { font-family: monospace; font-size: 10px; color: var(--ink-faint); word-break: break-all; }
 
+    /* ===== HERO WITH SCIENTIFIC VISUAL ===== */
     .landing-hero {
       background: linear-gradient(135deg, var(--charcoal) 0%, var(--charcoal-soft) 55%, #3a2c1f 100%);
       color: var(--white); padding: 56px 18px 60px;
@@ -433,14 +434,154 @@
       width: 500px; height: 500px; border-radius: 50%;
       background: radial-gradient(circle, rgba(200,16,46,0.1) 0%, transparent 70%); pointer-events: none;
     }
+
+    /* Two‑column hero layout: text left, scientific visual right */
     .landing-hero-inner {
-      max-width: 900px;
+      max-width: 1280px;
       margin: 0 auto;
       position: relative;
       z-index: 2;
-      display: block;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 40px;
       padding: 0 18px;
     }
+
+    /* Scientific illustration panel */
+    .hero-science-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      min-height: 340px;
+    }
+    .science-card {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(4px);
+      border: 2px solid rgba(245, 183, 0, 0.35);
+      border-radius: 24px;
+      padding: 28px 22px;
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .science-card:hover {
+      border-color: rgba(245, 183, 0, 0.7);
+      box-shadow: 0 24px 48px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.12);
+    }
+    .science-card::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      left: -40%;
+      width: 180%;
+      height: 180%;
+      background: radial-gradient(circle at 30% 30%, rgba(245,183,0,0.06) 0%, transparent 60%);
+      pointer-events: none;
+      animation: slowRotate 24s linear infinite;
+    }
+    @keyframes slowRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .science-emoji-row {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      margin-bottom: 22px;
+      position: relative;
+      z-index: 2;
+    }
+    .science-emoji {
+      font-size: 44px;
+      line-height: 1;
+      filter: drop-shadow(0 4px 12px rgba(245,183,0,0.25));
+      animation: floatEmoji 3.6s ease-in-out infinite;
+    }
+    .science-emoji:nth-child(1) { animation-delay: 0s; }
+    .science-emoji:nth-child(2) { animation-delay: 0.6s; }
+    .science-emoji:nth-child(3) { animation-delay: 1.2s; }
+    .science-emoji:nth-child(4) { animation-delay: 1.8s; }
+
+    @keyframes floatEmoji {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .science-dna {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0 18px;
+      position: relative;
+      z-index: 2;
+    }
+    .science-dna svg {
+      width: 100%;
+      max-width: 260px;
+      height: auto;
+      opacity: 0.9;
+    }
+
+    .science-caption {
+      text-align: center;
+      font-size: 12px;
+      color: #d4c8b8;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 600;
+      position: relative;
+      z-index: 2;
+      line-height: 1.6;
+    }
+    .science-caption strong {
+      color: var(--gold);
+      font-weight: 800;
+    }
+
+    /* Small orbiting dots decoration */
+    .science-orbit {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .science-orbit::before,
+    .science-orbit::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(245,183,0,0.2);
+    }
+    .science-orbit::before {
+      width: 280px;
+      height: 280px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .science-orbit::after {
+      width: 200px;
+      height: 200px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-color: rgba(200,16,46,0.2);
+    }
+
+    /* Adjust hero text for the two‑column layout */
+    .landing-hero-text {
+      position: relative;
+      z-index: 2;
+    }
+
     .identity-banner {
       display: block;
       background: linear-gradient(90deg, rgba(245,183,0,0.18) 0%, rgba(200,16,46,0.12) 100%);
@@ -493,7 +634,6 @@
       position: relative;
       overflow: hidden;
     }
-    /* Decorative Uganda flag-inspired colour blocks */
     .snapshot-strip::before {
       content: '';
       position: absolute;
@@ -506,7 +646,6 @@
       pointer-events: none;
       z-index: 0;
     }
-    /* Subtle flag-stripe motif inside the section */
     .snapshot-strip::after {
       content: '';
       position: absolute;
@@ -562,7 +701,6 @@
       text-align: center;
     }
 
-    /* Individual snapshot cards with coloured backgrounds */
     .snap {
       color: var(--white);
       background: rgba(255,255,255,0.07);
@@ -596,7 +734,6 @@
       font-weight: 700;
     }
 
-    /* Accent colours per card (matching flag / brand palette) */
     .snap:nth-child(1) { border-bottom: 4px solid var(--gold); }
     .snap:nth-child(2) { border-bottom: 4px solid var(--flag-red); }
     .snap:nth-child(3) { border-bottom: 4px solid #FFFFFF; }
@@ -1558,6 +1695,7 @@
       .landing-h1 .scipool-brand { font-size: 52px; }
       .section-heading { font-size: 28px; }
       .messages-shell { grid-template-columns: 260px 1fr; }
+      .landing-hero-inner { grid-template-columns: 1fr 1fr; gap: 24px; }
     }
 
     @media (max-width: 900px) {
@@ -1570,10 +1708,15 @@
       main { padding: 18px 14px 100px; }
 
       .landing-hero { padding: 40px 18px 48px; }
-      .landing-hero-inner { display: block; }
+      .landing-hero-inner { grid-template-columns: 1fr; gap: 28px; padding: 0 18px; }
       .landing-h1 { font-size: 36px; }
       .landing-h1 .scipool-brand { font-size: 44px; letter-spacing: -2px; }
       .landing-h1 .scipool-tagline { font-size: 17px; }
+
+      .hero-science-visual { min-height: 260px; }
+      .science-card { max-width: 340px; padding: 20px 18px; }
+      .science-emoji { font-size: 34px; }
+      .science-dna svg { max-width: 180px; }
 
       .identity-banner { padding: 12px 16px; }
       .identity-banner .identity-text { font-size: 15px; }
@@ -1582,7 +1725,6 @@
       .landing-ctas { flex-direction: column; width: 100%; }
       .btn-hero { width: 100%; padding: 15px 20px; }
 
-      /* Snapshot responsive adjustments */
       .snapshot-strip { padding: 28px 16px; }
       .snapshot-heading { margin-bottom: 20px; padding-bottom: 16px; }
       .snapshot-heading .snap-identity { font-size: 15px; }
@@ -1702,6 +1844,8 @@
       .quote-text { font-size: 14px; }
       .logo-text p { display: none; }
       .msg-bubble { max-width: 88%; }
+      .science-emoji { font-size: 28px; }
+      .science-card { padding: 16px 12px; }
     }
 
     @media (max-height: 500px) and (orientation: landscape) {
@@ -1712,6 +1856,9 @@
       .identity-banner .identity-text { font-size: 13px; }
       .landing-sub { display: none; }
       .mobile-sticky-cta { display: none; }
+      .hero-science-visual { min-height: 180px; }
+      .science-card { padding: 14px 12px; }
+      .science-emoji { font-size: 28px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1719,19 +1866,6 @@
         animation-duration: 0.001ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.001ms !important;
-      }
-    }
-
-    .landing-hero-inner {
-      grid-template-columns: 1fr;
-      align-items: center;
-      gap: 0;
-      max-width: 900px;
-    }
-    @media (max-width: 900px) {
-      .landing-hero-inner {
-        grid-template-columns: 1fr;
-        gap: 24px;
       }
     }
   </style>
@@ -1816,9 +1950,11 @@
 <main>
 
   <section class="view active" id="view-home-public">
+    <!-- ===== HERO WITH SCIENTIFIC VISUAL ===== -->
     <div class="landing-hero">
       <div class="landing-hero-inner">
-        <div>
+        <!-- Left: text content -->
+        <div class="landing-hero-text">
           <div class="identity-banner">
             <span class="identity-label">What this is</span>
             <span class="identity-text">
@@ -1837,8 +1973,51 @@
             <button class="btn-hero red" onclick="openAuthModal('signup')" type="button">Join SciPool UG</button>
           </div>
         </div>
+
+        <!-- Right: scientific illustration -->
+        <div class="hero-science-visual">
+          <div class="science-card">
+            <div class="science-orbit"></div>
+
+            <div class="science-emoji-row">
+              <span class="science-emoji" title="Microscope">🔬</span>
+              <span class="science-emoji" title="DNA">🧬</span>
+              <span class="science-emoji" title="Test tube">🧪</span>
+              <span class="science-emoji" title="Atom">⚛️</span>
+            </div>
+
+            <div class="science-dna">
+              <svg viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <defs>
+                  <linearGradient id="dnaGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#F5B700"/>
+                    <stop offset="100%" stop-color="#C8102E"/>
+                  </linearGradient>
+                </defs>
+                <!-- DNA double helix -->
+                <path d="M20 40 C 40 10, 60 10, 80 40 C 100 70, 120 70, 140 40 C 160 10, 180 10, 200 40"
+                      stroke="url(#dnaGold)" stroke-width="2.8" stroke-linecap="round" fill="none" opacity="0.9"/>
+                <path d="M20 40 C 40 70, 60 70, 80 40 C 100 10, 120 10, 140 40 C 160 70, 180 70, 200 40"
+                      stroke="url(#dnaGold)" stroke-width="2.8" stroke-linecap="round" fill="none" opacity="0.6"/>
+                <!-- Rungs -->
+                <line x1="35" y1="28" x2="35" y2="52" stroke="#F5B700" stroke-width="1.6" opacity="0.5"/>
+                <line x1="65" y1="28" x2="65" y2="52" stroke="#C8102E" stroke-width="1.6" opacity="0.5"/>
+                <line x1="95" y1="28" x2="95" y2="52" stroke="#F5B700" stroke-width="1.6" opacity="0.5"/>
+                <line x1="125" y1="28" x2="125" y2="52" stroke="#C8102E" stroke-width="1.6" opacity="0.5"/>
+                <line x1="155" y1="28" x2="155" y2="52" stroke="#F5B700" stroke-width="1.6" opacity="0.5"/>
+                <line x1="185" y1="28" x2="185" y2="52" stroke="#C8102E" stroke-width="1.6" opacity="0.5"/>
+              </svg>
+            </div>
+
+            <div class="science-caption">
+              <strong>Science &amp; Innovation</strong><br/>
+              Advancing Uganda's research
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+    <!-- ===== END HERO ===== -->
 
     <!-- ============ COLORED SNAPSHOT SECTION ============ -->
     <div class="snapshot-strip">
