@@ -69,6 +69,7 @@ const ROLES = [
 const VIEW_PERMISSIONS = {
   home: [],
   browse: [],
+  challenges: [],          // ← add this line
   about: [],
   submit: ["Young Scientist", "University Chapter", "Industry / Investor", "Government / Policy"],
   chapters: ["University Chapter"],
@@ -308,6 +309,7 @@ function goTo(view) {
     if (el) el.classList.add("active");
   }
   if (view === "browse") renderBrowse();
+  if (view === "challenges") renderChallenges();
   if (view === "admin") renderAdmin();
   if (view === "chapters") renderChapterDashboard();
   if (view === "messages") renderMessages();
@@ -1058,6 +1060,9 @@ function closeModal() {
 }
 window.openModal = openModal;
 window.closeModal = closeModal;
+window.openChallengeDetail = openChallengeDetail;
+window.proposeSolution = proposeSolution;
+window.openPostChallengeModal = openPostChallengeModal;
 
 /* ============================================================
    MEDIA UPLOAD
@@ -2054,6 +2059,10 @@ function wireEvents() {
     document.getElementById("thread-container").style.display = "none";
     document.getElementById("messages-empty").style.display = "flex";
   });
+  document.getElementById("post-challenge-btn")?.addEventListener("click", openPostChallengeModal);
+document.getElementById("challenge-search")?.addEventListener("input", renderChallenges);
+document.getElementById("challenge-sector-filter")?.addEventListener("change", renderChallenges);
+document.getElementById("challenge-status-filter")?.addEventListener("change", renderChallenges);
 
   document.getElementById("chapter-export")?.addEventListener("click", () => {
     const items = DB.filter(d => d.university === currentChapter);
@@ -2140,6 +2149,229 @@ function animateNumber(el, target) {
   }
   requestAnimationFrame(step);
 }
+/* ============================================================
+   CHALLENGES (temporary sample data)
+   ============================================================ */
 
+const SAMPLE_CHALLENGES = [
+  {
+    id: "ch-001",
+    title: "Affordable point-of-care malaria diagnostic for rural clinics",
+    sector: "Health and Pharmaceuticals",
+    postedBy: "Ministry of Health",
+    deadline: "15 Mar 2027",
+    prize: "UGX 50M seed + pilot support",
+    status: "open",
+    solutions: 12,
+    shortlisted: 3,
+    description: "Rural health centres still rely on microscopy or send samples to district labs. We need a low-cost, solar-compatible, rapid diagnostic that can be manufactured in Uganda and used by nurses without specialised training."
+  },
+  {
+    id: "ch-002",
+    title: "Low-cost solar cold-chain for last-mile vaccine delivery",
+    sector: "Renewable Energy",
+    postedBy: "Ministry of Health & STI Office",
+    deadline: "30 Apr 2027",
+    prize: "UGX 80M + manufacturing partnership",
+    status: "open",
+    solutions: 7,
+    shortlisted: 1,
+    description: "Vaccine potency is lost on the last mile in many districts. We are looking for a robust, solar-powered, low-maintenance cold-chain solution that can keep vaccines between 2–8 °C for at least 48 hours without grid power."
+  },
+  {
+    id: "ch-003",
+    title: "Post-harvest loss reduction for smallholder maize farmers",
+    sector: "Agriculture and Agro processing",
+    postedBy: "Ministry of Agriculture",
+    deadline: "20 May 2027",
+    prize: "UGX 40M + pilot sites",
+    status: "open",
+    solutions: 5,
+    shortlisted: 0,
+    description: "Up to 30% of maize is lost after harvest in some regions. We seek affordable drying, storage or monitoring solutions that smallholder farmers can adopt without heavy capital investment."
+  }
+];
+
+function challengeCardHTML(c) {
+  const icon = SECTOR_ICONS[c.sector] || "📌";
+  return `
+    <article class="challenge-card" data-id="${escapeHtml(c.id)}">
+      <div class="challenge-card-body">
+        <div class="challenge-top">
+          <span class="challenge-sector-chip">${icon} ${escapeHtml(c.sector)}</span>
+          <span class="challenge-status ${c.status}">${c.status === "open" ? "Open" : "Closed"}</span>
+        </div>
+        <h4 class="challenge-title">${escapeHtml(c.title)}</h4>
+        <div class="challenge-meta">
+          <span>Posted by <strong>${escapeHtml(c.postedBy)}</strong></span>
+          ${c.deadline ? `<span>Deadline: ${escapeHtml(c.deadline)}</span>` : ""}
+          ${c.prize ? `<span>Prize: ${escapeHtml(c.prize)}</span>` : ""}
+        </div>
+        <p class="challenge-desc">${escapeHtml(c.description)}</p>
+        <div class="challenge-bottom">
+          <div class="challenge-stats">
+            <span><span class="n">${c.solutions || 0}</span> solutions</span>
+            <span><span class="n">${c.shortlisted || 0}</span> shortlisted</span>
+          </div>
+          <div class="inn-actions">
+            <button class="btn-tiny yellow" type="button" onclick="openChallengeDetail('${escapeHtml(c.id)}')">View details</button>
+            <button class="btn-tiny red" type="button" onclick="proposeSolution('${escapeHtml(c.id)}')">Propose solution</button>
+          </div>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function getFilteredChallenges() {
+  const q = (document.getElementById("challenge-search")?.value || "").toLowerCase().trim();
+  const sector = document.getElementById("challenge-sector-filter")?.value || "";
+  const status = document.getElementById("challenge-status-filter")?.value || "open";
+
+  return SAMPLE_CHALLENGES.filter(c => {
+    if (status !== "all" && c.status !== status) return false;
+    if (sector && c.sector !== sector) return false;
+    if (q) {
+      const hay = (c.title + " " + c.sector + " " + c.postedBy + " " + c.description).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function renderChallenges() {
+  const list = document.getElementById("challenges-list");
+  const empty = document.getElementById("challenges-empty");
+  if (!list) return;
+
+  const items = getFilteredChallenges();
+  if (!items.length) {
+    list.innerHTML = "";
+    if (empty) empty.style.display = "block";
+    return;
+  }
+  if (empty) empty.style.display = "none";
+  list.innerHTML = items.map(challengeCardHTML).join("");
+}
+
+function openChallengeDetail(id) {
+  const c = SAMPLE_CHALLENGES.find(x => x.id === id);
+  if (!c) return;
+  const icon = SECTOR_ICONS[c.sector] || "📌";
+  openModal(`
+    <h3>${escapeHtml(c.title)}</h3>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
+      <span class="challenge-sector-chip">${icon} ${escapeHtml(c.sector)}</span>
+      <span class="challenge-status ${c.status}">${c.status === "open" ? "Open" : "Closed"}</span>
+    </div>
+    <div class="challenge-meta" style="margin-bottom:16px;">
+      <span>Posted by <strong>${escapeHtml(c.postedBy)}</strong></span>
+      ${c.deadline ? `<span>Deadline: ${escapeHtml(c.deadline)}</span>` : ""}
+      ${c.prize ? `<span>Prize: ${escapeHtml(c.prize)}</span>` : ""}
+    </div>
+    <p style="font-size:14px; line-height:1.7; color:var(--ink-soft); margin-bottom:24px;">
+      ${escapeHtml(c.description)}
+    </p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn btn-red" style="flex:1;" type="button" onclick="closeModal(); proposeSolution('${escapeHtml(c.id)}')">Propose a solution</button>
+      <button class="btn btn-black" style="flex:1;" type="button" onclick="closeModal()">Close</button>
+    </div>
+  `);
+}
+
+function proposeSolution(challengeId) {
+  if (!CURRENT_USER) {
+    openAuthModal("signin");
+    return;
+  }
+  goTo("submit");
+  setTimeout(() => {
+    openModal(`
+      <h3>Propose a solution</h3>
+      <div class="alert alert-info">
+        You are responding to a national challenge. Fill in the research submission form with your proposed solution.
+      </div>
+      <p style="font-size:13px; color:var(--ink-soft); margin-bottom:16px;">
+        Challenge ID: <code>${escapeHtml(challengeId)}</code>
+      </p>
+      <button class="btn" style="width:100%;" type="button" onclick="closeModal()">Continue to submission form</button>
+    `);
+  }, 300);
+}
+
+function openPostChallengeModal() {
+  if (!CURRENT_USER) {
+    openAuthModal("signin");
+    return;
+  }
+  const canPost = CURRENT_USER.role === "Government / Policy" || CURRENT_USER.role === "Industry / Investor" || isAdmin(CURRENT_USER);
+  if (!canPost) {
+    openModal(`
+      <h3>Not available for your role</h3>
+      <div class="alert alert-info">
+        Only <strong>Government / Policy</strong> and <strong>Industry / Investor</strong> accounts can post challenges.
+        You are signed in as <strong>${escapeHtml(CURRENT_USER.role)}</strong>.
+      </div>
+      <button class="btn" onclick="closeModal()" style="width:100%;" type="button">Close</button>
+    `);
+    return;
+  }
+
+  openModal(`
+    <h3>Post a national challenge</h3>
+    <div class="alert alert-info" style="margin-bottom:16px;">
+      Challenges are visible to all young scientists. They can respond by submitting a solution linked to this problem.
+    </div>
+    <form id="post-challenge-form">
+      <div class="form-row">
+        <label>Challenge title <span class="req">*</span></label>
+        <input type="text" id="ch-title" required placeholder="Example: Low-cost solar cold-chain for vaccines" />
+      </div>
+      <div class="form-row">
+        <label>Full problem statement <span class="req">*</span></label>
+        <textarea id="ch-description" required placeholder="Describe the problem clearly so researchers know what success looks like." style="min-height:140px;"></textarea>
+      </div>
+      <div class="two-col">
+        <div class="form-row">
+          <label>Sector <span class="req">*</span></label>
+          <select id="ch-sector" required>
+            <option value="">Select sector</option>
+            ${Object.keys(SECTOR_ICONS).map(s => `<option>${escapeHtml(s)}</option>`).join("")}
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Organisation / Ministry <span class="req">*</span></label>
+          <input type="text" id="ch-org" required placeholder="Example: Ministry of Health" />
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="form-row">
+          <label>Deadline <span class="opt">(optional)</span></label>
+          <input type="text" id="ch-deadline" placeholder="Example: 15 Mar 2027" />
+        </div>
+        <div class="form-row">
+          <label>Prize / funding note <span class="opt">(optional)</span></label>
+          <input type="text" id="ch-prize" placeholder="Example: UGX 50M seed + pilot support" />
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:8px;">
+        <button type="button" class="btn btn-black" onclick="closeModal()" style="flex:1;">Cancel</button>
+        <button type="submit" class="btn btn-red" style="flex:2;">Publish Challenge</button>
+      </div>
+    </form>
+  `);
+
+  document.getElementById("post-challenge-form")?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    closeModal();
+    openModal(`
+      <h3>Challenge received</h3>
+      <div class="alert alert-success">
+        Your challenge has been recorded. Full Firebase saving will be added next.
+      </div>
+      <button class="btn" onclick="closeModal(); goTo('challenges');" style="width:100%;" type="button">Back to Challenges</button>
+    `);
+  });
+}
 // Call it whenever the DB updates. Add to the subscribeInnovations callback.
 console.log("SciPool: app.js loaded (full version with admin)");
