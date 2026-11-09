@@ -441,6 +441,7 @@
 
     #view-browse,
     #view-submit,
+    #view-challenges,
     #view-messages,
     #view-chapters,
     #view-admin,
@@ -2685,6 +2686,118 @@
     .user-dropdown-list button.danger-btn { color: var(--flag-red); }
 .user-dropdown-list button.danger-btn:hover { background: #FFF0F2; }
 .mobile-user-actions button.danger { color: #FF8A9F; }
+
+    /* ===== CHALLENGES ===== */
+    #view-challenges {
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 24px 18px;
+    }
+    .challenge-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .challenge-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 3px;
+      background: linear-gradient(90deg, var(--flag-red), var(--gold));
+      transform: scaleX(0);
+      transition: transform var(--transition-base);
+      transform-origin: left;
+    }
+    .challenge-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(200,16,46,0.25);
+    }
+    .challenge-card:hover::before { transform: scaleX(1); }
+    .challenge-card-body { padding: 22px 24px; }
+    .challenge-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .challenge-sector-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--cream);
+      color: var(--earth-deep);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .challenge-status {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 4px 12px;
+      border-radius: 12px;
+    }
+    .challenge-status.open { background: #E8F3E3; color: var(--green); }
+    .challenge-status.closed { background: var(--cream-deep); color: var(--ink-faint); }
+    .challenge-title {
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.35;
+      margin-bottom: 8px;
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .challenge-title:hover { color: var(--flag-red); }
+    .challenge-meta {
+      font-size: 12px;
+      color: var(--ink-soft);
+      margin-bottom: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .challenge-meta strong { color: var(--ink); }
+    .challenge-desc {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.65;
+      margin-bottom: 16px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .challenge-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .challenge-stats {
+      display: flex;
+      gap: 16px;
+      font-size: 11px;
+      color: var(--ink-faint);
+    }
+    .challenge-stats .n { font-weight: 800; color: var(--ink); }
+    #post-challenge-btn { display: none; }
+    body.role-government #post-challenge-btn,
+    body.role-investor #post-challenge-btn { display: inline-flex; }
   </style>
 </head>
 <body>
@@ -2704,6 +2817,7 @@
       <ul>
         <li data-view="home"><button data-view="home" class="active">Home</button></li>
         <li data-view="browse"><button data-view="browse">Browse Innovations</button></li>
+        <li data-view="challenges"><button data-view="challenges">Challenges</button></li>
         <li data-view="submit"><button data-view="submit">Submit Research</button></li>
         <li data-view="messages"><button data-view="messages">Messages<span class="nav-badge" id="nav-msg-badge" style="display:none;">0</span></button></li>
         <li data-view="chapters"><button data-view="chapters">Chapter Dashboard</button></li>
@@ -2765,6 +2879,7 @@
   <ul class="mobile-nav-list" id="mobile-nav-list">
     <li data-view="home"><button data-view="home" type="button"><span><span class="m-icon">🏠</span>Home</span></button></li>
     <li data-view="browse"><button data-view="browse" type="button"><span><span class="m-icon">🔬</span>Browse Innovations</span></button></li>
+    <li data-view="challenges"><button data-view="challenges" type="button"><span><span class="m-icon">🎯</span>Challenges</span></button></li>
     <li data-view="submit"><button data-view="submit" type="button"><span><span class="m-icon">📤</span>Submit Research</span></button></li>
     <li data-view="messages"><button data-view="messages" type="button"><span><span class="m-icon">✉️</span>Messages</span><span class="nav-badge" id="mobile-msg-badge" style="display:none;">0</span></button></li>
     <li data-view="chapters"><button data-view="chapters" type="button"><span><span class="m-icon">🎓</span>Chapter Dashboard</span></button></li>
@@ -2905,6 +3020,70 @@
       <h2 class="section-heading">Where Uganda's <span>young scientists innovate</span></h2>
       <p class="section-sub">From life saving diagnostics to clean energy. Tap any sector to dive into the pool.</p>
       <div class="sector-cards" id="landing-sectors"></div>
+    </section>
+
+    <section class="landing-section alt">
+      <div class="inner">
+        <span class="section-eyebrow">Demand side</span>
+        <h2 class="section-heading">National <span>challenges</span> seeking solutions</h2>
+        <p class="section-sub">Government and industry partners post real problems. Young scientists respond with research and prototypes that can be funded and scaled.</p>
+        <div class="feed-list" id="landing-challenges">
+          <!-- Sample challenges (will be replaced by JS later) -->
+          <article class="challenge-card">
+            <div class="challenge-card-body">
+              <div class="challenge-top">
+                <span class="challenge-sector-chip">🏥 Health and Pharmaceuticals</span>
+                <span class="challenge-status open">Open</span>
+              </div>
+              <h4 class="challenge-title">Affordable point-of-care malaria diagnostic for rural clinics</h4>
+              <div class="challenge-meta">
+                <span>Posted by <strong>Ministry of Health</strong></span>
+                <span>Deadline: 15 Mar 2027</span>
+                <span>Prize: UGX 50M seed + pilot support</span>
+              </div>
+              <p class="challenge-desc">Rural health centres still rely on microscopy or send samples to district labs. We need a low-cost, solar-compatible, rapid diagnostic that can be manufactured in Uganda and used by nurses without specialised training.</p>
+              <div class="challenge-bottom">
+                <div class="challenge-stats">
+                  <span><span class="n">12</span> solutions</span>
+                  <span><span class="n">3</span> shortlisted</span>
+                </div>
+                <div class="inn-actions">
+                  <button class="btn-tiny yellow" onclick="goTo('challenges')" type="button">View details</button>
+                  <button class="btn-tiny red" onclick="goTo('challenges')" type="button">Propose solution</button>
+                </div>
+              </div>
+            </div>
+          </article>
+          <article class="challenge-card">
+            <div class="challenge-card-body">
+              <div class="challenge-top">
+                <span class="challenge-sector-chip">⚡ Renewable Energy</span>
+                <span class="challenge-status open">Open</span>
+              </div>
+              <h4 class="challenge-title">Low-cost solar cold-chain for last-mile vaccine delivery</h4>
+              <div class="challenge-meta">
+                <span>Posted by <strong>Ministry of Health &amp; STI Office</strong></span>
+                <span>Deadline: 30 Apr 2027</span>
+                <span>Prize: UGX 80M + manufacturing partnership</span>
+              </div>
+              <p class="challenge-desc">Vaccine potency is lost on the last mile in many districts. We are looking for a robust, solar-powered, low-maintenance cold-chain solution that can keep vaccines between 2–8 °C for at least 48 hours without grid power.</p>
+              <div class="challenge-bottom">
+                <div class="challenge-stats">
+                  <span><span class="n">7</span> solutions</span>
+                  <span><span class="n">1</span> shortlisted</span>
+                </div>
+                <div class="inn-actions">
+                  <button class="btn-tiny yellow" onclick="goTo('challenges')" type="button">View details</button>
+                  <button class="btn-tiny red" onclick="goTo('challenges')" type="button">Propose solution</button>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+        <div style="text-align:center; margin-top: 28px;">
+          <button class="btn" onclick="goTo('challenges')" type="button">View all challenges</button>
+        </div>
+      </div>
     </section>
 
     <section class="landing-section alt">
@@ -3051,6 +3230,132 @@
           <button class="btn btn-sm" style="margin-top: 16px; width: 100%;" onclick="openAuthModal('signup')" type="button">Register Interest</button>
         </div>
       </aside>
+    </div>
+  </section>
+
+  <!-- ============= CHALLENGES VIEW ============= -->
+  <section class="view" id="view-challenges">
+    <div class="section-header-row" style="margin-bottom: 20px;">
+      <div>
+        <h3 class="section-title" style="margin-bottom: 6px;">National Challenges</h3>
+        <p style="font-size: 14px; color: var(--ink-soft); max-width: 640px;">
+          Problems posted by government and investors. Young scientists can respond with solutions that may receive funding and support.
+        </p>
+      </div>
+      <button class="btn btn-sm btn-red" id="post-challenge-btn" type="button">
+        + Post a Challenge
+      </button>
+    </div>
+
+    <div class="browse-toolbar" style="margin-bottom: 24px;">
+      <div class="search-big">
+        <input type="text" id="challenge-search" placeholder="Search challenges by title, sector or organisation" />
+      </div>
+      <select id="challenge-sector-filter">
+        <option value="">All sectors</option>
+        <option>Health and Pharmaceuticals</option>
+        <option>Medical Devices and Diagnostics</option>
+        <option>Agriculture and Agro processing</option>
+        <option>Renewable Energy</option>
+        <option>ICT and Artificial Intelligence</option>
+        <option>Engineering and Manufacturing</option>
+        <option>Environmental Technologies</option>
+        <option>Biotechnology</option>
+        <option>Robotics and Automation</option>
+        <option>Construction and Transport Tech</option>
+      </select>
+      <select id="challenge-status-filter">
+        <option value="open">Open</option>
+        <option value="all">All statuses</option>
+        <option value="closed">Closed</option>
+      </select>
+    </div>
+
+    <div class="feed-list" id="challenges-list">
+      <!-- Sample challenges (JS will replace these later) -->
+      <article class="challenge-card" data-id="ch-001">
+        <div class="challenge-card-body">
+          <div class="challenge-top">
+            <span class="challenge-sector-chip">🏥 Health and Pharmaceuticals</span>
+            <span class="challenge-status open">Open</span>
+          </div>
+          <h4 class="challenge-title">Affordable point-of-care malaria diagnostic for rural clinics</h4>
+          <div class="challenge-meta">
+            <span>Posted by <strong>Ministry of Health</strong></span>
+            <span>Deadline: 15 Mar 2027</span>
+            <span>Prize: UGX 50M seed + pilot support</span>
+          </div>
+          <p class="challenge-desc">Rural health centres still rely on microscopy or send samples to district labs. We need a low-cost, solar-compatible, rapid diagnostic that can be manufactured in Uganda and used by nurses without specialised training.</p>
+          <div class="challenge-bottom">
+            <div class="challenge-stats">
+              <span><span class="n">12</span> solutions</span>
+              <span><span class="n">3</span> shortlisted</span>
+            </div>
+            <div class="inn-actions">
+              <button class="btn-tiny yellow" type="button">View details</button>
+              <button class="btn-tiny red" type="button">Propose solution</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="challenge-card" data-id="ch-002">
+        <div class="challenge-card-body">
+          <div class="challenge-top">
+            <span class="challenge-sector-chip">⚡ Renewable Energy</span>
+            <span class="challenge-status open">Open</span>
+          </div>
+          <h4 class="challenge-title">Low-cost solar cold-chain for last-mile vaccine delivery</h4>
+          <div class="challenge-meta">
+            <span>Posted by <strong>Ministry of Health &amp; STI Office</strong></span>
+            <span>Deadline: 30 Apr 2027</span>
+            <span>Prize: UGX 80M + manufacturing partnership</span>
+          </div>
+          <p class="challenge-desc">Vaccine potency is lost on the last mile in many districts. We are looking for a robust, solar-powered, low-maintenance cold-chain solution that can keep vaccines between 2–8 °C for at least 48 hours without grid power.</p>
+          <div class="challenge-bottom">
+            <div class="challenge-stats">
+              <span><span class="n">7</span> solutions</span>
+              <span><span class="n">1</span> shortlisted</span>
+            </div>
+            <div class="inn-actions">
+              <button class="btn-tiny yellow" type="button">View details</button>
+              <button class="btn-tiny red" type="button">Propose solution</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="challenge-card" data-id="ch-003">
+        <div class="challenge-card-body">
+          <div class="challenge-top">
+            <span class="challenge-sector-chip">🌾 Agriculture and Agro processing</span>
+            <span class="challenge-status open">Open</span>
+          </div>
+          <h4 class="challenge-title">Post-harvest loss reduction for smallholder maize farmers</h4>
+          <div class="challenge-meta">
+            <span>Posted by <strong>Ministry of Agriculture</strong></span>
+            <span>Deadline: 20 May 2027</span>
+            <span>Prize: UGX 40M + pilot sites</span>
+          </div>
+          <p class="challenge-desc">Up to 30% of maize is lost after harvest in some regions. We seek affordable drying, storage or monitoring solutions that smallholder farmers can adopt without heavy capital investment.</p>
+          <div class="challenge-bottom">
+            <div class="challenge-stats">
+              <span><span class="n">5</span> solutions</span>
+              <span><span class="n">0</span> shortlisted</span>
+            </div>
+            <div class="inn-actions">
+              <button class="btn-tiny yellow" type="button">View details</button>
+              <button class="btn-tiny red" type="button">Propose solution</button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="browse-empty" id="challenges-empty" style="display:none;">
+      <span class="icon">🎯</span>
+      <h4>No open challenges yet</h4>
+      <p>Government and industry partners will post challenges here. Check back soon.</p>
     </div>
   </section>
 
