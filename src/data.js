@@ -10,7 +10,6 @@ import { generateCertificate } from "./certificate.js";
 /* ============================================================
    Verification code generator
    Format: SPUG-XXXX-XXXX
-   Alphabet excludes 0, 1, O, I, L to avoid reading ambiguity.
    ============================================================ */
 function generateVerificationCode() {
   const alphabet = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
@@ -81,7 +80,7 @@ export async function createInnovation(payload, mediaArray, uid) {
     }
   }
 
-  // ---------- 2. Compute a master hash (concatenation of all file hashes) ----------
+  // ---------- 2. Master hash ----------
   let masterHash = "no-file";
   if (individualHashes.length > 0) {
     const concat = individualHashes.join("|");
@@ -91,10 +90,10 @@ export async function createInnovation(payload, mediaArray, uid) {
     masterHash = arr.map(b => b.toString(16).padStart(2, "0")).join("");
   }
 
-  // ---------- 3. Generate the public verification code ----------
+  // ---------- 3. Verification code ----------
   const verificationCode = generateVerificationCode();
 
-  // ---------- 4. Upload media to Cloudinary ----------
+  // ---------- 4. Upload media ----------
   const media = await uploadInnovationMedia(id, mediaArray);
 
   // ---------- 5. Save to Firestore ----------
@@ -114,12 +113,11 @@ export async function createInnovation(payload, mediaArray, uid) {
     createdAt: serverTimestamp()
   });
 
-  // ---------- 6. Generate the PDF certificate ----------
+  // ---------- 6. Certificate ----------
   try {
     const now = new Date();
     const issuedDate = now.toISOString().slice(0, 10);
     const shortId = id.slice(-6).toUpperCase();
-
     const primary = filesMeta[0] || { name: "—", size: 0 };
 
     generateCertificate({
@@ -211,7 +209,6 @@ export async function setEditorPick(itemId, editorPick) {
 }
 
 export async function setAdminStatus(itemId, status) {
-  // status: "active" | "pending" | "submitted" | "rejected" | "archived"
   await updateDoc(doc(db, "innovations", itemId), { adminStatus: status });
 }
 
@@ -266,7 +263,6 @@ export async function listAllUsersWithStats() {
 
 /* ============================================================
    CHALLENGES
-   Collection: "challenges"
    ============================================================ */
 
 export function subscribeChallenges(cb) {
@@ -288,7 +284,7 @@ export async function createChallenge(payload) {
     postedByRole: payload.postedByRole || "",
     deadline: payload.deadline || null,
     prize: payload.prize || null,
-    status: "open",               // open | closed
+    status: "open",
     solutions: 0,
     shortlisted: 0,
     createdAt: serverTimestamp()
@@ -297,7 +293,6 @@ export async function createChallenge(payload) {
 }
 
 export async function updateChallengeStatus(challengeId, status) {
-  // status: "open" | "closed"
   await updateDoc(doc(db, "challenges", challengeId), { status });
 }
 
