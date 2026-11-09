@@ -263,3 +263,44 @@ export async function listAllUsersWithStats() {
     };
   }).sort((a, b) => b.submissionCount - a.submissionCount);
 }
+
+/* ============================================================
+   CHALLENGES
+   Collection: "challenges"
+   ============================================================ */
+
+export function subscribeChallenges(cb) {
+  const q = query(collection(db, "challenges"), orderBy("createdAt", "desc"));
+  return onSnapshot(q, snap => {
+    cb(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+  }, err => console.warn("subscribeChallenges error", err));
+}
+
+export async function createChallenge(payload) {
+  const collRef = collection(db, "challenges");
+  const docRef = await addDoc(collRef, {
+    title: payload.title || "",
+    description: payload.description || "",
+    sector: payload.sector || "",
+    postedBy: payload.postedBy || "",
+    postedByEmail: payload.postedByEmail || "",
+    postedByUid: payload.postedByUid || null,
+    postedByRole: payload.postedByRole || "",
+    deadline: payload.deadline || null,
+    prize: payload.prize || null,
+    status: "open",               // open | closed
+    solutions: 0,
+    shortlisted: 0,
+    createdAt: serverTimestamp()
+  });
+  return docRef.id;
+}
+
+export async function updateChallengeStatus(challengeId, status) {
+  // status: "open" | "closed"
+  await updateDoc(doc(db, "challenges", challengeId), { status });
+}
+
+export async function deleteChallenge(challengeId) {
+  await deleteDoc(doc(db, "challenges", challengeId));
+}
