@@ -69,7 +69,7 @@ const ROLES = [
 const VIEW_PERMISSIONS = {
   home: [],
   browse: [],
-  challenges: [],          // ← add this line
+  challenges: [],          // ← ADD THIS LINE
   about: [],
   submit: ["Young Scientist", "University Chapter", "Industry / Investor", "Government / Policy"],
   chapters: ["University Chapter"],
@@ -308,11 +308,11 @@ function goTo(view) {
     const el = document.getElementById("view-" + view);
     if (el) el.classList.add("active");
   }
-  if (view === "browse") renderBrowse();
-  if (view === "challenges") renderChallenges();
-  if (view === "admin") renderAdmin();
-  if (view === "chapters") renderChapterDashboard();
-  if (view === "messages") renderMessages();
+if (view === "browse") renderBrowse();
+if (view === "challenges") renderChallenges();   // ← ADD THIS LINE
+if (view === "admin") renderAdmin();
+if (view === "chapters") renderChapterDashboard();
+if (view === "messages") renderMessages();
   const sticky = document.getElementById("mobile-sticky-cta");
   if (sticky) sticky.style.display = (view === "home" && !CURRENT_USER) ? "block" : "none";
   window.scrollTo({ top: 0, behavior: "smooth" });
